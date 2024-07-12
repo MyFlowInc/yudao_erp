@@ -228,10 +228,10 @@ public class TenantServiceImpl implements TenantService {
         if (tenant == null) {
             throw exception(TENANT_NOT_EXISTS);
         }
-        // 内置租户，不允许删除
-        if (isSystemTenant(tenant)) {
-            throw exception(TENANT_CAN_NOT_UPDATE_SYSTEM);
-        }
+//        // 内置租户，不允许删除
+//        if (isSystemTenant(tenant)) {
+//            throw exception(TENANT_CAN_NOT_UPDATE_SYSTEM);
+//        }
         return tenant;
     }
 
@@ -283,21 +283,22 @@ public class TenantServiceImpl implements TenantService {
         if (isTenantDisable()) {
             return;
         }
-        // 获得租户，然后获得菜单
-        TenantDO tenant = getTenant(TenantContextHolder.getRequiredTenantId());
-        Set<Long> menuIds;
-        if (isSystemTenant(tenant)) { // 系统租户，菜单是全量的
-            menuIds = CollectionUtils.convertSet(menuService.getMenuList(), MenuDO::getId);
-        } else {
-            menuIds = tenantPackageService.getTenantPackage(tenant.getPackageId()).getMenuIds();
-        }
+//        // 获得租户，然后获得菜单
+//        TenantDO tenant = getTenant(TenantContextHolder.getRequiredTenantId());
+//        Set<Long> menuIds;
+//        if (isSystemTenant(tenant)) { // 系统租户，菜单是全量的
+//            menuIds = CollectionUtils.convertSet(menuService.getMenuList(), MenuDO::getId);
+//        } else {
+//            menuIds = tenantPackageService.getTenantPackage(tenant.getPackageId()).getMenuIds();
+//        }
         // 执行处理器
-        handler.handle(menuIds);
+//        handler.handle(menuIds);
+
     }
 
-    private static boolean isSystemTenant(TenantDO tenant) {
-        return Objects.equals(tenant.getPackageId(), TenantDO.PACKAGE_ID_SYSTEM);
-    }
+//    private static boolean isSystemTenant(TenantDO tenant) {
+//        return Objects.equals(tenant.getPackageId(), TenantDO.PACKAGE_ID_SYSTEM);
+//    }
 
     private boolean isTenantDisable() {
         return tenantProperties == null || Boolean.FALSE.equals(tenantProperties.getEnable());

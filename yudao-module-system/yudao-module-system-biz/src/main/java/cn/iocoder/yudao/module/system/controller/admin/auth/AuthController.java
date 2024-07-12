@@ -17,7 +17,7 @@ import cn.iocoder.yudao.module.system.service.auth.AdminAuthService;
 import cn.iocoder.yudao.module.system.service.permission.MenuService;
 import cn.iocoder.yudao.module.system.service.permission.PermissionService;
 import cn.iocoder.yudao.module.system.service.permission.RoleService;
-import cn.iocoder.yudao.module.system.service.social.SocialClientService;
+//import cn.iocoder.yudao.module.system.service.social.SocialClientService;
 import cn.iocoder.yudao.module.system.service.user.AdminUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -56,8 +56,8 @@ public class AuthController {
     private MenuService menuService;
     @Resource
     private PermissionService permissionService;
-    @Resource
-    private SocialClientService socialClientService;
+//    @Resource
+//    private SocialClientService socialClientService;
 
     @Resource
     private SecurityProperties securityProperties;
@@ -132,20 +132,20 @@ public class AuthController {
         return success(true);
     }
 
-    // ========== 社交登录相关 ==========
-
-    @GetMapping("/social-auth-redirect")
-    @PermitAll
-    @Operation(summary = "社交授权的跳转")
-    @Parameters({
-            @Parameter(name = "type", description = "社交类型", required = true),
-            @Parameter(name = "redirectUri", description = "回调路径")
-    })
-    public CommonResult<String> socialLogin(@RequestParam("type") Integer type,
-                                            @RequestParam("redirectUri") String redirectUri) {
-        return success(socialClientService.getAuthorizeUrl(
-                type, UserTypeEnum.ADMIN.getValue(), redirectUri));
-    }
+//    // ========== 社交登录相关 ==========
+//
+//    @GetMapping("/social-auth-redirect")
+//    @PermitAll
+//    @Operation(summary = "社交授权的跳转")
+//    @Parameters({
+//            @Parameter(name = "type", description = "社交类型", required = true),
+//            @Parameter(name = "redirectUri", description = "回调路径")
+//    })
+//    public CommonResult<String> socialLogin(@RequestParam("type") Integer type,
+//                                            @RequestParam("redirectUri") String redirectUri) {
+//        return success(socialClientService.getAuthorizeUrl(
+//                type, UserTypeEnum.ADMIN.getValue(), redirectUri));
+//    }
 
     @PostMapping("/social-login")
     @PermitAll

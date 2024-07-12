@@ -32,7 +32,7 @@
         <redisson.version>3.18.0</redisson.version> <!-- Spring Boot 2.X 最多使用 3.18.0 版本，否则会报 Tuple NoClassDefFoundError -->
         <dm8.jdbc.version>8.1.3.62</dm8.jdbc.version>
         <!-- 消息队列 -->
-        <rocketmq-spring.version>2.2.3</rocketmq-spring.version>
+<!--        <rocketmq-spring.version>2.2.3</rocketmq-spring.version>-->
         <!-- 服务保障相关 -->
         <lock4j.version>2.2.7</lock4j.version>
         <!-- 监控相关 -->
@@ -138,12 +138,6 @@
             </dependency>
 
             <dependency>
-                <groupId>cn.iocoder.boot</groupId>
-                <artifactId>yudao-spring-boot-starter-websocket</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
@@ -244,18 +238,6 @@
                 <version>${revision}</version>
             </dependency>
 
-            <!-- 消息队列相关 -->
-            <dependency>
-                <groupId>cn.iocoder.boot</groupId>
-                <artifactId>yudao-spring-boot-starter-mq</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-spring-boot-starter</artifactId>
-                <version>${rocketmq-spring.version}</version>
-            </dependency>
 
             <!-- 服务保障相关 -->
             <dependency>
@@ -471,11 +453,11 @@
                 <version>${guava.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.google.inject</groupId>-->
+<!--                <artifactId>guice</artifactId>-->
+<!--                <version>${guice.version}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -558,33 +540,33 @@
             </dependency>
             <!-- SMS SDK end -->
 
-            <dependency>
-                <groupId>com.xingyuv</groupId>
-                <artifactId>spring-boot-starter-justauth</artifactId> <!-- 社交登陆（例如说，个人微信、企业微信等等） -->
-                <version>${justauth.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>cn.hutool</groupId>
-                        <artifactId>hutool-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.xingyuv</groupId>-->
+<!--                <artifactId>spring-boot-starter-justauth</artifactId> &lt;!&ndash; 社交登陆（例如说，个人微信、企业微信等等） &ndash;&gt;-->
+<!--                <version>${justauth.version}</version>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>cn.hutool</groupId>-->
+<!--                        <artifactId>hutool-core</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
 
-            <dependency>
-                <groupId>com.github.binarywang</groupId>
-                <artifactId>weixin-java-pay</artifactId>
-                <version>${weixin-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.binarywang</groupId>
-                <artifactId>wx-java-mp-spring-boot-starter</artifactId>
-                <version>${weixin-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.binarywang</groupId>
-                <artifactId>wx-java-miniapp-spring-boot-starter</artifactId>
-                <version>${weixin-java.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.github.binarywang</groupId>-->
+<!--                <artifactId>weixin-java-pay</artifactId>-->
+<!--                <version>${weixin-java.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>com.github.binarywang</groupId>-->
+<!--                <artifactId>wx-java-mp-spring-boot-starter</artifactId>-->
+<!--                <version>${weixin-java.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>com.github.binarywang</groupId>-->
+<!--                <artifactId>wx-java-miniapp-spring-boot-starter</artifactId>-->
+<!--                <version>${weixin-java.version}</version>-->
+<!--            </dependency>-->
 
             <!-- 积木报表-->
             <dependency>

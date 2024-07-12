@@ -41,11 +41,11 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
-
+        <!-- 设置为 provided，主要是 GlobalExceptionHandler 使用 -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-            <scope>provided</scope> <!-- 设置为 provided，主要是 GlobalExceptionHandler 使用 -->
+            <scope>provided</scope>
         </dependency>
 
         <!-- 业务组件 -->

@@ -3,7 +3,7 @@ spring:
     name: yudao-server
 
   profiles:
-    active: local
+    active: dev
 
   main:
     allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
@@ -118,29 +118,29 @@ aj:
 
 --- #################### 消息队列相关 ####################
 
-# rocketmq 配置项，对应 RocketMQProperties 配置类
-rocketmq:
-  # Producer 配置项
-  producer:
-    group: ${spring.application.name}_PRODUCER # 生产者分组
-
-spring:
-  # Kafka 配置项，对应 KafkaProperties 配置类
-  kafka:
-    # Kafka Producer 配置项
-    producer:
-      acks: 1 # 0-不应答。1-leader 应答。all-所有 leader 和 follower 应答。
-      retries: 3 # 发送失败时，重试发送的次数
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # 消息的 value 的序列化
-    # Kafka Consumer 配置项
-    consumer:
-      auto-offset-reset: earliest # 设置消费者分组最初的消费进度为 earliest 。可参考博客 https://blog.csdn.net/lishuangzhe7047/article/details/74530417 理解
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: '*'
-    # Kafka Consumer Listener 监听器配置
-    listener:
-      missing-topics-fatal: false # 消费监听接口监听的主题不存在时，默认会报错。所以通过设置为 false ，解决报错
+## rocketmq 配置项，对应 RocketMQProperties 配置类
+#rocketmq:
+#  # Producer 配置项
+#  producer:
+#    group: ${spring.application.name}_PRODUCER # 生产者分组
+#
+#spring:
+#  # Kafka 配置项，对应 KafkaProperties 配置类
+#  kafka:
+#    # Kafka Producer 配置项
+#    producer:
+#      acks: 1 # 0-不应答。1-leader 应答。all-所有 leader 和 follower 应答。
+#      retries: 3 # 发送失败时，重试发送的次数
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # 消息的 value 的序列化
+#    # Kafka Consumer 配置项
+#    consumer:
+#      auto-offset-reset: earliest # 设置消费者分组最初的消费进度为 earliest 。可参考博客 https://blog.csdn.net/lishuangzhe7047/article/details/74530417 理解
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+#      properties:
+#        spring.json.trusted.packages: '*'
+#    # Kafka Consumer Listener 监听器配置
+#    listener:
+#      missing-topics-fatal: false # 消费监听接口监听的主题不存在时，默认会报错。所以通过设置为 false ，解决报错
 
 --- #################### 芋道相关配置 ####################
 
@@ -154,19 +154,19 @@ yudao:
   security:
     permit-all_urls:
       - /admin-api/mp/open/** # 微信公众号开放平台，微信回调接口，不需要登录
-  websocket:
-    enable: true # websocket的开关
-    path: /infra/ws # 路径
-    sender-type: local # 消息发送的类型，可选值为 local、redis、rocketmq、kafka、rabbitmq
-    sender-rocketmq:
-      topic: ${spring.application.name}-websocket # 消息发送的 RocketMQ Topic
-      consumer-group: ${spring.application.name}-websocket-consumer # 消息发送的 RocketMQ Consumer Group
-    sender-rabbitmq:
-      exchange: ${spring.application.name}-websocket-exchange # 消息发送的 RabbitMQ Exchange
-      queue: ${spring.application.name}-websocket-queue # 消息发送的 RabbitMQ Queue
-    sender-kafka:
-      topic: ${spring.application.name}-websocket # 消息发送的 Kafka Topic
-      consumer-group: ${spring.application.name}-websocket-consumer # 消息发送的 Kafka Consumer Group
+#  websocket:
+#    enable: true # websocket的开关
+#    path: /infra/ws # 路径
+#    sender-type: local # 消息发送的类型，可选值为 local、redis、rocketmq、kafka、rabbitmq
+#    sender-rocketmq:
+#      topic: ${spring.application.name}-websocket # 消息发送的 RocketMQ Topic
+#      consumer-group: ${spring.application.name}-websocket-consumer # 消息发送的 RocketMQ Consumer Group
+#    sender-rabbitmq:
+#      exchange: ${spring.application.name}-websocket-exchange # 消息发送的 RabbitMQ Exchange
+#      queue: ${spring.application.name}-websocket-queue # 消息发送的 RabbitMQ Queue
+#    sender-kafka:
+#      topic: ${spring.application.name}-websocket # 消息发送的 Kafka Topic
+#      consumer-group: ${spring.application.name}-websocket-consumer # 消息发送的 Kafka Consumer Group
   swagger:
     title: 芋道快速开发平台
     description: 提供管理后台、用户 App 的所有功能
@@ -176,7 +176,7 @@ yudao:
     license: MIT
     license-url: https://gitee.com/zhijiantianya/ruoyi-vue-pro/blob/master/LICENSE
   captcha:
-    enable: true # 验证码的开关，默认为 true
+    enable: false # 验证码的开关，默认为 true
   codegen:
     base-package: ${yudao.info.base-package}
     db-schemas: ${spring.datasource.dynamic.datasource.master.name}
@@ -190,9 +190,9 @@ yudao:
       - /admin-api/system/captcha/check # 校验图片验证码，和租户无关
       - /admin-api/infra/file/*/get/** # 获取图片，和租户无关
       - /admin-api/system/sms/callback/* # 短信回调接口，无法带上租户编号
-      - /admin-api/pay/notify/** # 支付回调通知，不携带租户编号
-      - /jmreport/* # 积木报表，无法携带租户编号
-      - /admin-api/mp/open/** # 微信公众号开放平台，微信回调接口，无法携带租户编号
+#      - /admin-api/pay/notify/** # 支付回调通知，不携带租户编号
+#      - /jmreport/* # 积木报表，无法携带租户编号
+#      - /admin-api/mp/open/** # 微信公众号开放平台，微信回调接口，无法携带租户编号
     ignore-tables:
       - system_tenant
       - system_tenant_package
@@ -241,20 +241,20 @@ yudao:
     send-maximum-quantity-per-day: 10
     begin-code: 9999 # 这里配置 9999 的原因是，测试方便。
     end-code: 9999 # 这里配置 9999 的原因是，测试方便。
-  trade:
-    order:
-      app-id: 1 # 商户编号
-      pay-expire-time: 2h # 支付的过期时间
-      receive-expire-time: 14d # 收货的过期时间
-      comment-expire-time: 7d # 评论的过期时间
-    express:
-      client: kd_niao
-      kd-niao:
-        api-key: cb022f1e-48f1-4c4a-a723-9001ac9676b8
-        business-id: 1809751
-      kd100:
-        key: pLXUGAwK5305
-        customer: E77DF18BE109F454A5CD319E44BF5177
+#  trade:
+#    order:
+#      app-id: 1 # 商户编号
+#      pay-expire-time: 2h # 支付的过期时间
+#      receive-expire-time: 14d # 收货的过期时间
+#      comment-expire-time: 7d # 评论的过期时间
+#    express:
+#      client: kd_niao
+#      kd-niao:
+#        api-key: cb022f1e-48f1-4c4a-a723-9001ac9676b8
+#        business-id: 1809751
+#      kd100:
+#        key: pLXUGAwK5305
+#        customer: E77DF18BE109F454A5CD319E44BF5177
 
 debug: false
 

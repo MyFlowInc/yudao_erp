@@ -3911,3 +3911,1450 @@ INSERT INTO `yudao_demo03_student` (`id`, `name`, `sex`, `birthday`, `descriptio
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for erp_account
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_account`;
+CREATE TABLE `erp_account`  (
+                                `id` bigint NOT NULL AUTO_INCREMENT COMMENT '结算账户编号',
+                                `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '账户名称',
+                                `no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '账户编码',
+                                `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                `status` tinyint NOT NULL COMMENT '开启状态',
+                                `sort` int NOT NULL COMMENT '排序',
+                                `default_status` bit(1) NULL DEFAULT b'0' COMMENT '是否默认',
+                                `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                PRIMARY KEY (`id` DESC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 结算账户';
+
+-- ----------------------------
+-- Records of erp_account
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_customer
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_customer`;
+CREATE TABLE `erp_customer`  (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '客户编号',
+                                 `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '客户名称',
+                                 `contact` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系人',
+                                 `mobile` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '手机号码',
+                                 `telephone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系电话',
+                                 `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电子邮箱',
+                                 `fax` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '传真',
+                                 `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                 `status` tinyint NOT NULL COMMENT '开启状态',
+                                 `sort` int NOT NULL COMMENT '排序',
+                                 `tax_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '纳税人识别号',
+                                 `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率',
+                                 `bank_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
+                                 `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户账号',
+                                 `bank_address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户地址',
+                                 `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                 `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                 `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                 PRIMARY KEY (`id` DESC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 客户表';
+
+-- ----------------------------
+-- Records of erp_customer
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_finance_payment
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_finance_payment`;
+CREATE TABLE `erp_finance_payment`  (
+                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                        `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '付款单号',
+                                        `status` tinyint NOT NULL COMMENT '状态',
+                                        `payment_time` datetime NOT NULL COMMENT '付款时间',
+                                        `finance_user_id` bigint NULL DEFAULT NULL COMMENT '财务人员编号',
+                                        `supplier_id` bigint NOT NULL COMMENT '供应商编号',
+                                        `account_id` bigint NOT NULL COMMENT '付款账户编号',
+                                        `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                        `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                        `payment_price` decimal(24, 6) NOT NULL COMMENT '实付金额，单位：分',
+                                        `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                        `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                        `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                        `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                        `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                        `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                        PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 付款单表';
+
+-- ----------------------------
+-- Records of erp_finance_payment
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_finance_payment` (`id`, `no`, `status`, `payment_time`, `finance_user_id`, `supplier_id`, `account_id`, `total_price`, `discount_price`, `payment_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (2, 'FKD20240214000001', 10, '2024-02-26 00:00:00', 112, 1, 1, 300.000000, 10.000000, 290.000000, '哈哈哈哈', '1', '2024-02-14 15:05:19', '1', '2024-02-14 09:00:22', b'1', 1), (3, 'FKD20240214000002', 10, '2024-02-20 00:00:00', NULL, 1, 1, -10.000000, 4.000000, -14.000000, NULL, '1', '2024-02-14 15:34:11', '1', '2024-02-14 09:00:18', b'1', 1), (4, 'FKD20240214000003', 10, '2024-02-18 00:00:00', NULL, 1, 1, 114.700000, 0.000000, 114.700000, NULL, '1', '2024-02-14 16:43:59', '1', '2024-02-14 08:58:43', b'1', 1), (5, 'FKD20240214000004', 10, '2024-02-19 00:00:00', NULL, 1, 1, 114.700000, 0.000000, 114.700000, NULL, '1', '2024-02-14 16:44:31', '1', '2024-02-14 08:55:13', b'1', 1), (6, 'FKD20240214000005', 10, '2024-02-19 00:00:00', NULL, 1, 1, -20.000000, 0.000000, -20.000000, NULL, '1', '2024-02-14 16:59:30', '1', '2024-02-14 09:00:16', b'1', 1), (7, 'FKD20240214000006', 10, '2024-02-20 00:00:00', NULL, 1, 1, -20.000000, 0.000000, -20.000000, NULL, '1', '2024-02-14 17:00:11', '1', '2024-02-14 09:00:41', b'1', 1), (8, 'FKD20240214000007', 10, '2024-02-20 00:00:00', 115, 1, 1, -20.000000, 0.000000, -20.000000, NULL, '1', '2024-02-14 17:01:27', '1', '2024-02-14 09:05:28', b'1', 1), (9, 'FKD20240214000008', 10, '2024-02-27 00:00:00', NULL, 1, 1, -143.200000, 0.000000, -143.200000, NULL, '1', '2024-02-14 17:04:03', '1', '2024-02-14 09:04:35', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_finance_payment_item
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_finance_payment_item`;
+CREATE TABLE `erp_finance_payment_item`  (
+                                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                             `payment_id` bigint NOT NULL COMMENT '付款单编号',
+                                             `biz_type` tinyint NOT NULL COMMENT '业务类型',
+                                             `biz_id` bigint NOT NULL COMMENT '业务编号',
+                                             `biz_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '业务单号',
+                                             `total_price` decimal(24, 6) NOT NULL COMMENT '应付欠款，单位：分',
+                                             `paid_price` decimal(24, 6) NOT NULL COMMENT '已付欠款，单位：分',
+                                             `payment_price` decimal(24, 6) NOT NULL COMMENT '本次付款，单位：分',
+                                             `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                             `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                             `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                             `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                             `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                             `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 付款项表';
+
+-- ----------------------------
+-- Records of erp_finance_payment_item
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_finance_payment_item` (`id`, `payment_id`, `biz_type`, `biz_id`, `biz_no`, `total_price`, `paid_price`, `payment_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (11, 2, 11, 16, 'CGRK20240213000001', 414.700000, 0.000000, 300.000000, '测试一下', '1', '2024-02-14 15:05:19', '1', '2024-02-14 09:00:22', b'1', 1), (12, 3, 12, 24, 'CGTH20240213000001', -163.200000, 0.000000, -10.000000, NULL, '1', '2024-02-14 15:34:11', '1', '2024-02-14 09:00:18', b'1', 1), (13, 4, 11, 16, 'CGRK20240213000001', 414.700000, 300.000000, 114.700000, NULL, '1', '2024-02-14 16:43:59', '1', '2024-02-14 08:58:43', b'1', 1), (14, 5, 11, 16, 'CGRK20240213000001', 414.700000, 300.000000, 114.700000, NULL, '1', '2024-02-14 16:44:31', '1', '2024-02-14 08:55:13', b'1', 1), (15, 6, 12, 24, 'CGTH20240213000001', -163.200000, -10.000000, -20.000000, NULL, '1', '2024-02-14 16:59:30', '1', '2024-02-14 09:00:16', b'1', 1), (16, 7, 12, 24, 'CGTH20240213000001', -163.200000, -10.000000, -20.000000, NULL, '1', '2024-02-14 17:00:11', '1', '2024-02-14 09:00:41', b'1', 1), (17, 8, 12, 24, 'CGTH20240213000001', -163.200000, 0.000000, -20.000000, NULL, '1', '2024-02-14 17:01:27', '1', '2024-02-14 09:05:29', b'1', 1), (18, 9, 12, 24, 'CGTH20240213000001', -163.200000, -20.000000, -143.200000, NULL, '1', '2024-02-14 17:04:03', '1', '2024-02-14 09:04:35', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_finance_receipt
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_finance_receipt`;
+CREATE TABLE `erp_finance_receipt`  (
+                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                        `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '收款单号',
+                                        `status` tinyint NOT NULL COMMENT '状态',
+                                        `receipt_time` datetime NOT NULL COMMENT '收款时间',
+                                        `finance_user_id` bigint NULL DEFAULT NULL COMMENT '财务人员编号',
+                                        `customer_id` bigint NOT NULL COMMENT '客户编号',
+                                        `account_id` bigint NOT NULL COMMENT '收款账户编号',
+                                        `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                        `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                        `receipt_price` decimal(24, 6) NOT NULL COMMENT '实收金额，单位：分',
+                                        `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                        `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                        `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                        `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                        `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                        `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                        PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 收款单表';
+
+-- ----------------------------
+-- Records of erp_finance_receipt
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_finance_receipt` (`id`, `no`, `status`, `receipt_time`, `finance_user_id`, `customer_id`, `account_id`, `total_price`, `discount_price`, `receipt_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (2, 'FKD20240214000001', 10, '2024-02-26 00:00:00', 112, 1, 1, 300.000000, 10.000000, 290.000000, '哈哈哈哈', '1', '2024-02-14 15:05:19', '1', '2024-02-14 09:00:22', b'1', 1), (3, 'FKD20240214000002', 10, '2024-02-20 00:00:00', NULL, 1, 1, -10.000000, 4.000000, -14.000000, NULL, '1', '2024-02-14 15:34:11', '1', '2024-02-14 09:00:18', b'1', 1), (4, 'FKD20240214000003', 10, '2024-02-18 00:00:00', NULL, 1, 1, 114.700000, 0.000000, 114.700000, NULL, '1', '2024-02-14 16:43:59', '1', '2024-02-14 08:58:43', b'1', 1), (5, 'FKD20240214000004', 10, '2024-02-19 00:00:00', NULL, 1, 1, 114.700000, 0.000000, 114.700000, NULL, '1', '2024-02-14 16:44:31', '1', '2024-02-14 08:55:13', b'1', 1), (6, 'FKD20240214000005', 10, '2024-02-19 00:00:00', NULL, 1, 1, -20.000000, 0.000000, -20.000000, NULL, '1', '2024-02-14 16:59:30', '1', '2024-02-14 09:00:16', b'1', 1), (7, 'FKD20240214000006', 10, '2024-02-20 00:00:00', NULL, 1, 1, -20.000000, 0.000000, -20.000000, NULL, '1', '2024-02-14 17:00:11', '1', '2024-02-14 09:00:41', b'1', 1), (8, 'FKD20240214000007', 10, '2024-02-20 00:00:00', 115, 1, 1, -20.000000, 0.000000, -20.000000, NULL, '1', '2024-02-14 17:01:27', '1', '2024-02-14 09:05:28', b'1', 1), (9, 'FKD20240214000008', 10, '2024-02-27 00:00:00', NULL, 1, 1, -143.200000, 0.000000, -143.200000, NULL, '1', '2024-02-14 17:04:03', '1', '2024-02-14 09:04:35', b'1', 1), (11, 'SKD20240216000001', 10, '2024-02-16 00:00:00', NULL, 2, 1, 50.000000, 10.000000, 40.000000, NULL, '1', '2024-02-16 07:59:54', '1', '2024-02-16 00:04:53', b'1', 1), (12, 'SKD20240216000002', 10, '2024-02-08 00:00:00', NULL, 2, 1, 50.000000, 0.000000, 50.000000, NULL, '1', '2024-02-16 08:02:24', '1', '2024-02-16 00:04:55', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_finance_receipt_item
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_finance_receipt_item`;
+CREATE TABLE `erp_finance_receipt_item`  (
+                                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                             `receipt_id` bigint NOT NULL COMMENT '收款单编号',
+                                             `biz_type` tinyint NOT NULL COMMENT '业务类型',
+                                             `biz_id` bigint NOT NULL COMMENT '业务编号',
+                                             `biz_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '业务单号',
+                                             `total_price` decimal(24, 6) NOT NULL COMMENT '应收金额，单位：分',
+                                             `receipted_price` decimal(24, 6) NOT NULL COMMENT '已收金额，单位：分',
+                                             `receipt_price` decimal(24, 6) NOT NULL COMMENT '本次收款，单位：分',
+                                             `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                             `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                             `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                             `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                             `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                             `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 收款项表';
+
+-- ----------------------------
+-- Records of erp_finance_receipt_item
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_finance_receipt_item` (`id`, `receipt_id`, `biz_type`, `biz_id`, `biz_no`, `total_price`, `receipted_price`, `receipt_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (11, 2, 11, 16, 'CGRK20240213000001', 414.700000, 0.000000, 300.000000, '测试一下', '1', '2024-02-14 15:05:19', '1', '2024-02-14 09:00:22', b'1', 1), (12, 3, 12, 24, 'CGTH20240213000001', -163.200000, 0.000000, -10.000000, NULL, '1', '2024-02-14 15:34:11', '1', '2024-02-14 09:00:18', b'1', 1), (13, 4, 11, 16, 'CGRK20240213000001', 414.700000, 300.000000, 114.700000, NULL, '1', '2024-02-14 16:43:59', '1', '2024-02-14 08:58:43', b'1', 1), (14, 5, 11, 16, 'CGRK20240213000001', 414.700000, 300.000000, 114.700000, NULL, '1', '2024-02-14 16:44:31', '1', '2024-02-14 08:55:13', b'1', 1), (15, 6, 12, 24, 'CGTH20240213000001', -163.200000, -10.000000, -20.000000, NULL, '1', '2024-02-14 16:59:30', '1', '2024-02-14 09:00:16', b'1', 1), (16, 7, 12, 24, 'CGTH20240213000001', -163.200000, -10.000000, -20.000000, NULL, '1', '2024-02-14 17:00:11', '1', '2024-02-14 09:00:41', b'1', 1), (17, 8, 12, 24, 'CGTH20240213000001', -163.200000, 0.000000, -20.000000, NULL, '1', '2024-02-14 17:01:27', '1', '2024-02-14 09:05:29', b'1', 1), (18, 9, 12, 24, 'CGTH20240213000001', -163.200000, -20.000000, -143.200000, NULL, '1', '2024-02-14 17:04:03', '1', '2024-02-14 09:04:35', b'1', 1), (20, 11, 21, 14, 'XSCK20240215000001', 67.590000, 0.000000, 50.000000, NULL, '1', '2024-02-16 07:59:54', '1', '2024-02-16 00:04:53', b'1', 1), (21, 12, 21, 14, 'XSCK20240215000001', 67.590000, 0.000000, 50.000000, NULL, '1', '2024-02-16 08:02:24', '1', '2024-02-16 00:04:55', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_product
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_product`;
+CREATE TABLE `erp_product`  (
+                                `id` bigint NOT NULL AUTO_INCREMENT COMMENT '产品编号',
+                                `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品名称',
+                                `bar_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '产品条码',
+                                `category_id` bigint NOT NULL COMMENT '产品分类编号',
+                                `unit_id` int NOT NULL COMMENT '单位编号',
+                                `status` tinyint NOT NULL COMMENT '产品状态',
+                                `standard` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '产品规格',
+                                `remark` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '产品备注',
+                                `expiry_day` int NULL DEFAULT NULL COMMENT '保质期天数',
+                                `weight` decimal(24, 6) NULL DEFAULT NULL COMMENT '基础重量（kg）',
+                                `purchase_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '采购价格，单位：元',
+                                `sale_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '销售价格，单位：元',
+                                `min_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '最低价格，单位：元',
+                                `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 产品表';
+
+-- ----------------------------
+-- Records of erp_product
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_product_category
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_product_category`;
+CREATE TABLE `erp_product_category`  (
+                                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类编号',
+                                         `parent_id` bigint NOT NULL COMMENT '父分类编号',
+                                         `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类名称',
+                                         `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '分类编码',
+                                         `sort` int NULL DEFAULT 0 COMMENT '分类排序',
+                                         `status` tinyint NOT NULL COMMENT '开启状态',
+                                         `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                         `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                         PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 产品分类';
+
+-- ----------------------------
+-- Records of erp_product_category
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_product_unit
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_product_unit`;
+CREATE TABLE `erp_product_unit`  (
+                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '单位编号',
+                                     `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '单位名字',
+                                     `status` tinyint NOT NULL COMMENT '单位状态',
+                                     `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                     `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                     `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 产品单位表';
+
+-- ----------------------------
+-- Records of erp_product_unit
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_purchase_in
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_in`;
+CREATE TABLE `erp_purchase_in`  (
+                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                    `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '采购入库编号',
+                                    `status` tinyint NOT NULL COMMENT '采购状态',
+                                    `supplier_id` bigint NOT NULL COMMENT '供应商编号',
+                                    `account_id` bigint NOT NULL COMMENT '结算账户编号',
+                                    `in_time` datetime NOT NULL COMMENT '入库时间',
+                                    `order_id` bigint NOT NULL COMMENT '采购订单编号',
+                                    `order_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '采购订单号',
+                                    `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                    `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                    `payment_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '已付款金额，单位：元',
+                                    `total_product_price` decimal(24, 6) NOT NULL COMMENT '合计产品价格，单位：元',
+                                    `total_tax_price` decimal(24, 6) NOT NULL COMMENT '合计税额，单位：元',
+                                    `discount_percent` decimal(24, 6) NOT NULL COMMENT '优惠率，百分比',
+                                    `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                    `other_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '其它金额，单位：元',
+                                    `file_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件地址',
+                                    `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                    PRIMARY KEY (`id`) USING BTREE,
+                                    UNIQUE INDEX `no`(`no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 采购入库表';
+
+-- ----------------------------
+-- Records of erp_purchase_in
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_purchase_in_items
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_in_items`;
+CREATE TABLE `erp_purchase_in_items`  (
+                                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                          `in_id` bigint NOT NULL COMMENT '采购入库编号',
+                                          `order_item_id` bigint NOT NULL COMMENT '采购订单项编号',
+                                          `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                          `product_id` bigint NOT NULL COMMENT '产品编号',
+                                          `product_unit_id` bigint NOT NULL COMMENT '产品单位单位',
+                                          `product_price` decimal(24, 6) NOT NULL COMMENT '产品单价',
+                                          `count` decimal(24, 6) NOT NULL COMMENT '数量',
+                                          `total_price` decimal(24, 6) NOT NULL COMMENT '总价',
+                                          `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率，百分比',
+                                          `tax_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '税额，单位：元',
+                                          `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                          `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                          `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                          `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                          `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                          `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                          `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                          PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售入库项表';
+
+-- ----------------------------
+-- Records of erp_purchase_in_items
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_purchase_order
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_order`;
+CREATE TABLE `erp_purchase_order`  (
+                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                       `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '采购单编号',
+                                       `status` tinyint NOT NULL COMMENT '采购状态',
+                                       `supplier_id` bigint NOT NULL COMMENT '供应商编号',
+                                       `account_id` bigint NULL DEFAULT NULL COMMENT '结算账户编号',
+                                       `order_time` datetime NOT NULL COMMENT '采购时间',
+                                       `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                       `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                       `total_product_price` decimal(24, 6) NOT NULL COMMENT '合计产品价格，单位：元',
+                                       `total_tax_price` decimal(24, 6) NOT NULL COMMENT '合计税额，单位：元',
+                                       `discount_percent` decimal(24, 6) NOT NULL COMMENT '优惠率，百分比',
+                                       `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                       `deposit_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '定金金额，单位：元',
+                                       `file_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件地址',
+                                       `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                       `in_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '采购入库数量',
+                                       `return_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '采购退货数量',
+                                       `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                       `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                       `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                       `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                       `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                       `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                       PRIMARY KEY (`id`) USING BTREE,
+                                       UNIQUE INDEX `no`(`no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 采购订单表';
+
+-- ----------------------------
+-- Records of erp_purchase_order
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_purchase_order_items
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_order_items`;
+CREATE TABLE `erp_purchase_order_items`  (
+                                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                             `order_id` bigint NOT NULL COMMENT '采购订单编号',
+                                             `product_id` bigint NOT NULL COMMENT '产品编号',
+                                             `product_unit_id` bigint NOT NULL COMMENT '产品单位单位',
+                                             `product_price` decimal(24, 6) NOT NULL COMMENT '产品单价',
+                                             `count` decimal(24, 6) NOT NULL COMMENT '数量',
+                                             `total_price` decimal(24, 6) NOT NULL COMMENT '总价',
+                                             `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率，百分比',
+                                             `tax_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '税额，单位：元',
+                                             `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                             `in_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '采购入库数量',
+                                             `return_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '采购退货数量',
+                                             `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                             `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                             `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                             `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                             `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 采购订单项表';
+
+-- ----------------------------
+-- Records of erp_purchase_order_items
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_purchase_return
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_return`;
+CREATE TABLE `erp_purchase_return`  (
+                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                        `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '采购退货编号',
+                                        `status` tinyint NOT NULL COMMENT '退货状态',
+                                        `supplier_id` bigint NOT NULL COMMENT '供应商编号',
+                                        `account_id` bigint NOT NULL COMMENT '结算账户编号',
+                                        `return_time` datetime NOT NULL COMMENT '退货时间',
+                                        `order_id` bigint NOT NULL COMMENT '采购订单编号',
+                                        `order_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '采购订单号',
+                                        `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                        `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                        `refund_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '已退款金额，单位：元',
+                                        `total_product_price` decimal(24, 6) NOT NULL COMMENT '合计产品价格，单位：元',
+                                        `total_tax_price` decimal(24, 6) NOT NULL COMMENT '合计税额，单位：元',
+                                        `discount_percent` decimal(24, 6) NOT NULL COMMENT '优惠率，百分比',
+                                        `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                        `other_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '其它金额，单位：元',
+                                        `file_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件地址',
+                                        `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                        `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                        `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                        `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                        `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                        `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                        PRIMARY KEY (`id`) USING BTREE,
+                                        UNIQUE INDEX `no`(`no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 采购退货表';
+
+-- ----------------------------
+-- Records of erp_purchase_return
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_purchase_return_items
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_purchase_return_items`;
+CREATE TABLE `erp_purchase_return_items`  (
+                                              `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                              `return_id` bigint NOT NULL COMMENT '采购退货编号',
+                                              `order_item_id` bigint NOT NULL COMMENT '采购订单项编号',
+                                              `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                              `product_id` bigint NOT NULL COMMENT '产品编号',
+                                              `product_unit_id` bigint NOT NULL COMMENT '产品单位单位',
+                                              `product_price` decimal(24, 6) NOT NULL COMMENT '产品单价',
+                                              `count` decimal(24, 6) NOT NULL COMMENT '数量',
+                                              `total_price` decimal(24, 6) NOT NULL COMMENT '总价',
+                                              `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率，百分比',
+                                              `tax_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '税额，单位：元',
+                                              `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                              `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                              `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                              `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                              `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                              `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                              `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 47 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 采购退货项表';
+
+-- ----------------------------
+-- Records of erp_purchase_return_items
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_sale_order
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sale_order`;
+CREATE TABLE `erp_sale_order`  (
+                                   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                   `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '销售单编号',
+                                   `status` tinyint NOT NULL COMMENT '销售状态',
+                                   `customer_id` bigint NOT NULL COMMENT '客户编号',
+                                   `account_id` bigint NULL DEFAULT NULL COMMENT '结算账户编号',
+                                   `sale_user_id` bigint NULL DEFAULT NULL COMMENT '销售用户编号',
+                                   `order_time` datetime NOT NULL COMMENT '下单时间',
+                                   `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                   `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                   `total_product_price` decimal(24, 6) NOT NULL COMMENT '合计产品价格，单位：元',
+                                   `total_tax_price` decimal(24, 6) NOT NULL COMMENT '合计税额，单位：元',
+                                   `discount_percent` decimal(24, 6) NOT NULL COMMENT '优惠率，百分比',
+                                   `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                   `deposit_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '定金金额，单位：元',
+                                   `file_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件地址',
+                                   `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                   `out_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '销售出库数量',
+                                   `return_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '销售退货数量',
+                                   `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                   PRIMARY KEY (`id`) USING BTREE,
+                                   UNIQUE INDEX `no`(`no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售订单表';
+
+-- ----------------------------
+-- Records of erp_sale_order
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_sale_order_items
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sale_order_items`;
+CREATE TABLE `erp_sale_order_items`  (
+                                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                         `order_id` bigint NOT NULL COMMENT '销售订单编号',
+                                         `product_id` bigint NOT NULL COMMENT '产品编号',
+                                         `product_unit_id` bigint NOT NULL COMMENT '产品单位单位',
+                                         `product_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '产品单价',
+                                         `count` decimal(24, 6) NOT NULL COMMENT '数量',
+                                         `total_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '总价',
+                                         `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率，百分比',
+                                         `tax_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '税额，单位：元',
+                                         `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                         `out_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '销售出库数量',
+                                         `return_count` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '销售退货数量',
+                                         `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                         `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                         PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售订单项表';
+
+-- ----------------------------
+-- Records of erp_sale_order_items
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_sale_out
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sale_out`;
+CREATE TABLE `erp_sale_out`  (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                 `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '销售出库编号',
+                                 `status` tinyint NOT NULL COMMENT '出库状态',
+                                 `customer_id` bigint NOT NULL COMMENT '客户编号',
+                                 `account_id` bigint NOT NULL COMMENT '结算账户编号',
+                                 `sale_user_id` bigint NULL DEFAULT NULL COMMENT '销售用户编号',
+                                 `out_time` datetime NOT NULL COMMENT '出库时间',
+                                 `order_id` bigint NOT NULL COMMENT '销售订单编号',
+                                 `order_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '销售订单号',
+                                 `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                 `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                 `receipt_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '已收款金额，单位：元',
+                                 `total_product_price` decimal(24, 6) NOT NULL COMMENT '合计产品价格，单位：元',
+                                 `total_tax_price` decimal(24, 6) NOT NULL COMMENT '合计税额，单位：元',
+                                 `discount_percent` decimal(24, 6) NOT NULL COMMENT '优惠率，百分比',
+                                 `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                 `other_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '其它金额，单位：元',
+                                 `file_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件地址',
+                                 `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                 `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                 `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                 `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                 PRIMARY KEY (`id`) USING BTREE,
+                                 UNIQUE INDEX `no`(`no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售出库表';
+
+-- ----------------------------
+-- Records of erp_sale_out
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_sale_out_items
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sale_out_items`;
+CREATE TABLE `erp_sale_out_items`  (
+                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                       `out_id` bigint NOT NULL COMMENT '销售出库编号',
+                                       `order_item_id` bigint NOT NULL COMMENT '销售订单项编号',
+                                       `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                       `product_id` bigint NOT NULL COMMENT '产品编号',
+                                       `product_unit_id` bigint NOT NULL COMMENT '产品单位单位',
+                                       `product_price` decimal(24, 6) NOT NULL COMMENT '产品单价',
+                                       `count` decimal(24, 6) NOT NULL COMMENT '数量',
+                                       `total_price` decimal(24, 6) NOT NULL COMMENT '总价',
+                                       `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率，百分比',
+                                       `tax_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '税额，单位：元',
+                                       `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                       `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                       `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                       `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                       `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                       `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                       `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                       PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售出库项表';
+
+-- ----------------------------
+-- Records of erp_sale_out_items
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_sale_return
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sale_return`;
+CREATE TABLE `erp_sale_return`  (
+                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                    `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '销售退货编号',
+                                    `status` tinyint NOT NULL COMMENT '退货状态',
+                                    `customer_id` bigint NOT NULL COMMENT '客户编号',
+                                    `account_id` bigint NOT NULL COMMENT '结算账户编号',
+                                    `sale_user_id` bigint NULL DEFAULT NULL COMMENT '销售用户编号',
+                                    `return_time` datetime NOT NULL COMMENT '退货时间',
+                                    `order_id` bigint NOT NULL COMMENT '销售订单编号',
+                                    `order_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '销售订单号',
+                                    `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                    `total_price` decimal(24, 6) NOT NULL COMMENT '合计价格，单位：元',
+                                    `refund_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '已退款金额，单位：元',
+                                    `total_product_price` decimal(24, 6) NOT NULL COMMENT '合计产品价格，单位：元',
+                                    `total_tax_price` decimal(24, 6) NOT NULL COMMENT '合计税额，单位：元',
+                                    `discount_percent` decimal(24, 6) NOT NULL COMMENT '优惠率，百分比',
+                                    `discount_price` decimal(24, 6) NOT NULL COMMENT '优惠金额，单位：元',
+                                    `other_price` decimal(24, 6) NOT NULL DEFAULT 0.000000 COMMENT '其它金额，单位：元',
+                                    `file_url` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件地址',
+                                    `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                    PRIMARY KEY (`id`) USING BTREE,
+                                    UNIQUE INDEX `no`(`no` ASC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售退货表';
+
+-- ----------------------------
+-- Records of erp_sale_return
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_sale_return_items
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_sale_return_items`;
+CREATE TABLE `erp_sale_return_items`  (
+                                          `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                          `return_id` bigint NOT NULL COMMENT '销售退货编号',
+                                          `order_item_id` bigint NOT NULL COMMENT '销售订单项编号',
+                                          `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                          `product_id` bigint NOT NULL COMMENT '产品编号',
+                                          `product_unit_id` bigint NOT NULL COMMENT '产品单位单位',
+                                          `product_price` decimal(24, 6) NOT NULL COMMENT '产品单价',
+                                          `count` decimal(24, 6) NOT NULL COMMENT '数量',
+                                          `total_price` decimal(24, 6) NOT NULL COMMENT '总价',
+                                          `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率，百分比',
+                                          `tax_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '税额，单位：元',
+                                          `remark` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                          `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                          `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                          `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                          `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                          `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                          `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                          PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 销售退货项表';
+
+-- ----------------------------
+-- Records of erp_sale_return_items
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock`;
+CREATE TABLE `erp_stock`  (
+                              `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                              `product_id` bigint NOT NULL COMMENT '产品编号',
+                              `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                              `count` decimal(24, 6) NOT NULL COMMENT '库存数量',
+                              `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                              `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                              `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                              `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                              `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                              `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 产品库存表';
+
+-- ----------------------------
+-- Records of erp_stock
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_check
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_check`;
+CREATE TABLE `erp_stock_check`  (
+                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '盘点编号',
+                                    `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '盘点单号',
+                                    `check_time` datetime NOT NULL COMMENT '盘点时间',
+                                    `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                    `total_price` decimal(24, 6) NOT NULL COMMENT '合计金额，单位：元',
+                                    `status` tinyint NOT NULL COMMENT '状态',
+                                    `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                    `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件 URL',
+                                    `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                    `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                    `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                    `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                    `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                    `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 库存盘点单表';
+
+-- ----------------------------
+-- Records of erp_stock_check
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_stock_check` (`id`, `no`, `check_time`, `total_count`, `total_price`, `status`, `remark`, `file_url`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (10, 'QCDB20240207000002', '2024-02-06 00:00:00', 23.000000, 76.590000, 10, NULL, NULL, '1', '2024-02-07 19:34:47', '1', '2024-02-08 00:49:53', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_check_item
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_check_item`;
+CREATE TABLE `erp_stock_check_item`  (
+                                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '盘点项编号',
+                                         `check_id` bigint NOT NULL COMMENT '盘点编号',
+                                         `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                         `product_id` bigint NOT NULL COMMENT '产品编号',
+                                         `product_unit_id` bigint NOT NULL COMMENT '产品单位编号',
+                                         `product_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '产品单价',
+                                         `stock_count` decimal(24, 6) NOT NULL COMMENT '账面数量（当前库存）',
+                                         `actual_count` decimal(24, 6) NOT NULL COMMENT '实际数量（实际库存）',
+                                         `count` decimal(24, 6) NOT NULL COMMENT '盈亏数量',
+                                         `total_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '合计金额，单位：元',
+                                         `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                         `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                         `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                         PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 库存盘点项表';
+
+-- ----------------------------
+-- Records of erp_stock_check_item
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_stock_check_item` (`id`, `check_id`, `warehouse_id`, `product_id`, `product_unit_id`, `product_price`, `stock_count`, `actual_count`, `count`, `total_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (10, 10, 2, 1, 2, 3.330000, 0.000000, 0.000000, 23.000000, 76.590000, NULL, '1', '2024-02-07 19:34:47', '1', '2024-02-08 00:49:53', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_in
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_in`;
+CREATE TABLE `erp_stock_in`  (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '入库编号',
+                                 `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '入库单号',
+                                 `supplier_id` bigint NULL DEFAULT NULL COMMENT '供应商编号',
+                                 `in_time` datetime NOT NULL COMMENT '入库时间',
+                                 `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                 `total_price` decimal(24, 6) NOT NULL COMMENT '合计金额，单位：元',
+                                 `status` tinyint NOT NULL COMMENT '状态',
+                                 `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                 `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件 URL',
+                                 `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                 `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                 `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                 PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 其它入库单表';
+
+-- ----------------------------
+-- Records of erp_stock_in
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_stock_in` (`id`, `no`, `supplier_id`, `in_time`, `total_count`, `total_price`, `status`, `remark`, `file_url`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (1, 'AAA', NULL, '2024-02-06 00:00:00', 5.010000, 14.683300, 10, NULL, NULL, '1', '2024-02-06 14:43:04', '1', '2024-02-16 09:26:55', b'1', 1), (2, '单据2', 1, '2024-02-22 00:00:00', 2.000000, 6.660000, 10, '测试一下', 'http://test.yudao.iocoder.cn/e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.xls', '1', '2024-02-06 15:54:58', '1', '2024-02-16 09:26:53', b'1', 1), (3, '001', 1, '2024-02-06 00:00:00', 1.000000, 3.330000, 10, '给一个', NULL, '1', '2024-02-06 19:55:05', '1', '2024-02-16 09:26:50', b'1', 1), (4, '10', 1, '2024-02-06 00:00:00', 1.000000, 2.000000, 10, NULL, NULL, '1', '2024-02-06 20:18:48', '1', '2024-02-16 09:26:48', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_in_item
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_in_item`;
+CREATE TABLE `erp_stock_in_item`  (
+                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '入库项编号',
+                                      `in_id` bigint NOT NULL COMMENT '入库编号',
+                                      `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                      `product_id` bigint NOT NULL COMMENT '产品编号',
+                                      `product_unit_id` bigint NOT NULL COMMENT '产品单位编号',
+                                      `product_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '产品单价',
+                                      `count` decimal(24, 6) NOT NULL COMMENT '产品数量',
+                                      `total_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '合计金额，单位：元',
+                                      `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                      `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                      `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                      `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                      `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                      `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                      `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                      PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 其它入库单项表';
+
+-- ----------------------------
+-- Records of erp_stock_in_item
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_stock_in_item` (`id`, `in_id`, `warehouse_id`, `product_id`, `product_unit_id`, `product_price`, `count`, `total_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (1, 1, 1, 1, 2, 2.330000, 2.000000, 4.660000, NULL, '1', '2024-02-06 14:43:04', '1', '2024-02-16 09:26:55', b'1', 1), (2, 1, 2, 1, 2, 3.330000, 3.010000, 10.023300, NULL, '1', '2024-02-06 15:15:07', '1', '2024-02-16 09:26:55', b'1', 1), (3, 2, 2, 2, 2, 3.330000, 2.000000, 6.660000, NULL, '1', '2024-02-06 15:54:58', '1', '2024-02-16 09:26:53', b'1', 1), (4, 3, 2, 1, 2, 3.330000, 1.000000, 3.330000, NULL, '1', '2024-02-06 19:55:05', '1', '2024-02-16 09:26:50', b'1', 1), (5, 4, 2, 2, 2, 2.000000, 1.000000, 2.000000, NULL, '1', '2024-02-06 20:18:48', '1', '2024-02-16 09:26:48', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_move
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_move`;
+CREATE TABLE `erp_stock_move`  (
+                                   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '调拨编号',
+                                   `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '调拨单号',
+                                   `move_time` datetime NOT NULL COMMENT '调拨时间',
+                                   `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                   `total_price` decimal(24, 6) NOT NULL COMMENT '合计金额，单位：元',
+                                   `status` tinyint NOT NULL COMMENT '状态',
+                                   `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                   `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件 URL',
+                                   `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 库存调拨单表';
+
+-- ----------------------------
+-- Records of erp_stock_move
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_move_item
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_move_item`;
+CREATE TABLE `erp_stock_move_item`  (
+                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '调拨项编号',
+                                        `move_id` bigint NOT NULL COMMENT '调拨编号',
+                                        `from_warehouse_id` bigint NOT NULL COMMENT '调出仓库编号',
+                                        `to_warehouse_id` bigint NOT NULL COMMENT '调入仓库编号',
+                                        `product_id` bigint NOT NULL COMMENT '产品编号',
+                                        `product_unit_id` bigint NOT NULL COMMENT '产品单位编号',
+                                        `product_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '产品单价',
+                                        `count` decimal(24, 6) NOT NULL COMMENT '产品数量',
+                                        `total_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '合计金额，单位：元',
+                                        `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                        `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                        `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                        `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                        `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                        `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                        `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                        PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 库存调拨项表';
+
+-- ----------------------------
+-- Records of erp_stock_move_item
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_out
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_out`;
+CREATE TABLE `erp_stock_out`  (
+                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '出库编号',
+                                  `no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '出库单号',
+                                  `customer_id` bigint NULL DEFAULT NULL COMMENT '客户编号',
+                                  `out_time` datetime NOT NULL COMMENT '出库时间',
+                                  `total_count` decimal(24, 6) NOT NULL COMMENT '合计数量',
+                                  `total_price` decimal(24, 6) NOT NULL COMMENT '合计金额，单位：元',
+                                  `status` tinyint NOT NULL COMMENT '状态',
+                                  `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                  `file_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '附件 URL',
+                                  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 其它入库单表';
+
+-- ----------------------------
+-- Records of erp_stock_out
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_stock_out` (`id`, `no`, `customer_id`, `out_time`, `total_count`, `total_price`, `status`, `remark`, `file_url`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (9, 'QCKD20240207000001', NULL, '2024-02-14 00:00:00', 1.000000, 2.000000, 10, '333', NULL, '1', '2024-02-07 14:59:53', '1', '2024-02-07 07:00:13', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_out_item
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_out_item`;
+CREATE TABLE `erp_stock_out_item`  (
+                                       `id` bigint NOT NULL AUTO_INCREMENT COMMENT '出库项编号',
+                                       `out_id` bigint NOT NULL COMMENT '出库编号',
+                                       `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                       `product_id` bigint NOT NULL COMMENT '产品编号',
+                                       `product_unit_id` bigint NOT NULL COMMENT '产品单位编号',
+                                       `product_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '产品单价',
+                                       `count` decimal(24, 6) NOT NULL COMMENT '产品数量',
+                                       `total_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '合计金额，单位：元',
+                                       `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                       `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                       `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                       `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                       `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                       `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                       `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                       PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 其它出库单项表';
+
+-- ----------------------------
+-- Records of erp_stock_out_item
+-- ----------------------------
+BEGIN;
+INSERT INTO `erp_stock_out_item` (`id`, `out_id`, `warehouse_id`, `product_id`, `product_unit_id`, `product_price`, `count`, `total_price`, `remark`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (10, 9, 2, 2, 2, 2.000000, 1.000000, 2.000000, NULL, '1', '2024-02-07 14:59:53', '1', '2024-02-07 07:00:13', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_stock_record
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_stock_record`;
+CREATE TABLE `erp_stock_record`  (
+                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                     `product_id` bigint NOT NULL COMMENT '产品编号',
+                                     `warehouse_id` bigint NOT NULL COMMENT '仓库编号',
+                                     `count` decimal(24, 6) NOT NULL COMMENT '出入库数量',
+                                     `total_count` decimal(24, 6) NOT NULL COMMENT '总库存量',
+                                     `biz_type` tinyint NOT NULL COMMENT '业务类型',
+                                     `biz_id` bigint NOT NULL COMMENT '业务编号',
+                                     `biz_item_id` bigint NOT NULL COMMENT '业务项编号',
+                                     `biz_no` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '业务单号',
+                                     `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                     `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                     `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                     `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                     `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 产品库存明细表';
+
+-- ----------------------------
+-- Records of erp_stock_record
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_supplier
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_supplier`;
+CREATE TABLE `erp_supplier`  (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '供应商编号',
+                                 `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '供应商名称',
+                                 `contact` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系人',
+                                 `mobile` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '手机号码',
+                                 `telephone` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '联系电话',
+                                 `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '电子邮箱',
+                                 `fax` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '传真',
+                                 `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                 `status` tinyint NOT NULL COMMENT '开启状态',
+                                 `sort` int NOT NULL COMMENT '排序',
+                                 `tax_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '纳税人识别号',
+                                 `tax_percent` decimal(24, 6) NULL DEFAULT NULL COMMENT '税率',
+                                 `bank_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户行',
+                                 `bank_account` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户账号',
+                                 `bank_address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '开户地址',
+                                 `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                 `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                 `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                 PRIMARY KEY (`id` DESC) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 供应商表';
+
+-- ----------------------------
+-- Records of erp_supplier
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for erp_warehouse
+-- ----------------------------
+DROP TABLE IF EXISTS `erp_warehouse`;
+CREATE TABLE `erp_warehouse`  (
+                                  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '仓库编号',
+                                  `name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '仓库名称',
+                                  `address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '仓库地址',
+                                  `sort` bigint NOT NULL COMMENT '排序',
+                                  `remark` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                                  `principal` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '负责人',
+                                  `warehouse_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '仓储费，单位：元',
+                                  `truckage_price` decimal(24, 6) NULL DEFAULT NULL COMMENT '搬运费，单位：元',
+                                  `status` tinyint NOT NULL COMMENT '开启状态',
+                                  `default_status` bit(1) NULL DEFAULT b'0' COMMENT '是否默认',
+                                  `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                  `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                  `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'ERP 仓库表';
+
+-- ----------------------------
+-- Records of erp_warehouse
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 127.0.0.1 MySQL
+ Source Server Type    : MySQL
+ Source Server Version : 80200 (8.2.0)
+ Source Host           : 127.0.0.1:3306
+ Source Schema         : ruoyi-vue-pro
+
+ Target Server Type    : MySQL
+ Target Server Version : 80200 (8.2.0)
+ File Encoding         : 65001
+
+ Date: 24/03/2024 10:38:12
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for bpm_category
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_category`;
+CREATE TABLE `bpm_category`  (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '分类编号',
+                                 `name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '分类名',
+                                 `code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '分类标志',
+                                 `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '分类描述',
+                                 `status` tinyint NULL DEFAULT NULL COMMENT '分类状态',
+                                 `sort` int NULL DEFAULT NULL COMMENT '分类排序',
+                                 `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                 `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                 `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                 PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 116 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 流程分类';
+
+-- ----------------------------
+-- Records of bpm_category
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_form
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_form`;
+CREATE TABLE `bpm_form`  (
+                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                             `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '表单名',
+                             `status` tinyint NOT NULL COMMENT '开启状态',
+                             `conf` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '表单的配置',
+                             `fields` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '表单项的数组',
+                             `remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '备注',
+                             `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                             `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                             `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                             `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                             `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                             `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 表单定义表';
+
+-- ----------------------------
+-- Records of bpm_form
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_oa_leave
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_oa_leave`;
+CREATE TABLE `bpm_oa_leave`  (
+                                 `id` bigint NOT NULL AUTO_INCREMENT COMMENT '请假表单主键',
+                                 `user_id` bigint NOT NULL COMMENT '申请人的用户编号',
+                                 `type` tinyint NOT NULL COMMENT '请假类型',
+                                 `reason` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '请假原因',
+                                 `start_time` datetime NOT NULL COMMENT '开始时间',
+                                 `end_time` datetime NOT NULL COMMENT '结束时间',
+                                 `day` tinyint NOT NULL COMMENT '请假天数',
+                                 `status` tinyint NOT NULL COMMENT '审批结果',
+                                 `process_instance_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '流程实例的编号',
+                                 `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                 `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                 `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                 `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                 `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                 `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                 PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'OA 请假申请表';
+
+-- ----------------------------
+-- Records of bpm_oa_leave
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_process_definition_info
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_process_definition_info`;
+CREATE TABLE `bpm_process_definition_info`  (
+                                                `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                                `process_definition_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程定义的编号',
+                                                `model_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程模型的编号',
+                                                `icon` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图标',
+                                                `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
+                                                `form_type` tinyint NOT NULL COMMENT '表单类型',
+                                                `form_id` bigint NULL DEFAULT NULL COMMENT '表单编号',
+                                                `form_conf` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '表单的配置',
+                                                `form_fields` varchar(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '表单项的数组',
+                                                `form_custom_create_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '自定义表单的提交路径',
+                                                `form_custom_view_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '自定义表单的查看路径',
+                                                `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                                `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                                `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                                `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                                `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                                `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                                PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 241 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 流程定义的信息表';
+
+-- ----------------------------
+-- Records of bpm_process_definition_info
+-- ----------------------------
+BEGIN;
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (141, 'test_return:1:dd6b6e1d-5ac0-11ee-be77-fe3a43e3aa2f', '75452338-5ac0-11ee-be77-fe3a43e3aa2f', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2023-09-24 17:58:09', '1', '2023-09-24 17:58:09', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (142, 'test_return2:1:e2de03c7-5ac2-11ee-9bee-fe3a43e3aa2f', 'ad8d0722-5ac2-11ee-9bee-fe3a43e3aa2f', NULL, 'biubiu', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2023-09-24 18:12:37', '1', '2023-09-24 18:12:37', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (143, 'test_return2:2:320f7403-5ac3-11ee-9bee-fe3a43e3aa2f', 'ad8d0722-5ac2-11ee-9bee-fe3a43e3aa2f', NULL, 'biubiu', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2023-09-24 18:14:50', '1', '2023-09-24 18:14:50', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (144, 'contract-approve:1:057a9d3b-d1ed-11ee-a436-8a9af48de719', '499c96e6-d1ec-11ee-a436-8a9af48de719', NULL, NULL, 20, NULL, NULL, NULL, '1', '/crm/contract/detail', '1', '2024-02-23 09:44:02', '1', '2024-02-23 09:44:02', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (145, 'contract-approve:2:dd644004-d208-11ee-ba3b-5e0431cb568f', '499c96e6-d1ec-11ee-a436-8a9af48de719', NULL, NULL, 20, NULL, NULL, NULL, '/crm/contract/detail2', '/crm/contract/detail2', '1', '2024-02-23 13:03:21', '1', '2024-02-23 13:03:21', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (146, 'contract-approve:3:87c93a24-d212-11ee-ba3b-5e0431cb568f', '499c96e6-d1ec-11ee-a436-8a9af48de719', NULL, NULL, 20, NULL, NULL, NULL, '/crm/contract/detail/index', '/crm/contract/detail/index', '1', '2024-02-23 14:12:32', '1', '2024-02-23 14:12:32', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (147, 'crm-contract-audit:1:a5ec9240-d2a7-11ee-a703-92ff8e2e5a3e', '5b40f87b-d2a7-11ee-a703-92ff8e2e5a3e', NULL, NULL, 20, NULL, NULL, NULL, '/crm/business/detail/index', '/crm/business/detail/index', '1', '2024-02-24 07:59:58', '1', '2024-02-24 07:59:58', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (148, 'crm-contract-audit:2:288f69f6-d2a8-11ee-b20a-8adfac90dc14', '5b40f87b-d2a7-11ee-a703-92ff8e2e5a3e', NULL, NULL, 20, NULL, NULL, NULL, '/crm/contract/detail/index', '/crm/contract/detail/index', '1', '2024-02-24 08:03:37', '1', '2024-02-24 08:03:37', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (149, 'crm-receivable-audit:1:fa8272f3-d3d2-11ee-aa2f-26aa5e0b65cc', '9bc054ce-d3d2-11ee-aa2f-26aa5e0b65cc', NULL, NULL, 20, NULL, NULL, NULL, '/crm/receivable/detail/index', '/crm/receivable/detail/index', '1', '2024-02-25 19:42:39', '1', '2024-02-25 19:42:39', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (150, 'xx:1:4d87fd62-e074-11ee-9b46-0e22e0b61031', '9f50553c-a6b4-11ee-904d-2a0706c917c0', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-12 21:27:42', '1', '2024-03-12 21:27:42', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (151, 'xx:2:eacda6dc-e077-11ee-be9b-f21fd1da61a2', '9f50553c-a6b4-11ee-904d-2a0706c917c0', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-12 21:53:34', '1', '2024-03-12 21:53:34', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (152, 'new-1:1:73f06beb-e13b-11ee-a38f-06b2c2ddc7b1', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-13 21:13:16', '1', '2024-03-13 21:13:16', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (153, 'new-1:2:7f2c569a-e141-11ee-9d86-06b2c2ddc7b1', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-13 21:56:32', '1', '2024-03-13 21:56:32', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (154, 'new-1:3:86ec704e-e141-11ee-9d86-06b2c2ddc7b1', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-13 21:56:45', '1', '2024-03-13 21:56:45', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (155, 'new-1:4:6a258922-e1bc-11ee-9330-feeee51d4267', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 12:36:25', '1', '2024-03-14 12:36:25', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (156, 'new-1:5:a48c8e16-e1bc-11ee-9330-feeee51d4267', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 12:38:03', '1', '2024-03-14 12:38:03', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (157, 'new-1:6:ab7ad8da-e1bc-11ee-9330-feeee51d4267', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 12:38:14', '1', '2024-03-14 12:38:14', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (158, 'new-1:7:d7595072-e1bc-11ee-9b9f-feeee51d4267', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 12:39:28', '1', '2024-03-14 12:39:28', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (159, 'new-1:8:75b9842a-e205-11ee-aac1-66c23f24ce2b', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 21:19:17', '1', '2024-03-14 21:19:17', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (160, 'new-1:9:9dcaa07e-e205-11ee-aac1-66c23f24ce2b', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 21:20:25', '1', '2024-03-14 21:20:25', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (161, 'new-1:10:9f5a6842-e205-11ee-aac1-66c23f24ce2b', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 21:20:27', '1', '2024-03-14 21:20:27', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (162, 'new-1:11:f2499f4b-e20c-11ee-beae-46aa22562164', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-14 22:12:53', '1', '2024-03-14 22:12:53', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (163, 'new-2:1:7fc84238-e2c1-11ee-ad8d-9216688a4b8f', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-15 19:45:20', '1', '2024-03-15 19:45:20', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (164, 'new-2:2:18c21844-e2c2-11ee-ad8d-9216688a4b8f', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-15 19:49:36', '1', '2024-03-15 19:49:36', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (165, 'new-2:3:2a67c3b8-e2c2-11ee-ad8d-9216688a4b8f', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-15 19:50:06', '1', '2024-03-15 19:50:06', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (166, 'new-2:4:4bdfb93e-e2c2-11ee-ad8d-9216688a4b8f', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-15 19:51:02', '1', '2024-03-15 19:51:02', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (167, 'new-2:5:aca8925e-e2e9-11ee-83a1-0e2aa205f435', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 00:32:55', '1', '2024-03-16 00:32:55', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (168, 'new-2:6:634784f8-e2ea-11ee-b183-0e2aa205f435', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 00:38:01', '1', '2024-03-16 00:38:01', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (169, 'new-2:7:8167c4f2-e2ea-11ee-b183-0e2aa205f435', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', NULL, '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 00:38:52', '1', '2024-03-16 00:38:52', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (170, 'test:1:9c4cac8d-e360-11ee-9498-6aca1e3be435', '7077f888-e360-11ee-9498-6aca1e3be435', NULL, 'biubiubiu', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 14:44:17', '1', '2024-03-16 14:44:17', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (171, 'test:2:99e30b8e-e370-11ee-a1a2-0ebfd53b3c91', '7077f888-e360-11ee-9498-6aca1e3be435', NULL, 'biubiubiu', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 16:38:45', '1', '2024-03-16 16:38:45', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (172, 'test:3:9befa472-e370-11ee-a1a2-0ebfd53b3c91', '7077f888-e360-11ee-9498-6aca1e3be435', NULL, 'biubiubiu', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 16:38:49', '1', '2024-03-16 16:38:49', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (173, 'huoqian:1:e95f383c-e37e-11ee-a889-0ebfd53b3c91', 'd139e257-e37e-11ee-a889-0ebfd53b3c91', NULL, '123321', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 18:21:12', '1', '2024-03-16 18:21:12', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (174, 'bohui:1:5b1ab874-e384-11ee-9e7b-aab4713d012e', '35963a6f-e384-11ee-9e7b-aab4713d012e', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-16 19:00:10', '1', '2024-03-16 19:00:10', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (175, 'bohui:2:929c1199-e5ca-11ee-9e7b-3e9a6d6b4cd2', '35963a6f-e384-11ee-9e7b-aab4713d012e', NULL, '测试', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 16:27:50', '1', '2024-03-19 16:27:50', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (176, 'bohui:3:2e6a6c9d-e5e2-11ee-9e7b-3e9a6d6b4cd2', '35963a6f-e384-11ee-9e7b-aab4713d012e', NULL, '测试', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 19:16:50', '1', '2024-03-19 19:16:50', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (177, 'huoqian:2:3081daf1-e5e2-11ee-9e7b-3e9a6d6b4cd2', 'd139e257-e37e-11ee-a889-0ebfd53b3c91', NULL, '312321', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 19:16:53', '1', '2024-03-19 19:16:53', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (178, 'test:4:31c77a55-e5e2-11ee-9e7b-3e9a6d6b4cd2', '7077f888-e360-11ee-9498-6aca1e3be435', NULL, 'biubiubiu', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 19:16:56', '1', '2024-03-19 19:16:56', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (179, 'new-1:12:32ec9969-e5e2-11ee-9e7b-3e9a6d6b4cd2', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 19:16:57', '1', '2024-03-19 19:16:57', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (180, 'new-1:13:8612ea4d-e5e2-11ee-9e7b-3e9a6d6b4cd2', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 19:19:17', '1', '2024-03-19 19:19:17', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (181, 'crm-receivable-audit:2:87747621-e5e2-11ee-9e7b-3e9a6d6b4cd2', '9bc054ce-d3d2-11ee-aa2f-26aa5e0b65cc', NULL, NULL, 20, NULL, NULL, NULL, '/crm/receivable/detail/index', '/crm/receivable/detail/index', '1', '2024-03-19 19:19:19', '1', '2024-03-19 19:19:19', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (182, 'huoqian:3:a0f2f365-e5e2-11ee-9e7b-3e9a6d6b4cd2', 'd139e257-e37e-11ee-a889-0ebfd53b3c91', NULL, '312321', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 19:20:02', '1', '2024-03-19 19:20:02', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (183, 'bohui:4:0ae36c02-e607-11ee-95fc-76ce04f8068a', '35963a6f-e384-11ee-9e7b-aab4713d012e', NULL, '测试', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-19 23:40:42', '1', '2024-03-19 23:40:42', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (184, 'bohui:5:cc1ecb1f-e60c-11ee-9a09-76ce04f8068a', '35963a6f-e384-11ee-9e7b-aab4713d012e', NULL, '测试', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 00:21:53', '1', '2024-03-20 00:21:53', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (185, 'bohui:6:cd95b3b3-e60c-11ee-9a09-76ce04f8068a', '35963a6f-e384-11ee-9e7b-aab4713d012e', NULL, '测试', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 00:21:56', '1', '2024-03-20 00:21:56', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (186, 'huoqian:4:e4f8f217-e60c-11ee-9a09-76ce04f8068a', 'd139e257-e37e-11ee-a889-0ebfd53b3c91', NULL, '312321', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 00:22:35', '1', '2024-03-20 00:22:35', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (187, 'huoqian:5:e87101db-e60c-11ee-9a09-76ce04f8068a', 'd139e257-e37e-11ee-a889-0ebfd53b3c91', NULL, '312321', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 00:22:41', '1', '2024-03-20 00:22:41', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (188, 'new-test:1:c94e33b3-e60e-11ee-b246-76ce04f8068a', '89f1f488-e60e-11ee-9a09-76ce04f8068a', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 00:36:08', '1', '2024-03-20 00:36:08', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (189, 'new-test:2:09735826-e66a-11ee-9c22-4aafd11823fb', '89f1f488-e60e-11ee-9a09-76ce04f8068a', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 11:29:19', '1', '2024-03-20 11:29:19', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (190, 'new-test:3:0abe009a-e66a-11ee-9c22-4aafd11823fb', '89f1f488-e60e-11ee-9a09-76ce04f8068a', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 11:29:22', '1', '2024-03-20 11:29:22', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (191, 'hhhh:1:8b313806-e698-11ee-8b05-52c6ce924391', '155910bd-e698-11ee-aeba-aa5b9845b3dd', NULL, '444', 10, 24, NULL, NULL, NULL, NULL, '1', '2024-03-20 17:02:14', '1', '2024-03-20 17:02:14', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (192, 'hhhh:2:b96ff12b-e699-11ee-a9b4-52c6ce924391', '155910bd-e698-11ee-aeba-aa5b9845b3dd', NULL, '444', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-20 17:10:41', '1', '2024-03-20 17:10:41', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (193, 'oa_leave:1:7f7be21c-e6b8-11ee-9cdc-4a23a0fa7ecb', '5a910c07-e6b8-11ee-9cdc-4a23a0fa7ecb', NULL, NULL, 20, NULL, NULL, NULL, '/bpm/oa/leave/create', '/bpm/oa/leave/detail', '1', '2024-03-20 20:50:58', '1', '2024-03-20 20:50:58', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (194, 'oa_leave:2:dc565ee3-e841-11ee-a5e7-525da23008fe', '5a910c07-e6b8-11ee-9cdc-4a23a0fa7ecb', NULL, NULL, 20, NULL, NULL, NULL, '/bpm/oa/leave/create', '/bpm/oa/leave/detail', '1', '2024-03-22 19:46:46', '1', '2024-03-22 19:46:46', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (195, 'hhhh:3:c1e2dce5-e842-11ee-90ce-4a385f3b4f1a', '155910bd-e698-11ee-aeba-aa5b9845b3dd', NULL, '444', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-22 19:53:11', '1', '2024-03-22 19:53:11', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (196, 'hhhh:4:d27088a9-e842-11ee-90ce-4a385f3b4f1a', '155910bd-e698-11ee-aeba-aa5b9845b3dd', NULL, '444', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-22 19:53:39', '1', '2024-03-22 19:53:39', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (197, 'oa_leave:3:ec4b0352-e85f-11ee-a915-fef401dd8c67', '5a910c07-e6b8-11ee-9cdc-4a23a0fa7ecb', NULL, NULL, 20, NULL, NULL, NULL, '/bpm/oa/leave/create', '/bpm/oa/leave/detail', '1', '2024-03-22 23:21:58', '1', '2024-03-22 23:21:58', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (198, 'hhhh:5:f8052e06-e85f-11ee-a915-fef401dd8c67', '155910bd-e698-11ee-aeba-aa5b9845b3dd', NULL, '444', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-22 23:22:18', '1', '2024-03-22 23:22:18', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (199, 'hhhh:6:f9c52d8a-e85f-11ee-a915-fef401dd8c67', '155910bd-e698-11ee-aeba-aa5b9845b3dd', NULL, '444', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-22 23:22:21', '1', '2024-03-22 23:22:21', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (200, 'oa_leave:4:405a9670-e86a-11ee-9962-52c5f2f50e3f', '5a910c07-e6b8-11ee-9cdc-4a23a0fa7ecb', NULL, NULL, 20, NULL, NULL, NULL, '/bpm/oa/leave/create', '/bpm/oa/leave/detail', '1', '2024-03-23 00:35:54', '1', '2024-03-23 00:35:54', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (201, 'test-execute-listener:1:53f38c0e-e8c7-11ee-a81e-aa3623b10f85', '63ad6275-e8c6-11ee-a81e-aa3623b10f85', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 11:42:10', '1', '2024-03-23 11:42:10', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (202, 'test-execute-listener:2:a385e0a9-e8c7-11ee-aad0-aa3623b10f85', '63ad6275-e8c6-11ee-a81e-aa3623b10f85', NULL, NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 11:44:23', '1', '2024-03-23 11:44:23', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (203, 'jiandan:1:9303634e-e8c8-11ee-afed-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 11:51:05', '1', '2024-03-23 11:51:05', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (204, 'jiandan:2:a188dba5-e8cb-11ee-90b0-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:12:58', '1', '2024-03-23 12:12:58', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (205, 'jiandan:3:a365b1f9-e8cb-11ee-90b0-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:13:01', '1', '2024-03-23 12:13:01', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (206, 'jiandan:4:cd840373-e8cb-11ee-90b0-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:14:12', '1', '2024-03-23 12:14:12', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (207, 'jiandan:5:eaa4117f-e8cb-11ee-90b0-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:15:01', '1', '2024-03-23 12:15:01', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (208, 'jiandan:6:86693c4b-e8cc-11ee-90b0-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:19:22', '1', '2024-03-23 12:19:22', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (209, 'jiandan:7:05a77968-e8cf-11ee-817e-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:37:15', '1', '2024-03-23 12:37:15', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (210, 'jiandan:8:40e137b4-e8cf-11ee-817e-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:38:54', '1', '2024-03-23 12:38:54', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (211, 'jiandan:9:5df007b3-e8cf-11ee-817e-aa3623b10f85', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 12:39:43', '1', '2024-03-23 12:39:43', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (212, 'jiandan:10:86a7834f-e904-11ee-868e-769cf7027e4a', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:00:14', '1', '2024-03-23 19:00:14', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (213, 'jiandan:11:ae58a559-e904-11ee-868e-769cf7027e4a', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:01:21', '1', '2024-03-23 19:01:21', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (214, 'jiandan:12:b021305d-e904-11ee-868e-769cf7027e4a', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:01:24', '1', '2024-03-23 19:01:24', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (215, 'jiandan:13:3d5f2d56-e905-11ee-9c2f-cacdb29edc0f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:05:21', '1', '2024-03-23 19:05:21', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (216, 'jiandan:14:911254cd-e905-11ee-b8a7-cacdb29edc0f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:07:41', '1', '2024-03-23 19:07:41', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (217, 'jiandan:15:d171abcd-e905-11ee-b8a7-cacdb29edc0f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:09:29', '1', '2024-03-23 19:09:29', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (218, 'jiandan:16:12cd3d1d-e906-11ee-b8a7-cacdb29edc0f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:11:19', '1', '2024-03-23 19:11:19', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (219, 'jiandan:17:14ffd491-e906-11ee-b8a7-cacdb29edc0f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:11:23', '1', '2024-03-23 19:11:23', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (220, 'jiandan:18:a37d1331-e907-11ee-ad58-cacdb29edc0f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 19:22:31', '1', '2024-03-23 19:22:31', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (221, 'jiandan:19:c0a44484-e915-11ee-9b58-4ad6071fe8cb', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 21:03:33', '1', '2024-03-23 21:03:33', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (222, 'jiandan:20:d94ad861-e915-11ee-9b58-4ad6071fe8cb', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 21:04:14', '1', '2024-03-23 21:04:14', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (223, 'jiandan:21:ebf8cc15-e915-11ee-9b58-4ad6071fe8cb', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 21:04:46', '1', '2024-03-23 21:04:46', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (224, 'jiandan:22:f303eda9-e915-11ee-9b58-4ad6071fe8cb', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 21:04:58', '1', '2024-03-23 21:04:58', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (225, 'jiandan:23:1f51a246-e916-11ee-9b58-4ad6071fe8cb', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 21:06:12', '1', '2024-03-23 21:06:12', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (226, 'jiandan:24:2143602a-e916-11ee-9b58-4ad6071fe8cb', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-23 21:06:15', '1', '2024-03-23 21:06:15', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (227, 'jiandan:25:fe687100-e97f-11ee-98a3-7248bcbce76f', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 09:44:03', '1', '2024-03-24 09:44:03', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (228, 'jiandan:26:e9f49fcc-e981-11ee-b9f2-daad0f82ed42', '31b0d649-e8c8-11ee-afed-aa3623b10f85', NULL, '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 09:57:48', '1', '2024-03-24 09:57:48', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (229, 'jiandan:27:1fdd973f-e982-11ee-85e4-0ae4354b692e', '31b0d649-e8c8-11ee-afed-aa3623b10f85', 'http://test.yudao.iocoder.cn/a2b3603cf8797447c26a22f18256df94562d5e00bcbdc2a523098119c50a6efa.png', '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 09:59:19', '1', '2024-03-24 09:59:19', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (230, 'jiandan:28:4eaa2e83-e982-11ee-85e4-0ae4354b692e', '31b0d649-e8c8-11ee-afed-aa3623b10f85', 'http://test.yudao.iocoder.cn/a2b3603cf8797447c26a22f18256df94562d5e00bcbdc2a523098119c50a6efa.png', '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 10:00:45', '1', '2024-03-24 10:00:45', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (231, 'crm-receivable-audit:3:a7ef6c37-e982-11ee-85e4-0ae4354b692e', '9bc054ce-d3d2-11ee-aa2f-26aa5e0b65cc', 'http://test.yudao.iocoder.cn/4c38186a52a6796d998f4e826178e1c24bee0eb722f8751e9ffb4d8eaea9b5cf.png', NULL, 20, NULL, NULL, NULL, '/crm/receivable/detail/index', '/crm/receivable/detail/index', '1', '2024-03-24 10:03:07', '1', '2024-03-24 10:03:07', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (232, 'new-1:14:bddcd37b-e982-11ee-85e4-0ae4354b692e', '341a1b12-e13b-11ee-a38f-06b2c2ddc7b1', NULL, '2222', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 10:03:44', '1', '2024-03-24 10:03:44', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (233, 'crm-receivable-audit:4:bf5cbcbf-e982-11ee-85e4-0ae4354b692e', '9bc054ce-d3d2-11ee-aa2f-26aa5e0b65cc', 'http://test.yudao.iocoder.cn/4c38186a52a6796d998f4e826178e1c24bee0eb722f8751e9ffb4d8eaea9b5cf.png', NULL, 20, NULL, NULL, NULL, '/crm/receivable/detail/index', '/crm/receivable/detail/index', '1', '2024-03-24 10:03:46', '1', '2024-03-24 10:03:46', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (234, 'crm-contract-audit:3:c0998283-e982-11ee-85e4-0ae4354b692e', '5b40f87b-d2a7-11ee-a703-92ff8e2e5a3e', 'http://test.yudao.iocoder.cn/10d745dfe02082351f86c28ed2f3a7e0da8bbf6858f1d4a02e409930b3670d63.png', NULL, 20, NULL, NULL, NULL, '/crm/contract/detail/index', '/crm/contract/detail/index', '1', '2024-03-24 10:03:48', '1', '2024-03-24 10:03:48', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (235, 'jiandan:29:04a89a9e-e983-11ee-8309-e2652d1d3e17', '31b0d649-e8c8-11ee-afed-aa3623b10f85', 'http://test.yudao.iocoder.cn/a2b3603cf8797447c26a22f18256df94562d5e00bcbdc2a523098119c50a6efa.png', '31', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 10:05:42', '1', '2024-03-24 10:05:42', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (236, 'test-execute-listener:3:05563fc2-e983-11ee-8309-e2652d1d3e17', '63ad6275-e8c6-11ee-a81e-aa3623b10f85', 'http://test.yudao.iocoder.cn/9bb3c5ced2acdd50e303db8d719900ac20a3a8fab2f2002c56fc8da41b74c204.png', NULL, 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 10:05:43', '1', '2024-03-24 10:05:43', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (237, 'oa_leave:5:06357c36-e983-11ee-8309-e2652d1d3e17', '5a910c07-e6b8-11ee-9cdc-4a23a0fa7ecb', 'http://test.yudao.iocoder.cn/628560c644de0ae9120114509227ffb90a32e23dfc9afc2bd63763cd781ece8f.png', NULL, 20, NULL, NULL, NULL, '/bpm/oa/leave/create', '/bpm/oa/leave/detail', '1', '2024-03-24 10:05:45', '1', '2024-03-24 10:05:45', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (238, 'new-2:8:072f458a-e983-11ee-8309-e2652d1d3e17', '096c61cd-e2c0-11ee-ad8d-9216688a4b8f', 'http://test.yudao.iocoder.cn/6857d7b2e57f514629c0f1aa937c5fc6c551460851975bc3ea15b5a56ce4bdea.png', '123', 10, 24, '{\"form\":{\"labelPosition\":\"right\",\"size\":\"small\",\"labelWidth\":\"125px\",\"hideRequiredAsterisk\":false,\"showMessage\":true,\"inlineMessage\":false},\"submitBtn\":{\"show\":true,\"innerText\":\"提交\"},\"resetBtn\":{\"show\":false,\"innerText\":\"重置\"}}', '[\"{\\\"type\\\":\\\"input\\\",\\\"field\\\":\\\"Fjph60d8vlrl9\\\",\\\"title\\\":\\\"输入框\\\",\\\"info\\\":\\\"\\\",\\\"$required\\\":false,\\\"_fc_drag_tag\\\":\\\"input\\\",\\\"hidden\\\":false,\\\"display\\\":true}\"]', NULL, NULL, '1', '2024-03-24 10:05:47', '1', '2024-03-24 10:05:47', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (239, 'crm-receivable-audit:5:0828729e-e983-11ee-8309-e2652d1d3e17', '9bc054ce-d3d2-11ee-aa2f-26aa5e0b65cc', 'http://test.yudao.iocoder.cn/4c38186a52a6796d998f4e826178e1c24bee0eb722f8751e9ffb4d8eaea9b5cf.png', NULL, 20, NULL, NULL, NULL, '/crm/receivable/detail/index', '/crm/receivable/detail/index', '1', '2024-03-24 10:05:48', '1', '2024-03-24 10:05:48', b'0', 1);
+INSERT INTO `bpm_process_definition_info` (`id`, `process_definition_id`, `model_id`, `icon`, `description`, `form_type`, `form_id`, `form_conf`, `form_fields`, `form_custom_create_path`, `form_custom_view_path`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (240, 'crm-contract-audit:4:09a0e1d2-e983-11ee-8309-e2652d1d3e17', '5b40f87b-d2a7-11ee-a703-92ff8e2e5a3e', 'http://test.yudao.iocoder.cn/10d745dfe02082351f86c28ed2f3a7e0da8bbf6858f1d4a02e409930b3670d63.png', NULL, 20, NULL, NULL, NULL, '/crm/contract/detail/index', '/crm/contract/detail/index', '1', '2024-03-24 10:05:51', '1', '2024-03-24 10:05:51', b'0', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_process_expression
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_process_expression`;
+CREATE TABLE `bpm_process_expression`  (
+                                           `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                           `name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '表达式名字',
+                                           `status` tinyint NOT NULL COMMENT '表达式状态',
+                                           `expression` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '表达式',
+                                           `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                           `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                           `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                           `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                           `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                           `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                           PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 120 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 流程表达式表';
+
+-- ----------------------------
+-- Records of bpm_process_expression
+-- ----------------------------
+BEGIN;
+INSERT INTO `bpm_process_expression` (`id`, `name`, `status`, `expression`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (116, '测试表达式', 0, 'cn.iocoder.yudao.module.bpm.framework.flowable.core.listener.demo.exection.DemoDelegateClassExecutionListener', '1', '2024-03-23 15:13:20', '1', '2024-03-09 22:37:51', b'1', 1);
+INSERT INTO `bpm_process_expression` (`id`, `name`, `status`, `expression`, `creator`, `create_time`, `updater`, `update_time`, `deleted`, `tenant_id`) VALUES (118, '测试任务监听器', 0, 'cn.iocoder.yudao.module.bpm.framework.flowable.core.listener.demo.task.DemoDelegateClassTaskListener', '1', '2024-03-23 19:13:15', '1', '2024-03-09 22:36:44', b'1', 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_process_instance_copy
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_process_instance_copy`;
+CREATE TABLE `bpm_process_instance_copy`  (
+                                              `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                              `user_id` bigint NOT NULL DEFAULT 0 COMMENT '用户编号，被抄送人',
+                                              `start_user_id` bigint NOT NULL DEFAULT 0 COMMENT '发起流程的用户编号',
+                                              `process_instance_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '流程实例的id',
+                                              `process_instance_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '流程实例的名字',
+                                              `category` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '流程定义的分类',
+                                              `task_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '发起抄送的任务编号',
+                                              `task_name` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '任务的名字',
+                                              `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                              `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                              `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                              `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                              `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                              `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                              PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 流程实例抄送表';
+
+-- ----------------------------
+-- Records of bpm_process_instance_copy
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_process_listener
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_process_listener`;
+CREATE TABLE `bpm_process_listener`  (
+                                         `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                         `name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '监听器名字',
+                                         `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '监听器类型',
+                                         `status` tinyint NOT NULL COMMENT '监听器状态',
+                                         `event` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '监听事件',
+                                         `value_type` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '监听器值类型',
+                                         `value` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '监听器值',
+                                         `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                         `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                         PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 119 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 流程监听器表';
+
+-- ----------------------------
+-- Records of bpm_process_listener
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for bpm_user_group
+-- ----------------------------
+DROP TABLE IF EXISTS `bpm_user_group`;
+CREATE TABLE `bpm_user_group`  (
+                                   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '编号',
+                                   `name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '组名',
+                                   `description` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '描述',
+                                   `user_ids` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '成员编号数组',
+                                   `status` tinyint NOT NULL COMMENT '状态（0正常 1停用）',
+                                   `creator` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '创建者',
+                                   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                   `updater` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT '' COMMENT '更新者',
+                                   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                   `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+                                   `tenant_id` bigint NOT NULL DEFAULT 0 COMMENT '租户编号',
+                                   PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 114 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'BPM 用户组表';
+
+-- ----------------------------
+-- Records of bpm_user_group
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE IF NOT EXISTS "erp_purchase_requisition" (
+                                                          "id" bigint NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+                                                          "requisition_code" varchar,
+                                                          "requisition_type" varchar,
+                                                          "requisition_time" varchar,
+                                                          "estimated_time" varchar,
+                                                          "association_project" varchar,
+                                                          "annex" varchar,
+                                                          "status" varchar,
+                                                          "remark" varchar,
+                                                          "creator" varchar DEFAULT '',
+                                                          "create_time" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                                          "updater" varchar DEFAULT '',
+                                                          "update_time" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                                          "deleted" bit NOT NULL DEFAULT FALSE,
+                                                          PRIMARY KEY ("id")
+    ) COMMENT '请购单';
+
+-- 将该删表 SQL 语句，添加到 yudao-module-erp-biz 模块的 test/resources/sql/clean.sql 文件里
+DELETE FROM "erp_purchase_requisition";
+
+-- 将该建表 SQL 语句，添加到 yudao-module-erp-biz 模块的 test/resources/sql/create_tables.sql 文件里
+CREATE TABLE IF NOT EXISTS "erp_product" (
+                                             "id" bigint NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+                                             "name" varchar NOT NULL,
+                                             "bar_code" varchar NOT NULL,
+                                             "category_id" bigint NOT NULL,
+                                             "association_supplier_id" varchar NOT NULL,
+                                             "unit_id" int NOT NULL,
+                                             "status" int NOT NULL,
+                                             "standard" varchar,
+                                             "remark" varchar,
+                                             "expiry_day" int,
+                                             "weight" varchar,
+                                             "purchase_price" varchar,
+                                             "sale_price" varchar,
+                                             "min_price" varchar,
+                                             "creator" varchar DEFAULT '',
+                                             "create_time" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                             "updater" varchar DEFAULT '',
+                                             "update_time" datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                             "deleted" bit NOT NULL DEFAULT FALSE,
+                                             "tenant_id" bigint NOT NULL,
+                                             PRIMARY KEY ("id")
+    ) COMMENT 'ERP 产品表';
+
+-- 将该删表 SQL 语句，添加到 yudao-module-erp-biz 模块的 test/resources/sql/clean.sql 文件里
+DELETE FROM "erp_product";
+

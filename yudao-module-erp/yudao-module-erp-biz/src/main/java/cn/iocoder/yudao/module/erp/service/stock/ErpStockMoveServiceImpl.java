@@ -147,7 +147,7 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
                 item -> Stream.of(item.getFromWarehouseId(),  item.getToWarehouseId())));
         // 2. 转化为 ErpStockMoveItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockMoveItemDO.class, item -> item
-                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
+                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 

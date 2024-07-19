@@ -153,7 +153,8 @@ public class ErpStockInServiceImpl implements ErpStockInService {
     private void updateStockInItemList(Long id, List<ErpStockInItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpStockInItemDO> oldList = stockInItemMapper.selectListByInId(id);
-        List<List<ErpStockInItemDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<ErpStockInItemDO>> diffList = diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
 
         // 第二步，批量添加、修改、删除

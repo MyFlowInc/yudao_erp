@@ -150,7 +150,7 @@ public class ErpStockCheckServiceImpl implements ErpStockCheckService {
         warehouseService.validWarehouseList(convertSet(list, ErpStockCheckSaveReqVO.Item::getWarehouseId));
         // 2. 转化为 ErpStockCheckItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockCheckItemDO.class, item -> item
-                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
+                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 

@@ -47,7 +47,7 @@ public class ErpProductDO extends BaseDO {
     /**
      * 单位编号
      */
-    private Integer unitId;
+    private Long unitId;
     /**
      * 产品状态
      */

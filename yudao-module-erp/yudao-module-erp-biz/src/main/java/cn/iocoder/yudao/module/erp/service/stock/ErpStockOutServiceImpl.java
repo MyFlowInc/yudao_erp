@@ -146,7 +146,7 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
         warehouseService.validWarehouseList(convertSet(list, ErpStockOutSaveReqVO.Item::getWarehouseId));
         // 2. 转化为 ErpStockOutItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockOutItemDO.class, item -> item
-                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
+                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 

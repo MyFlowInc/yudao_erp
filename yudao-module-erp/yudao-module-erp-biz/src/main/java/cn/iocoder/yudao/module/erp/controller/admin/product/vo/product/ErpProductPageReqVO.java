@@ -32,7 +32,7 @@ public class ErpProductPageReqVO extends PageParam {
     private String associationSupplierId;
 
     @Schema(description = "单位编号", example = "28652")
-    private Integer unitId;
+    private Long unitId;
 
     @Schema(description = "产品状态", example = "2")
     private Integer status;

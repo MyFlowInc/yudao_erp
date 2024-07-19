@@ -65,7 +65,7 @@ public class ErpStockInServiceImpl implements ErpStockInService {
         // 1.1 校验入库项的有效性
         List<ErpStockInItemDO> stockInItems = validateStockInItems(createReqVO.getItems());
         // 1.2 校验供应商
-        supplierService.validateSupplier(createReqVO.getSupplierId());
+//        supplierService.validateSupplier(createReqVO.getSupplierId());
         // 1.3 生成入库单号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.STOCK_IN_NO_PREFIX);
         if (stockInMapper.selectByNo(no) != null) {
@@ -93,7 +93,7 @@ public class ErpStockInServiceImpl implements ErpStockInService {
             throw exception(STOCK_IN_UPDATE_FAIL_APPROVE, stockIn.getNo());
         }
         // 1.2 校验供应商
-        supplierService.validateSupplier(updateReqVO.getSupplierId());
+//        supplierService.validateSupplier(updateReqVO.getSupplierId());
         // 1.3 校验入库项的有效性
         List<ErpStockInItemDO> stockInItems = validateStockInItems(updateReqVO.getItems());
 

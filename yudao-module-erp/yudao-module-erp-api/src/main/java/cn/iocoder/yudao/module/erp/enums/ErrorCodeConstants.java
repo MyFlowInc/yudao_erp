@@ -164,5 +164,11 @@ ErrorCode PURCHASE_ORDER_ITEM_RETURN_FAIL_IN_EXCEED = new ErrorCode(1_030_101_00
     ErrorCode FINANCE_RECEIPT_APPROVE_FAIL = new ErrorCode(1_030_602_003, "审核失败，只有未审核的收款单才能审核");
     ErrorCode FINANCE_RECEIPT_NO_EXISTS = new ErrorCode(1_030_602_004, "生成收款单号失败，请重新提交");
     ErrorCode FINANCE_RECEIPT_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_602_005, "收款单({})已审核，无法修改");
-
+    ErrorCode PURCHASE_REQUISITION_NOT_EXISTS = new ErrorCode(1_030_602_006, "新增请购不存在");
+    ErrorCode REQUISITION_PRODUCT_NOT_EXISTS = new ErrorCode(1_030_602_007, "请购产品不存在");
+    ErrorCode SUPPLIER_EXITS_CHILDREN = new ErrorCode(1_030_602_008, "存在存在子ERP 供应商，无法删除");
+    ErrorCode SUPPLIER_PARENT_NOT_EXITS = new ErrorCode(1_030_602_009,"父级ERP 供应商不存在");
+    ErrorCode SUPPLIER_PARENT_ERROR = new ErrorCode(1_030_602_010, "不能设置自己为父ERP 供应商");
+    ErrorCode SUPPLIER_TYPE_DUPLICATE = new ErrorCode(1_030_602_011, "已经存在该供应商类型的ERP 供应商");
+    ErrorCode SUPPLIER_PARENT_IS_CHILD = new ErrorCode(1_030_602_012, "不能设置自己的子Supplier为父Supplier");
 }

@@ -1,17 +1,18 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.purchase;
 
-import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
-import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.ErpSupplierListReqVO;
 import lombok.*;
-
+import java.util.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.*;
+import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 
 /**
  * ERP 供应商 DO
  *
- * @author 芋道源码
+ * @author 那就这样吧
  */
 @TableName("erp_supplier")
 @KeySequence("erp_supplier_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
@@ -23,6 +24,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ErpSupplierDO extends BaseDO {
 
+    public static final Long PARENT_ID_ROOT = 0L;
+
     /**
      * 供应商编号
      */
@@ -32,6 +35,18 @@ public class ErpSupplierDO extends BaseDO {
      * 供应商名称
      */
     private String name;
+    /**
+     * 供应商类型
+     */
+    private String type;
+    /**
+     * 父级编号
+     */
+    private String parentId;
+    /**
+     * 评级
+     */
+    private String grade;
     /**
      * 联系人
      */
@@ -58,8 +73,6 @@ public class ErpSupplierDO extends BaseDO {
     private String remark;
     /**
      * 开启状态
-     *
-     * 枚举 {@link cn.iocoder.yudao.framework.common.enums.CommonStatusEnum}
      */
     private Integer status;
     /**
@@ -87,4 +100,6 @@ public class ErpSupplierDO extends BaseDO {
      */
     private String bankAddress;
 
+    @TableField(exist = false)
+    private List<ErpSupplierDO> children = new ArrayList<>();
 }

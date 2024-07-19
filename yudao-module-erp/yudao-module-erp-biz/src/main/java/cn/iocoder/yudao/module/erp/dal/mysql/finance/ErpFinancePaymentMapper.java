@@ -31,7 +31,8 @@ public interface ErpFinancePaymentMapper extends BaseMapperX<ErpFinancePaymentDO
         if (reqVO.getBizNo() != null) {
             query.leftJoin(ErpFinancePaymentItemDO.class, ErpFinancePaymentItemDO::getPaymentId, ErpFinancePaymentDO::getId)
                     .eq(reqVO.getBizNo() != null, ErpFinancePaymentItemDO::getBizNo, reqVO.getBizNo())
-                    .groupBy(ErpFinancePaymentDO::getId); // 避免 1 对多查询，产生相同的 1
+                    // 避免 1 对多查询，产生相同的 1
+                    .groupBy(ErpFinancePaymentDO::getId);
         }
         return selectJoinPage(reqVO, ErpFinancePaymentDO.class, query);
     }

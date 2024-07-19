@@ -56,7 +56,8 @@ public class DictTypeServiceImpl implements DictTypeService {
 
         // 插入字典类型
         DictTypeDO dictType = BeanUtils.toBean(createReqVO, DictTypeDO.class);
-        dictType.setDeletedTime(LocalDateTimeUtils.EMPTY); // 唯一索引，避免 null 值
+        // 唯一索引，避免 null 值
+        dictType.setDeletedTime(LocalDateTimeUtils.EMPTY);
         dictTypeMapper.insert(dictType);
         return dictType.getId();
     }

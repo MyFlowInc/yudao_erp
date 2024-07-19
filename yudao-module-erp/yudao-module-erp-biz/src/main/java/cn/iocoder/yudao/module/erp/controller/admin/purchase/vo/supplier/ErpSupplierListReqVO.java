@@ -1,15 +1,20 @@
 package cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
-import javax.validation.constraints.NotNull;
+import java.util.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
-@Schema(description = "管理后台 - ERP 供应商新增/修改 Request VO")
+import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
+
+@Schema(description = "管理后台 - ERP 供应商列表 Request VO")
 @Data
-public class ErpSupplierSaveReqVO {
+public class ErpSupplierListReqVO {
 
-    @Schema(description = "供应商编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10473")
+    @Schema(description = "供应商编号", example = "10473")
     private Long id;
 
     @Schema(description = "供应商名称", example = "赵六")
@@ -39,15 +44,10 @@ public class ErpSupplierSaveReqVO {
     @Schema(description = "传真")
     private String fax;
 
-    @Schema(description = "备注", example = "你说的对")
-    private String remark;
-
-    @Schema(description = "开启状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "开启状态不能为空")
+    @Schema(description = "开启状态", example = "2")
     private Integer status;
 
-    @Schema(description = "排序", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "排序不能为空")
+    @Schema(description = "排序")
     private Integer sort;
 
     @Schema(description = "纳税人识别号")
@@ -64,5 +64,9 @@ public class ErpSupplierSaveReqVO {
 
     @Schema(description = "开户地址")
     private String bankAddress;
+
+    @Schema(description = "创建时间")
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
+    private LocalDateTime[] createTime;
 
 }

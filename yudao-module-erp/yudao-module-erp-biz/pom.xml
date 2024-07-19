@@ -7,6 +7,18 @@
         <artifactId>yudao-module-erp</artifactId>
         <version>${revision}</version>
     </parent>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yudao-module-erp-biz</artifactId>
 
@@ -58,11 +70,11 @@
             <artifactId>yudao-spring-boot-starter-excel</artifactId>
         </dependency>
 
-        <!-- Test 测试相关 -->
-        <dependency>
-            <groupId>cn.iocoder.boot</groupId>
-            <artifactId>yudao-spring-boot-starter-test</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; Test 测试相关 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>cn.iocoder.boot</groupId>-->
+<!--            <artifactId>yudao-spring-boot-starter-test</artifactId>-->
+<!--        </dependency>-->
 
     </dependencies>
 

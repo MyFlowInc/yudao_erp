@@ -38,20 +38,18 @@ public class ErpProductDO extends BaseDO {
     private String barCode;
     /**
      * 产品分类编号
-     *
-     * 关联 {@link ErpProductCategoryDO#getId()}
      */
     private Long categoryId;
     /**
-     * 单位编号
-     *
-     * 关联 {@link ErpProductUnitDO#getId()}
+     * 关联供应商Id
      */
-    private Long unitId;
+    private String associationSupplierId;
+    /**
+     * 单位编号
+     */
+    private Integer unitId;
     /**
      * 产品状态
-     *
-     * 枚举 {@link cn.iocoder.yudao.framework.common.enums.CommonStatusEnum}
      */
     private Integer status;
     /**

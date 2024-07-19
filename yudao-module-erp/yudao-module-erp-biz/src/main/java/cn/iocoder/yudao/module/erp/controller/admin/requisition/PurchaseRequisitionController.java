@@ -120,39 +120,39 @@ public class PurchaseRequisitionController {
                         BeanUtils.toBean(list, PurchaseRequisitionRespVO.class));
     }
 
-    // ==================== 子表（请购产品） ====================
-
-    @GetMapping("/requisition-product/page")
-    @Operation(summary = "获得请购产品分页")
-    @Parameter(name = "associationRequisition", description = "关联请购单")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
-    public CommonResult<PageResult<RequisitionProductDO>> getRequisitionProductPage(PageParam pageReqVO,
-                                                                                        @RequestParam("associationRequisition") String associationRequisition) {
-        return success(purchaseRequisitionService.getRequisitionProductPage(pageReqVO, associationRequisition));
-    }
-
-    @PostMapping("/requisition-product/create")
-    @Operation(summary = "创建请购产品")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:create')")
-    public CommonResult<Long> createRequisitionProduct(@Valid @RequestBody RequisitionProductDO requisitionProduct) {
-        return success(purchaseRequisitionService.createRequisitionProduct(requisitionProduct));
-    }
-
-    @PutMapping("/requisition-product/update")
-    @Operation(summary = "更新请购产品")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:update')")
-    public CommonResult<Boolean> updateRequisitionProduct(@Valid @RequestBody RequisitionProductDO requisitionProduct) {
-        purchaseRequisitionService.updateRequisitionProduct(requisitionProduct);
-        return success(true);
-    }
-
-    @DeleteMapping("/requisition-product/delete")
-    @Parameter(name = "id", description = "编号", required = true)
-    @Operation(summary = "删除请购产品")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:delete')")
-    public CommonResult<Boolean> deleteRequisitionProduct(@RequestParam("id") Long id) {
-        purchaseRequisitionService.deleteRequisitionProduct(id);
-        return success(true);
-    }
+//    // ==================== 子表（请购产品） ====================
+//
+//    @GetMapping("/requisition-product/page")
+//    @Operation(summary = "获得请购产品分页")
+//    @Parameter(name = "associationRequisition", description = "关联请购单")
+//    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
+//    public CommonResult<PageResult<RequisitionProductDO>> getRequisitionProductPage(PageParam pageReqVO,
+//                                                                                        @RequestParam("associationRequisition") String associationRequisition) {
+//        return success(purchaseRequisitionService.getRequisitionProductPage(pageReqVO, associationRequisition));
+//    }
+//
+//    @PostMapping("/requisition-product/create")
+//    @Operation(summary = "创建请购产品")
+//    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:create')")
+//    public CommonResult<Long> createRequisitionProduct(@Valid @RequestBody RequisitionProductDO requisitionProduct) {
+//        return success(purchaseRequisitionService.createRequisitionProduct(requisitionProduct));
+//    }
+//
+//    @PutMapping("/requisition-product/update")
+//    @Operation(summary = "更新请购产品")
+//    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:update')")
+//    public CommonResult<Boolean> updateRequisitionProduct(@Valid @RequestBody RequisitionProductDO requisitionProduct) {
+//        purchaseRequisitionService.updateRequisitionProduct(requisitionProduct);
+//        return success(true);
+//    }
+//
+//    @DeleteMapping("/requisition-product/delete")
+//    @Parameter(name = "id", description = "编号", required = true)
+//    @Operation(summary = "删除请购产品")
+//    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:delete')")
+//    public CommonResult<Boolean> deleteRequisitionProduct(@RequestParam("id") Long id) {
+//        purchaseRequisitionService.deleteRequisitionProduct(id);
+//        return success(true);
+//    }
 
 }

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition.vo;
 
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 

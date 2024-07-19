@@ -1,5 +1,11 @@
 package cn.iocoder.yudao.module.erp.service.requisition;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.iocoder.yudao.framework.common.exception.ErrorCode;
+import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
+import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
+import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
+import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +24,8 @@ import cn.iocoder.yudao.module.erp.dal.mysql.requisition.PurchaseRequisitionMapp
 import cn.iocoder.yudao.module.erp.dal.mysql.requisition.RequisitionProductMapper;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 
 /**
@@ -172,7 +180,6 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
         return requisitionProductMapper.selectListByOrderId(orderId);
     }
 
-    @Override
     public void updateRequisitionProduct(RequisitionProductDO requisitionProduct) {
         // 校验存在
         validateRequisitionProductExists(requisitionProduct.getId());
@@ -180,7 +187,6 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
         requisitionProductMapper.updateById(requisitionProduct);
     }
 
-    @Override
     public void deleteRequisitionProduct(Long id) {
         // 校验存在
         validateRequisitionProductExists(id);
@@ -197,12 +203,14 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     private void validateRequisitionProductExists(Long id) {
         if (requisitionProductMapper.selectById(id) == null) {
             throw exception(REQUISITION_PRODUCT_NOT_EXISTS);
-    public List<RequisitionProductDO> getRequisitionProductListByOrderIds(Collection<Long> orderIds) {
-        if (CollUtil.isEmpty(orderIds)) {
-            return Collections.emptyList();
+            public List<RequisitionProductDO> getRequisitionProductListByOrderIds (Collection<Long> orderIds) {
+                if (CollUtil.isEmpty(orderIds)) {
+                    return Collections.emptyList();
+                }
+                return requisitionProductMapper.selectListByOrderIds(orderIds);
+            }
+
+
         }
-        return requisitionProductMapper.selectListByOrderIds(orderIds);
     }
-
-
 }

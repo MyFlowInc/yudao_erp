@@ -13,19 +13,6 @@ public interface ErrorCodeConstants {
     ErrorCode SUPPLIER_NOT_EXISTS = new ErrorCode(1_030_100_000, "供应商不存在");
     ErrorCode SUPPLIER_NOT_ENABLE = new ErrorCode(1_030_100_000, "供应商({})未启用");
 
-    // ========== ERP 请购单（1-030-700-000） ==========
-    ErrorCode REQUISITION_ORDER_NO_EXISTS = new ErrorCode(1-030-700-000, "生成请购单号失败，请重新提交");
-    ErrorCode PURCHASE_REQUISITION_NOT_EXISTS = new ErrorCode(1_030_700_001, "新增请购不存在");
-    ErrorCode REQUISITION_ORDER_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_700_002, "请购单({})已审核，无法修改");
-    ErrorCode SUPPLIER_EXITS_CHILDREN = new ErrorCode(1_030_700_003, "存在存在子ERP 供应商，无法删除");
-    ErrorCode SUPPLIER_PARENT_NOT_EXITS = new ErrorCode(1_030_700_004,"父级ERP 供应商不存在");
-    ErrorCode SUPPLIER_PARENT_ERROR = new ErrorCode(1_030_700_005, "不能设置自己为父ERP 供应商");
-    ErrorCode SUPPLIER_TYPE_DUPLICATE = new ErrorCode(1_030_700_006, "已经存在该供应商类型的ERP 供应商");
-    ErrorCode SUPPLIER_PARENT_IS_CHILD = new ErrorCode(1_030_700_007, "不能设置自己的子Supplier为父Supplier");
-    ErrorCode REQUISITION_ORDER__PROCESS_FAIL = new ErrorCode(1_030_700_008, "反审核失败，只有已审核的请购单才能反审核");
-
-
-
     // ========== ERP 采购订单（1-030-101-000） ==========
     ErrorCode PURCHASE_ORDER_NOT_EXISTS = new ErrorCode(1_030_101_000, "采购订单不存在");
     ErrorCode PURCHASE_ORDER_DELETE_FAIL_APPROVE = new ErrorCode(1_030_101_001, "采购订单({})已审核，无法删除");
@@ -179,9 +166,17 @@ ErrorCode PURCHASE_ORDER_ITEM_RETURN_FAIL_IN_EXCEED = new ErrorCode(1_030_101_00
     ErrorCode FINANCE_RECEIPT_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_602_005, "收款单({})已审核，无法修改");
     ErrorCode PURCHASE_REQUISITION_NOT_EXISTS = new ErrorCode(1_030_602_006, "新增请购不存在");
     ErrorCode REQUISITION_PRODUCT_NOT_EXISTS = new ErrorCode(1_030_602_007, "请购产品不存在");
-    ErrorCode SUPPLIER_EXITS_CHILDREN = new ErrorCode(1_030_602_008, "存在存在子ERP 供应商，无法删除");
-    ErrorCode SUPPLIER_PARENT_NOT_EXITS = new ErrorCode(1_030_602_009,"父级ERP 供应商不存在");
-    ErrorCode SUPPLIER_PARENT_ERROR = new ErrorCode(1_030_602_010, "不能设置自己为父ERP 供应商");
-    ErrorCode SUPPLIER_TYPE_DUPLICATE = new ErrorCode(1_030_602_011, "已经存在该供应商类型的ERP 供应商");
-    ErrorCode SUPPLIER_PARENT_IS_CHILD = new ErrorCode(1_030_602_012, "不能设置自己的子Supplier为父Supplier");
+    // ========== ERP 请购单（1-030-700-000） ==========
+    ErrorCode REQUISITION_ORDER_NO_EXISTS = new ErrorCode(1-030-700-000, "生成请购单号失败，请重新提交");
+    ErrorCode REQUISITION_ORDER_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_700_002, "请购单({})已审核，无法修改");
+    ErrorCode REQUISITION_ORDER__PROCESS_FAIL = new ErrorCode(1_030_700_008, "反审核失败，只有已审核的请购单才能反审核");
+    //客户分类
+    ErrorCode SUPPLIER_CLASSIFICATION_NOT_EXISTS = new ErrorCode(1_030_700_009, "供应商分类不存在");
+    ErrorCode SUPPLIER_CLASSIFICATION_EXITS_CHILDREN = new ErrorCode(1_030_700_010, "存在存在子供应商分类，无法删除");
+    ErrorCode SUPPLIER_CLASSIFICATION_PARENT_NOT_EXITS = new ErrorCode(1_030_700_011,"父级供应商分类不存在");
+    ErrorCode SUPPLIER_CLASSIFICATION_PARENT_ERROR = new ErrorCode(1_030_700_012, "不能设置自己为父供应商分类");
+    ErrorCode SUPPLIER_CLASSIFICATION_NAME_DUPLICATE = new ErrorCode(1_030_700_013, "已经存在该分类名称的供应商分类");
+    ErrorCode SUPPLIER_CLASSIFICATION_PARENT_IS_CHILD = new ErrorCode(1_030_700_014, "不能设置自己的子ErpSupplierClassification为父ErpSupplierClassification");
+
+
 }

@@ -2,17 +2,21 @@ package cn.iocoder.yudao.module.erp.service.supplierclassification;
 
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 import cn.iocoder.yudao.module.erp.controller.admin.supplierclassification.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupplierClassificationDO;
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.erp.dal.mysql.supplierclassification.ErpSupplierClassificationMapper;
 
 import javax.annotation.Resource;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
-
 
 /**
  * 供应商分类 Service 实现类
@@ -86,8 +90,7 @@ public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassifi
             throw exception(SUPPLIER_CLASSIFICATION_PARENT_NOT_EXITS);
         }
         // 3. 递归校验父供应商分类，如果父供应商分类是自己的子供应商分类，则报错，避免形成环路
-        // id 为空，说明新增，不需要考虑环路
-        if (id == null) {
+        if (id == null) { // id 为空，说明新增，不需要考虑环路
             return;
         }
         for (int i = 0; i < Short.MAX_VALUE; i++) {

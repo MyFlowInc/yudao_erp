@@ -3,6 +3,9 @@ package cn.iocoder.yudao.module.erp.service.supplierclassification;
 import java.util.*;
 import cn.iocoder.yudao.module.erp.controller.admin.supplierclassification.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupplierClassificationDO;
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.pojo.PageParam;
+
 import javax.validation.Valid;
 
 /**

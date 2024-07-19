@@ -48,6 +48,6 @@ public class ErpSupplierClassificationDO extends BaseDO {
     /**
      * 状态
      */
-    private Integer status;
+    private String status;
 
 }

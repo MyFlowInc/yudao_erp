@@ -157,7 +157,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         Map<Long, ErpProductDO> productMap = convertMap(productList, ErpProductDO::getId);
         // 2. 转化为 ErpPurchaseOrderItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpPurchaseOrderItemDO.class, item -> {
-            item.setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()));
+            item.setProductUnitId(productMap.get(item.getProductId()).getUnitId());
             item.setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()));
             if (item.getTotalPrice() == null) {
                 return;
@@ -171,7 +171,8 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     private void updatePurchaseOrderItemList(Long id, List<ErpPurchaseOrderItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpPurchaseOrderItemDO> oldList = purchaseOrderItemMapper.selectListByOrderId(id);
-        List<List<ErpPurchaseOrderItemDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<ErpPurchaseOrderItemDO>> diffList = diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
 
         // 第二步，批量添加、修改、删除

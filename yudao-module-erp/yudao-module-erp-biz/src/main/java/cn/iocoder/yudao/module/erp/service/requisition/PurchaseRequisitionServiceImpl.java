@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.erp.service.requisition;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.exception.ErrorCode;
+import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
@@ -139,9 +140,9 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     private void updateRequisitionProductItemList(Long id, List<RequisitionProductDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<RequisitionProductDO> oldList = requisitionProductMapper.selectListByOrderId(id);
-        List<List<RequisitionProductDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<RequisitionProductDO>> diffList = CollectionUtils.diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
-
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
             diffList.get(0).forEach(o -> o.setAssociationRequisition(id));
@@ -203,14 +204,12 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     private void validateRequisitionProductExists(Long id) {
         if (requisitionProductMapper.selectById(id) == null) {
             throw exception(REQUISITION_PRODUCT_NOT_EXISTS);
-            public List<RequisitionProductDO> getRequisitionProductListByOrderIds (Collection<Long> orderIds) {
-                if (CollUtil.isEmpty(orderIds)) {
-                    return Collections.emptyList();
-                }
-                return requisitionProductMapper.selectListByOrderIds(orderIds);
-            }
-
-
         }
+    }
+    public List<RequisitionProductDO> getRequisitionProductListByOrderIds (Collection<Long> orderIds) {
+        if (CollUtil.isEmpty(orderIds)) {
+            return Collections.emptyList();
+        }
+        return requisitionProductMapper.selectListByOrderIds(orderIds);
     }
 }

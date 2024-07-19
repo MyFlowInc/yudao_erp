@@ -22,6 +22,9 @@ public interface RequisitionProductMapper extends BaseMapperX<RequisitionProduct
                 .eq(RequisitionProductDO::getAssociationRequisition, associationRequisition)
                 .orderByDesc(RequisitionProductDO::getId));
     }
+    default List<RequisitionProductDO> selectListByOrderId(Long orderId) {
+        return selectList(RequisitionProductDO::getAssociationRequisition, orderId);
+    }
     default List<RequisitionProductDO> selectListByOrderIds(Collection<Long> orderIds) {
         return selectList(RequisitionProductDO::getAssociationRequisition, orderIds);
     }

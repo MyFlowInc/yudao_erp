@@ -92,6 +92,5 @@ public interface PurchaseRequisitionService {
 	 * @param id 编号
      * @return 请购产品
 	 */
-    RequisitionProductDO getRequisitionProduct(Long id);
-
+    List<RequisitionProductDO> getRequisitionProduct(Long id);
 }

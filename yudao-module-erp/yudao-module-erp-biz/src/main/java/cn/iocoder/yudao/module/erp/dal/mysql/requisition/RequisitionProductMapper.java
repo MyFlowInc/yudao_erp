@@ -22,9 +22,12 @@ public interface RequisitionProductMapper extends BaseMapperX<RequisitionProduct
             .eq(RequisitionProductDO::getAssociationRequisition, associationRequisition)
             .orderByDesc(RequisitionProductDO::getId));
     }
-
     default int deleteByAssociationRequisition(String associationRequisition) {
         return delete(RequisitionProductDO::getAssociationRequisition, associationRequisition);
     }
+    default List<RequisitionProductDO> selectListProductId(Long productId) {
+        return selectList(RequisitionProductDO::getAssociationRequisition, productId);
+    }
+
 
 }

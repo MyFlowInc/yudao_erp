@@ -1,12 +1,9 @@
 package cn.iocoder.yudao.module.erp.service.purchase;
 
-import java.util.*;
-
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.ErpSupplierListReqVO;
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.ErpSupplierSaveReqVO;
+import javax.validation.*;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpSupplierDO;
-
-import javax.validation.Valid;
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
 /**
  * ERP 供应商 Service 接口
@@ -46,11 +43,11 @@ public interface ErpSupplierService {
     ErpSupplierDO getSupplier(Long id);
 
     /**
-     * 获得ERP 供应商列表
+     * 获得ERP 供应商分页
      *
-     * @param listReqVO 查询条件
-     * @return ERP 供应商列表
+     * @param pageReqVO 分页查询
+     * @return ERP 供应商分页
      */
-    List<ErpSupplierDO> getSupplierList(@Valid ErpSupplierListReqVO listReqVO);
+    PageResult<ErpSupplierDO> getSupplierPage(ErpSupplierPageReqVO pageReqVO);
 
 }

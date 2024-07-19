@@ -1,6 +1,5 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.purchase;
 
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.ErpSupplierListReqVO;
 import lombok.*;
 import java.util.*;
 import java.math.BigDecimal;
@@ -24,8 +23,6 @@ import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 @AllArgsConstructor
 public class ErpSupplierDO extends BaseDO {
 
-    public static final Long PARENT_ID_ROOT = 0L;
-
     /**
      * 供应商编号
      */
@@ -36,9 +33,9 @@ public class ErpSupplierDO extends BaseDO {
      */
     private String name;
     /**
-     * 供应商类型
+     * 供应商分类id
      */
-    private String type;
+    private String supplierClassification;
     /**
      * 父级编号
      */
@@ -100,6 +97,4 @@ public class ErpSupplierDO extends BaseDO {
      */
     private String bankAddress;
 
-    @TableField(exist = false)
-    private List<ErpSupplierDO> children = new ArrayList<>();
 }

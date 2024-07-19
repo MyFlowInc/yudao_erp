@@ -34,7 +34,7 @@ public class RequisitionProductDO extends BaseDO {
     /**
      * 数量
      */
-    private String number;
+    private String count;
     /**
      * 用途
      */

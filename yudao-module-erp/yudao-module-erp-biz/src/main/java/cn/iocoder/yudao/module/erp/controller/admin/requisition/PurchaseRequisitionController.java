@@ -1,5 +1,9 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 
+import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
+import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.sale.ErpSaleOrderItemDO;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
 
@@ -24,6 +29,7 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
@@ -69,7 +75,15 @@ public class PurchaseRequisitionController {
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<PurchaseRequisitionRespVO> getPurchaseRequisition(@RequestParam("id") Long id) {
         PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(id);
-        return success(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class));
+        if (purchaseRequisition == null){
+            return success(null);
+        }
+        PurchaseRequisitionRespVO bean = BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class);
+        List<RequisitionProductDO> requisitionProduct = purchaseRequisitionService.getRequisitionProduct(purchaseRequisition.getId());
+        if (requisitionProduct != null){
+            bean.setChildren(requisitionProduct);
+        }
+        return success(bean);
     }
 
     @GetMapping("/page")
@@ -127,13 +141,5 @@ public class PurchaseRequisitionController {
         purchaseRequisitionService.deleteRequisitionProduct(id);
         return success(true);
     }
-
-	@GetMapping("/requisition-product/get")
-	@Operation(summary = "获得请购产品")
-	@Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
-	public CommonResult<RequisitionProductDO> getRequisitionProduct(@RequestParam("id") Long id) {
-	    return success(purchaseRequisitionService.getRequisitionProduct(id));
-	}
 
 }

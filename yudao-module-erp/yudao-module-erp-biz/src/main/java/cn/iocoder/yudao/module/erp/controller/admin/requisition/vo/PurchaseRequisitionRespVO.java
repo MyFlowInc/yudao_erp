@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition.vo;
 
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -52,4 +53,6 @@ public class PurchaseRequisitionRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    @Schema(description = "子项产品")
+    List<RequisitionProductDO> children;
 }

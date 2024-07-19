@@ -109,9 +109,10 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     }
 
     @Override
-    public RequisitionProductDO getRequisitionProduct(Long id) {
-        return requisitionProductMapper.selectById(id);
+    public List<RequisitionProductDO> getRequisitionProduct(Long id) {
+        return requisitionProductMapper.selectListProductId(id);
     }
+
 
     private void validateRequisitionProductExists(Long id) {
         if (requisitionProductMapper.selectById(id) == null) {
@@ -122,5 +123,6 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     private void deleteRequisitionProductByAssociationRequisition(Long associationRequisition) {
         requisitionProductMapper.deleteByAssociationRequisition(String.valueOf(associationRequisition));
     }
+
 
 }

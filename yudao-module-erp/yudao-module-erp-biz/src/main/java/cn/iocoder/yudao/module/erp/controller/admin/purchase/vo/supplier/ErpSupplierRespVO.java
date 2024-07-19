@@ -13,19 +13,19 @@ import com.alibaba.excel.annotation.*;
 @ExcelIgnoreUnannotated
 public class ErpSupplierRespVO {
 
-    @Schema(description = "供应商编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "10473")
+    @Schema(description = "供应商编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "629")
     @ExcelProperty("供应商编号")
     private Long id;
 
-    @Schema(description = "供应商名称", example = "赵六")
+    @Schema(description = "供应商名称", example = "李四")
     @ExcelProperty("供应商名称")
     private String name;
 
-    @Schema(description = "供应商类型", example = "2")
-    @ExcelProperty("供应商类型")
-    private String type;
+    @Schema(description = "供应商分类id")
+    @ExcelProperty("供应商分类id")
+    private String supplierClassification;
 
-    @Schema(description = "父级编号", example = "28468")
+    @Schema(description = "父级编号", example = "9216")
     @ExcelProperty("父级编号")
     private String parentId;
 
@@ -53,11 +53,11 @@ public class ErpSupplierRespVO {
     @ExcelProperty("传真")
     private String fax;
 
-    @Schema(description = "备注", example = "你说的对")
+    @Schema(description = "备注", example = "你猜")
     @ExcelProperty("备注")
     private String remark;
 
-    @Schema(description = "开启状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @Schema(description = "开启状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @ExcelProperty("开启状态")
     private Integer status;
 
@@ -73,11 +73,11 @@ public class ErpSupplierRespVO {
     @ExcelProperty("税率")
     private BigDecimal taxPercent;
 
-    @Schema(description = "开户行", example = "赵六")
+    @Schema(description = "开户行", example = "芋艿")
     @ExcelProperty("开户行")
     private String bankName;
 
-    @Schema(description = "开户账号", example = "11287")
+    @Schema(description = "开户账号", example = "29722")
     @ExcelProperty("开户账号")
     private String bankAccount;
 

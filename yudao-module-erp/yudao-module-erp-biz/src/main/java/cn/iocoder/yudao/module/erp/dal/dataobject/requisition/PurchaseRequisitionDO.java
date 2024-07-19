@@ -60,4 +60,5 @@ public class PurchaseRequisitionDO extends BaseDO {
      */
     private String remark;
 
+
 }

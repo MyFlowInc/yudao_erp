@@ -146,7 +146,7 @@ public class ErpStockInServiceImpl implements ErpStockInService {
                 list, ErpStockInSaveReqVO.Item::getWarehouseId));
         // 2. 转化为 ErpStockInItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockInItemDO.class, item -> item
-                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
+                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 

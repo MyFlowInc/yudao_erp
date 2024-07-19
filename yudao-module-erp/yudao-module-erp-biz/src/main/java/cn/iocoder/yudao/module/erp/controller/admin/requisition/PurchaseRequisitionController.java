@@ -3,6 +3,13 @@ package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
+import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
+import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.sale.ErpSaleOrderItemDO;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -36,7 +43,7 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitio
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionService;
 
-@Tag(name = "管理后台 - 新增请购")
+@Tag(name = "管理后台 - ERP 请购单")
 @RestController
 @RequestMapping("/erp/purchase-requisition")
 @Validated
@@ -44,6 +51,12 @@ public class PurchaseRequisitionController {
 
     @Resource
     private PurchaseRequisitionService purchaseRequisitionService;
+
+    @Resource
+    private ErpProductService productService;
+
+    @Resource
+    private ErpStockService stockService;
 
     @PostMapping("/create")
     @Operation(summary = "创建新增请购")
@@ -62,10 +75,10 @@ public class PurchaseRequisitionController {
 
     @DeleteMapping("/delete")
     @Operation(summary = "删除新增请购")
-    @Parameter(name = "id", description = "编号", required = true)
+    @Parameter(name = "ids", description = "编号数组", required = true)
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:delete')")
-    public CommonResult<Boolean> deletePurchaseRequisition(@RequestParam("id") Long id) {
-        purchaseRequisitionService.deletePurchaseRequisition(id);
+    public CommonResult<Boolean> deletePurchaseRequisition(@RequestParam("ids") List<Long> ids) {
+        purchaseRequisitionService.deletePurchaseRequisition(ids);
         return success(true);
     }
 

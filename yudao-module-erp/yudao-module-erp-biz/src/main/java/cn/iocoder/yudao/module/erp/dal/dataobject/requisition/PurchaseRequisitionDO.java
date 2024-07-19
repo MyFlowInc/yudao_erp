@@ -38,11 +38,11 @@ public class PurchaseRequisitionDO extends BaseDO {
     /**
      * 请购单时间
      */
-    private String requisitionTime;
+    private LocalDateTime requisitionTime;
     /**
      * 预计交期
      */
-    private String estimatedTime;
+    private LocalDateTime estimatedTime;
     /**
      * 关联项目
      */
@@ -54,7 +54,7 @@ public class PurchaseRequisitionDO extends BaseDO {
     /**
      * 审核类型
      */
-    private String status;
+    private Integer status;
     /**
      * 备注
      */

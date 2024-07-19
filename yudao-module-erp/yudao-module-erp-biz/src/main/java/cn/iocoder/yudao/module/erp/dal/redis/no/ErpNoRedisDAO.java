@@ -52,6 +52,11 @@ public class ErpNoRedisDAO {
     public static final String SALE_RETURN_NO_PREFIX = "XSTH";
 
     /**
+     * 请购单 {@link cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO}
+     */
+    public static final String REQUISITION_ORDER_NO_PREFIX = "QGD";
+
+    /**
      * 采购订单 {@link cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO}
      */
     public static final String PURCHASE_ORDER_NO_PREFIX = "CGDD";

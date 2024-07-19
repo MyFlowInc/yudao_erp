@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.erp.service.requisition;
 import java.util.*;
 import javax.validation.*;
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -33,9 +34,9 @@ public interface PurchaseRequisitionService {
     /**
      * 删除新增请购
      *
-     * @param id 编号
+     * @param ids 编号
      */
-    void deletePurchaseRequisition(Long id);
+    void deletePurchaseRequisition(List<Long> ids);
 
     /**
      * 获得新增请购
@@ -53,38 +54,23 @@ public interface PurchaseRequisitionService {
      */
     PageResult<PurchaseRequisitionDO> getPurchaseRequisitionPage(PurchaseRequisitionPageReqVO pageReqVO);
 
-    // ==================== 子表（请购产品） ====================
+    // ==================== 请购单项 ====================
 
     /**
-     * 获得请购产品分页
+     * 获得请购单项列表
      *
-     * @param pageReqVO 分页查询
-     * @param associationRequisition 关联请购单
-     * @return 请购产品分页
+     * @param orderId 请购单编号
+     * @return 请购单项列表
      */
-    PageResult<RequisitionProductDO> getRequisitionProductPage(PageParam pageReqVO, String associationRequisition);
+    List<RequisitionProductDO> getRequisitionProductListByOrderId(Long orderId);
 
     /**
-     * 创建请购产品
-     *
-     * @param requisitionProduct 创建信息
-     * @return 编号
-     */
-    Long createRequisitionProduct(@Valid RequisitionProductDO requisitionProduct);
-
-    /**
-     * 更新请购产品
-     *
-     * @param requisitionProduct 更新信息
-     */
-    void updateRequisitionProduct(@Valid RequisitionProductDO requisitionProduct);
-
-    /**
-     * 删除请购产品
+     * 更新请购单的状态
      *
      * @param id 编号
+     * @param status 状态
      */
-    void deleteRequisitionProduct(Long id);
+    void updatePurchaseRequisitionStatus(Long id, Integer status);
 
 	/**
 	 * 获得请购产品

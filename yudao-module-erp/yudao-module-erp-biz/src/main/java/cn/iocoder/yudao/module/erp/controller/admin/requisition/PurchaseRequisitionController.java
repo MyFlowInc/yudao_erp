@@ -1,5 +1,12 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 
+import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
+import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
 
@@ -24,13 +32,14 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionService;
 
-@Tag(name = "管理后台 - 新增请购")
+@Tag(name = "管理后台 - ERP 请购单")
 @RestController
 @RequestMapping("/erp/purchase-requisition")
 @Validated
@@ -38,6 +47,12 @@ public class PurchaseRequisitionController {
 
     @Resource
     private PurchaseRequisitionService purchaseRequisitionService;
+
+    @Resource
+    private ErpProductService productService;
+
+    @Resource
+    private ErpStockService stockService;
 
     @PostMapping("/create")
     @Operation(summary = "创建新增请购")
@@ -56,10 +71,10 @@ public class PurchaseRequisitionController {
 
     @DeleteMapping("/delete")
     @Operation(summary = "删除新增请购")
-    @Parameter(name = "id", description = "编号", required = true)
+    @Parameter(name = "ids", description = "编号数组", required = true)
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:delete')")
-    public CommonResult<Boolean> deletePurchaseRequisition(@RequestParam("id") Long id) {
-        purchaseRequisitionService.deletePurchaseRequisition(id);
+    public CommonResult<Boolean> deletePurchaseRequisition(@RequestParam("ids") List<Long> ids) {
+        purchaseRequisitionService.deletePurchaseRequisition(ids);
         return success(true);
     }
 
@@ -69,7 +84,28 @@ public class PurchaseRequisitionController {
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<PurchaseRequisitionRespVO> getPurchaseRequisition(@RequestParam("id") Long id) {
         PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(id);
-        return success(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class));
+        if (purchaseRequisition == null) {
+            return success(null);
+        }
+        List<RequisitionProductDO> requisitionProductItemList = purchaseRequisitionService.getRequisitionProductListByOrderId(id);
+        Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
+                convertSet(requisitionProductItemList, RequisitionProductDO::getProductId));
+        return success(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class, purchaseRequisitionVO ->
+                purchaseRequisitionVO.setItems(BeanUtils.toBean(requisitionProductItemList, PurchaseRequisitionRespVO.Item.class, item -> {
+                    BigDecimal purchaseCount = stockService.getStockCount(item.getProductId());
+                    item.setStockCount(purchaseCount != null ? purchaseCount : BigDecimal.ZERO);
+                    MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
+                            .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
+                }))));
+    }
+
+    @PutMapping("/update-status")
+    @Operation(summary = "更新请购单的状态")
+    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:update-status')")
+    public CommonResult<Boolean> updatePurchaseRequisitionStatus(@RequestParam("id") Long id,
+                                                           @RequestParam("status") Integer status) {
+        purchaseRequisitionService.updatePurchaseRequisitionStatus(id, status);
+        return success(true);
     }
 
     @GetMapping("/page")
@@ -92,48 +128,4 @@ public class PurchaseRequisitionController {
         ExcelUtils.write(response, "新增请购.xls", "数据", PurchaseRequisitionRespVO.class,
                         BeanUtils.toBean(list, PurchaseRequisitionRespVO.class));
     }
-
-    // ==================== 子表（请购产品） ====================
-
-    @GetMapping("/requisition-product/page")
-    @Operation(summary = "获得请购产品分页")
-    @Parameter(name = "associationRequisition", description = "关联请购单")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
-    public CommonResult<PageResult<RequisitionProductDO>> getRequisitionProductPage(PageParam pageReqVO,
-                                                                                        @RequestParam("associationRequisition") String associationRequisition) {
-        return success(purchaseRequisitionService.getRequisitionProductPage(pageReqVO, associationRequisition));
-    }
-
-    @PostMapping("/requisition-product/create")
-    @Operation(summary = "创建请购产品")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:create')")
-    public CommonResult<Long> createRequisitionProduct(@Valid @RequestBody RequisitionProductDO requisitionProduct) {
-        return success(purchaseRequisitionService.createRequisitionProduct(requisitionProduct));
-    }
-
-    @PutMapping("/requisition-product/update")
-    @Operation(summary = "更新请购产品")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:update')")
-    public CommonResult<Boolean> updateRequisitionProduct(@Valid @RequestBody RequisitionProductDO requisitionProduct) {
-        purchaseRequisitionService.updateRequisitionProduct(requisitionProduct);
-        return success(true);
-    }
-
-    @DeleteMapping("/requisition-product/delete")
-    @Parameter(name = "id", description = "编号", required = true)
-    @Operation(summary = "删除请购产品")
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:delete')")
-    public CommonResult<Boolean> deleteRequisitionProduct(@RequestParam("id") Long id) {
-        purchaseRequisitionService.deleteRequisitionProduct(id);
-        return success(true);
-    }
-
-	@GetMapping("/requisition-product/get")
-	@Operation(summary = "获得请购产品")
-	@Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
-	public CommonResult<RequisitionProductDO> getRequisitionProduct(@RequestParam("id") Long id) {
-	    return success(purchaseRequisitionService.getRequisitionProduct(id));
-	}
-
 }

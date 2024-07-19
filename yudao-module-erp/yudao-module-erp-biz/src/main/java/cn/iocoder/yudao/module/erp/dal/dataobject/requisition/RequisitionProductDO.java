@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.requisition;
 
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.LocalDateTime;
@@ -30,11 +32,11 @@ public class RequisitionProductDO extends BaseDO {
     /**
      * 产品id
      */
-    private String productId;
+    private Long productId;
     /**
      * 数量
      */
-    private String number;
+    private BigDecimal count;
     /**
      * 用途
      */
@@ -42,7 +44,7 @@ public class RequisitionProductDO extends BaseDO {
     /**
      * 关联请购单
      */
-    private String associationRequisition;
+    private Long associationRequisition;
     /**
      * 备注
      */

@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.purchase;
 
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupplierClassificationDO;
 import lombok.*;
 import java.util.*;
 import java.math.BigDecimal;
@@ -35,7 +37,7 @@ public class ErpSupplierDO extends BaseDO {
     /**
      * 供应商分类id
      */
-    private String supplierClassification;
+    private Long supplierClassification;
     /**
      * 父级编号
      */
@@ -97,4 +99,6 @@ public class ErpSupplierDO extends BaseDO {
      */
     private String bankAddress;
 
+    @TableField(exist = false)
+    private ErpSupplierClassificationDO children;
 }

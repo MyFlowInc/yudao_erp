@@ -104,6 +104,7 @@ public class OAuth2OpenController {
                                                                      @RequestParam(value = "scope", required = false) String scope, // 密码模式
                                                                      @RequestParam(value = "refresh_token", required = false) String refreshToken) { // 刷新模式
         List<String> scopes = OAuth2Utils.buildScopes(scope);
+
         // 1.1 校验授权类型
         OAuth2GrantTypeEnum grantTypeEnum = OAuth2GrantTypeEnum.getByGrantType(grantType);
         if (grantTypeEnum == null) {

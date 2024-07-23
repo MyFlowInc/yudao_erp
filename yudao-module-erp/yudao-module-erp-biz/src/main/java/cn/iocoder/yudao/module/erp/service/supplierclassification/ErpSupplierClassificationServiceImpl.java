@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.supplierclassification;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassificationService {
 
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private ErpSupplierClassificationMapper supplierClassificationMapper;
 
     @Override

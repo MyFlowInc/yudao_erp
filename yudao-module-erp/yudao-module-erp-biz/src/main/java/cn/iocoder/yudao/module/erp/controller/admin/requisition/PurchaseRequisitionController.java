@@ -11,6 +11,7 @@ import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.sale.ErpSaleOrderItemDO;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -48,13 +49,10 @@ import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionServic
 @RequestMapping("/erp/purchase-requisition")
 @Validated
 public class PurchaseRequisitionController {
-
     @Resource
     private PurchaseRequisitionService purchaseRequisitionService;
-
     @Resource
     private ErpProductService productService;
-
     @Resource
     private ErpStockService stockService;
 
@@ -64,7 +62,6 @@ public class PurchaseRequisitionController {
     public CommonResult<Long> createPurchaseRequisition(@Valid @RequestBody PurchaseRequisitionSaveReqVO createReqVO) {
         return success(purchaseRequisitionService.createPurchaseRequisition(createReqVO));
     }
-
     @PutMapping("/update")
     @Operation(summary = "更新新增请购")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:update')")
@@ -72,7 +69,6 @@ public class PurchaseRequisitionController {
         purchaseRequisitionService.updatePurchaseRequisition(updateReqVO);
         return success(true);
     }
-
     @DeleteMapping("/delete")
     @Operation(summary = "删除新增请购")
     @Parameter(name = "ids", description = "编号数组", required = true)
@@ -81,22 +77,33 @@ public class PurchaseRequisitionController {
         purchaseRequisitionService.deletePurchaseRequisition(ids);
         return success(true);
     }
-
     @GetMapping("/get")
     @Operation(summary = "获得新增请购")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<PurchaseRequisitionRespVO> getPurchaseRequisition(@RequestParam("id") Long id) {
         PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(id);
-        if (purchaseRequisition == null){
+        if (purchaseRequisition == null) {
             return success(null);
         }
-        PurchaseRequisitionRespVO bean = BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class);
-        List<RequisitionProductDO> requisitionProduct = purchaseRequisitionService.getRequisitionProduct(purchaseRequisition.getId());
-        if (requisitionProduct != null){
-            bean.setChildren(requisitionProduct);
-        }
-        return success(bean);
+        List<RequisitionProductDO> requisitionProductItemList = purchaseRequisitionService.getRequisitionProductListByOrderId(id);
+        Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
+                convertSet(requisitionProductItemList, RequisitionProductDO::getProductId));
+        return success(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class, purchaseRequisitionVO ->
+                purchaseRequisitionVO.setItems(BeanUtils.toBean(requisitionProductItemList, PurchaseRequisitionRespVO.Item.class, item -> {
+                    BigDecimal purchaseCount = stockService.getStockCount(item.getProductId());
+                    item.setStockCount(purchaseCount != null ? purchaseCount : BigDecimal.ZERO);
+                    MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
+                            .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
+                }))));
+    }
+    @PutMapping("/update-status")
+    @Operation(summary = "更新请购单的状态")
+    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:update-status')")
+    public CommonResult<Boolean> updatePurchaseRequisitionStatus(@RequestParam("id") Long id,
+                                                                 @RequestParam("status") Integer status) {
+        purchaseRequisitionService.updatePurchaseRequisitionStatus(id, status);
+        return success(true);
     }
 
     @GetMapping("/page")

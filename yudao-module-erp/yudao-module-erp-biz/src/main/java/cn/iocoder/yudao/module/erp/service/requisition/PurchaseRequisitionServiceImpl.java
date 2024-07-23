@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -39,17 +40,22 @@ import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionService {
 
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private PurchaseRequisitionMapper purchaseRequisitionMapper;
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private RequisitionProductMapper requisitionProductMapper;
 
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private ErpNoRedisDAO noRedisDAO;
 
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private ErpProductService productService;
 
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private ErpAccountService accountService;
 
     @Override

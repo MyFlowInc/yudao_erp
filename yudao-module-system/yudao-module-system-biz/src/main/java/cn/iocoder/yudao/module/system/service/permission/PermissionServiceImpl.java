@@ -255,6 +255,9 @@ public class PermissionServiceImpl implements PermissionService {
     List<RoleDO> getEnableUserRoleListByUserIdFromCache(Long userId) {
         // 获得用户拥有的角色编号
         Set<Long> roleIds = getSelf().getUserRoleIdListByUserIdFromCache(userId);
+        if (roleIds.isEmpty()){
+            return Collections.emptyList();
+        }
         // 获得角色数组，并移除被禁用的
         List<RoleDO> roles = roleService.getRoleListFromCache(roleIds);
         roles.removeIf(role -> !CommonStatusEnum.ENABLE.getStatus().equals(role.getStatus()));

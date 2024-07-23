@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.supplierclassification;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,6 +27,7 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupp
 import cn.iocoder.yudao.module.erp.service.supplierclassification.ErpSupplierClassificationService;
 
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -71,6 +73,7 @@ public class ErpSupplierClassificationController {
         return success(BeanUtils.toBean(supplierClassification, ErpSupplierClassificationRespVO.class));
     }
 
+    @PermitAll
     @GetMapping("/list")
     @Operation(summary = "获得供应商分类列表")
     @PreAuthorize("@ss.hasPermission('erp:supplier-classification:query')")

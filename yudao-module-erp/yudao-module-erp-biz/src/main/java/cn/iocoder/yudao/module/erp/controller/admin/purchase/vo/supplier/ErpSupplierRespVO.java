@@ -1,5 +1,8 @@
 package cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier;
 
+import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.PurchaseRequisitionRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupplierClassificationDO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -88,5 +91,8 @@ public class ErpSupplierRespVO {
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
+
+    @Schema(description = "子项产品")
+    List<ErpSupplierClassificationDO> children;
 
 }

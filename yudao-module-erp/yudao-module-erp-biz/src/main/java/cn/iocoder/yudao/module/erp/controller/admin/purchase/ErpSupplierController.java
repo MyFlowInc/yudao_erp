@@ -1,5 +1,9 @@
 package cn.iocoder.yudao.module.erp.controller.admin.purchase;
+import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupplierClassificationDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.requisition.PurchaseRequisitionMapper;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpSupplierService;
+import cn.iocoder.yudao.module.erp.service.supplierclassification.ErpSupplierClassificationService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +33,8 @@ public class ErpSupplierController {
 
     @Resource
     private ErpSupplierService supplierService;
+    @Resource
+    private ErpSupplierClassificationService supplierClassificationService;
 
     @PostMapping("/create")
     @Operation(summary = "创建ERP 供应商")
@@ -68,6 +74,12 @@ public class ErpSupplierController {
     @PreAuthorize("@ss.hasPermission('erp:supplier:query')")
     public CommonResult<PageResult<ErpSupplierRespVO>> getSupplierPage(@Valid ErpSupplierPageReqVO pageReqVO) {
         PageResult<ErpSupplierDO> pageResult = supplierService.getSupplierPage(pageReqVO);
+        if (pageResult != null){
+            for (ErpSupplierDO page : pageResult.getList()){
+                ErpSupplierClassificationDO supplierClassification = supplierClassificationService.getSupplierClassification(page.getSupplierClassification());
+                page.setChildren(supplierClassification);
+            }
+        }
         return success(BeanUtils.toBean(pageResult, ErpSupplierRespVO.class));
     }
 

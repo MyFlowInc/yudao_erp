@@ -140,13 +140,14 @@ public class YudaoWebSecurityConfigurerAdapter {
                 .antMatchers(buildAppApi("/**")).permitAll()
                 // 1.5 验证码captcha 允许匿名访问
                 .antMatchers("/captcha/get", "/captcha/check").permitAll()
+                .antMatchers("/erp/supplier-classification","/list").permitAll()
                 // ②：每个项目的自定义规则
-                .and().authorizeRequests(registry -> // 下面，循环设置自定义规则
+                // 下面，循环设置自定义规则
+                .and().authorizeRequests(registry ->
                         authorizeRequestsCustomizers.forEach(customizer -> customizer.customize(registry)))
-                // ③：兜底规则，必须认证
+        // ③：兜底规则，必须认证
                 .authorizeRequests()
                 .anyRequest().authenticated();
-
         // 添加 Token Filter
         httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();

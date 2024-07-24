@@ -21,7 +21,7 @@ public class ErpSupplierListReqVO {
     private String name;
 
     @Schema(description = "供应商类型", example = "2")
-    private String supplierClassification;
+    private Long supplierClassification;
 
     @Schema(description = "父级编号", example = "28468")
     private String parentId;

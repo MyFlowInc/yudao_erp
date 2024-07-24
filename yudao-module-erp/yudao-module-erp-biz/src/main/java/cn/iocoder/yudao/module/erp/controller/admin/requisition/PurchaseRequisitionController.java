@@ -2,16 +2,9 @@ package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.controller.admin.requisition.JDBCUtil.JDBCConfig;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
-import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
-import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.sale.ErpSaleOrderItemDO;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -20,10 +13,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.*;
 import java.io.IOException;
 
@@ -38,6 +31,7 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
+import static com.alibaba.druid.util.JdbcUtils.executeQuery;
 
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
@@ -125,6 +119,22 @@ public class PurchaseRequisitionController {
         // 导出 Excel
         ExcelUtils.write(response, "新增请购.xls", "数据", PurchaseRequisitionRespVO.class,
                         BeanUtils.toBean(list, PurchaseRequisitionRespVO.class));
+    }
+
+
+    @GetMapping("/project")
+    @Operation(summary = "获得ailuo项目信息")
+    public CommonResult<List<ErpAiluoSplProjectVO>> getErpSplProjectList() {
+        List<ErpAiluoSplProjectVO> erpAiluoSplProjects = null;
+        try {
+            String sql = "SELECT * FROM spl_project WHERE status = ?";
+            erpAiluoSplProjects = JDBCConfig.executeQuery(sql, "ended");
+            // 处理结果集
+        } catch (SQLException e) {
+            // 处理异常
+            e.printStackTrace();
+        }
+        return success(erpAiluoSplProjects);
     }
 
 //    // ==================== 子表（请购产品） ====================

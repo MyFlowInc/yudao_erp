@@ -98,8 +98,11 @@ public class AdminUserServiceImpl implements AdminUserService {
                 createReqVO.getMobile(), createReqVO.getEmail(), createReqVO.getDeptId(), createReqVO.getPostIds());
         // 2.1 插入用户
         AdminUserDO user = BeanUtils.toBean(createReqVO, AdminUserDO.class);
-        user.setStatus(CommonStatusEnum.ENABLE.getStatus()); // 默认开启
-        user.setPassword(encodePassword(createReqVO.getPassword())); // 加密密码
+        // 默认开启
+        user.setStatus(CommonStatusEnum.ENABLE.getStatus());
+        user.setPassword(encodePassword(createReqVO.getPassword()));
+//        String replace = UUID.randomUUID().toString().replace("-", "");
+//        user.setUuid(replace);
         userMapper.insert(user);
         // 2.2 插入关联岗位
         if (CollectionUtil.isNotEmpty(user.getPostIds())) {
@@ -117,7 +120,8 @@ public class AdminUserServiceImpl implements AdminUserService {
     @LogRecord(type = SYSTEM_USER_TYPE, subType = SYSTEM_USER_UPDATE_SUB_TYPE, bizNo = "{{#updateReqVO.id}}",
             success = SYSTEM_USER_UPDATE_SUCCESS)
     public void updateUser(UserSaveReqVO updateReqVO) {
-        updateReqVO.setPassword(null); // 特殊：此处不更新密码
+        // 特殊：此处不更新密码
+        updateReqVO.setPassword(null);
         // 1. 校验正确性
         AdminUserDO oldUser = validateUserForCreateOrUpdate(updateReqVO.getId(), updateReqVO.getUsername(),
                 updateReqVO.getMobile(), updateReqVO.getEmail(), updateReqVO.getDeptId(), updateReqVO.getPostIds());

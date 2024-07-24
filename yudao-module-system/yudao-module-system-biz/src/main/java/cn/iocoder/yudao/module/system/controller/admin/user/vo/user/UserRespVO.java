@@ -28,6 +28,9 @@ public class UserRespVO{
     @ExcelProperty("用户昵称")
     private String nickname;
 
+    @Schema(description = "唯一标识")
+    private String uuid;
+
     @Schema(description = "备注", example = "我是一个用户")
     private String remark;
 

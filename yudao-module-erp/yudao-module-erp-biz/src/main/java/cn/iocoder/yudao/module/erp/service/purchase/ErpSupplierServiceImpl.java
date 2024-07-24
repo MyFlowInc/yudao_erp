@@ -65,6 +65,19 @@ public class ErpSupplierServiceImpl implements ErpSupplierService {
     }
 
     @Override
+    public List<ErpSupplierDO> getSupplierList(Collection<Long> ids) {
+        return supplierMapper.selectBatchIds(ids);
+    }
+    @Override
+    public List<ErpSupplierDO> getSupplierListByStatus(Integer status) {
+        return supplierMapper.selectListByStatus(status);
+    }
+    @Override
+    public Map<Long, ErpSupplierDO> getSupplierMap(Collection<Long> ids) {
+        return ErpSupplierService.super.getSupplierMap(ids);
+    }
+
+    @Override
     public PageResult<ErpSupplierDO> getSupplierPage(ErpSupplierPageReqVO pageReqVO) {
         return supplierMapper.selectPage(pageReqVO);
     }

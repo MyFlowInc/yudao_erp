@@ -48,6 +48,10 @@ public class AdminUserDO extends TenantBaseDO {
      */
     private String nickname;
     /**
+     * 唯一标识
+     */
+    private String uuid;
+    /**
      * 备注
      */
     private String remark;

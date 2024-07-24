@@ -5,6 +5,12 @@ import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpSupplierDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
+
 /**
  * ERP 供应商 Service 接口
  *
@@ -42,6 +48,23 @@ public interface ErpSupplierService {
      */
     ErpSupplierDO getSupplier(Long id);
 
+    /**
+     * 获得供应商列表
+     *
+     * @param ids 编号列表
+     * @return 供应商列表
+     */
+    List<ErpSupplierDO> getSupplierList(Collection<Long> ids);
+    /**
+     * 获得供应商 Map
+     *
+     * @param ids 编号列表
+     * @return 供应商 Map
+     */
+    default Map<Long, ErpSupplierDO> getSupplierMap(Collection<Long> ids) {
+        return convertMap(getSupplierList(ids), ErpSupplierDO::getId);
+    }
+    List<ErpSupplierDO> getSupplierListByStatus(Integer status);
     /**
      * 获得ERP 供应商分页
      *

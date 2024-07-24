@@ -52,6 +52,8 @@ public class PurchaseRequisitionRespVO {
     @Schema(description = "备注", example = "你猜")
     @ExcelProperty("备注")
     private String remark;
+    @Schema(description = "创建人")
+    private String creator;
 
     @Schema(description = "创建时间")
     @ExcelProperty("创建时间")

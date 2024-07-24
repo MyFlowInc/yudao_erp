@@ -39,4 +39,8 @@ public interface ErpSupplierMapper extends BaseMapperX<ErpSupplierDO> {
                 .orderByDesc(ErpSupplierDO::getId));
     }
 
+    default List<ErpSupplierDO> selectListByStatus(Integer status) {
+        return selectList(ErpSupplierDO::getStatus, status);
+    }
+
 }

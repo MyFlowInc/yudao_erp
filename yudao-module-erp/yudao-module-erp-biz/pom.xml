@@ -69,8 +69,14 @@
             <groupId>cn.iocoder.boot</groupId>
             <artifactId>yudao-spring-boot-starter-excel</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.27</version>
+            <scope>compile</scope>
+        </dependency>
 
-<!--        &lt;!&ndash; Test 测试相关 &ndash;&gt;-->
+        <!--        &lt;!&ndash; Test 测试相关 &ndash;&gt;-->
 <!--        <dependency>-->
 <!--            <groupId>cn.iocoder.boot</groupId>-->
 <!--            <artifactId>yudao-spring-boot-starter-test</artifactId>-->

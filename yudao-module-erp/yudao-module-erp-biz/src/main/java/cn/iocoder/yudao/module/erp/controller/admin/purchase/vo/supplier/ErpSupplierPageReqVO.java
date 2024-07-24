@@ -23,7 +23,7 @@ public class ErpSupplierPageReqVO extends PageParam {
     private String name;
 
     @Schema(description = "供应商分类id")
-    private String supplierClassification;
+    private Long supplierClassification;
 
     @Schema(description = "父级编号", example = "9216")
     private String parentId;

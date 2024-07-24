@@ -16,6 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.*;
 import javax.servlet.http.*;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.io.IOException;
@@ -120,19 +123,26 @@ public class PurchaseRequisitionController {
         ExcelUtils.write(response, "新增请购.xls", "数据", PurchaseRequisitionRespVO.class,
                         BeanUtils.toBean(list, PurchaseRequisitionRespVO.class));
     }
-
-
     @GetMapping("/project")
     @Operation(summary = "获得ailuo项目信息")
     public CommonResult<List<ErpAiluoSplProjectVO>> getErpSplProjectList() {
         List<ErpAiluoSplProjectVO> erpAiluoSplProjects = null;
+        String sql = "SELECT * FROM spl_project WHERE status = ?";
+        Object[] params = { "ended" };
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            String sql = "SELECT * FROM spl_project WHERE status = ?";
-            erpAiluoSplProjects = JDBCConfig.executeQuery(sql, "ended");
-            // 处理结果集
+            rs = JDBCConfig.executeQuery(sql, params);
+            // 处理 ResultSet 并映射为对象列表
+            erpAiluoSplProjects = JDBCConfig.mapResultSetToErpAiluoSplProjects(rs);
+
         } catch (SQLException e) {
-            // 处理异常
+            // 或者其他错误处理
             e.printStackTrace();
+        } finally {
+            // 关闭资源
+            JDBCConfig.closeResources(conn, stmt, rs);
         }
         return success(erpAiluoSplProjects);
     }

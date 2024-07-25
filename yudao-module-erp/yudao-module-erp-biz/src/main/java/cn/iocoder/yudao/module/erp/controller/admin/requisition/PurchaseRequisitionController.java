@@ -1,11 +1,18 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
-import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionServiceImpl;
+import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
+import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
+import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -49,6 +56,10 @@ public class PurchaseRequisitionController {
     private ErpProductService productService;
     @Resource
     private ErpStockService stockService;
+    @Resource
+    private AdminUserApi adminUserApi;
+    @Resource
+    private ErpAiluoProjectsService ailuoProjectsService;
 
 
     @PostMapping("/create")
@@ -106,24 +117,7 @@ public class PurchaseRequisitionController {
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<PageResult<PurchaseRequisitionRespVO>> getPurchaseRequisitionPage(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
         PageResult<PurchaseRequisitionDO> pageResult = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO);
-        // 转换 PurchaseRequisitionDO 到 PurchaseRequisitionRespVO
-        List<PurchaseRequisitionRespVO> respVOList = pageResult.getList().stream()
-                .map(reqDO -> {
-                    PurchaseRequisitionRespVO respVO = BeanUtils.toBean(reqDO, PurchaseRequisitionRespVO.class);
-                    return respVO;
-                })
-                .collect(Collectors.toList());
-        // 处理每个 PurchaseRequisitionRespVO 的产品名称
-        respVOList.forEach(respVO -> {
-            List<String> productNames = purchaseRequisitionService.selectListProductId(respVO.getId()).stream()
-                    .map(product -> productService.getProduct(product.getProductId()).getName())
-                    .collect(Collectors.toList());
-            respVO.setProductName(productNames.toString());
-        });
-        // 替换原来的列表
-        PageResult<PurchaseRequisitionRespVO> respPageResult = new PageResult<>();
-        respPageResult.setList(respVOList);
-        return success(respPageResult);
+        return success(buildPurchaseRequisitionVOPageResult(pageResult));
     }
 
     @GetMapping("/export-excel")
@@ -137,6 +131,26 @@ public class PurchaseRequisitionController {
         // 导出 Excel
         ExcelUtils.write(response, "新增请购.xls", "数据", PurchaseRequisitionRespVO.class,
                         BeanUtils.toBean(list, PurchaseRequisitionRespVO.class));
+    }
+
+    private PageResult<PurchaseRequisitionRespVO> buildPurchaseRequisitionVOPageResult(PageResult<PurchaseRequisitionDO> pageResult) {
+        if (CollUtil.isEmpty(pageResult.getList())) {
+            return PageResult.empty(pageResult.getTotal());
+        }
+        // 1.1 项目列表
+        Map<Long, ErpAiluoProjectDO> projectMap = ailuoProjectsService.getProjectMap(
+                convertSet(pageResult.getList(), purchaseRequisition -> Long.parseLong(purchaseRequisition.getAssociationProject())));
+        // 1.2 管理员信息
+        Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
+                convertSet(pageResult.getList(), purchaseRequisition -> Long.parseLong(purchaseRequisition.getCreator())));
+        // 2. 开始拼接
+        return BeanUtils.toBean(pageResult, PurchaseRequisitionRespVO.class, purchaseRequisition -> {
+            List<RequisitionProductDO> productItemList = purchaseRequisitionService.getRequisitionProductListByOrderId(purchaseRequisition.getId());
+            List<String> productNames = CollectionUtils.convertList(productItemList, item -> productService.getProduct(item.getProductId()).getName());
+            purchaseRequisition.setProductName(String.join("，", productNames));
+            MapUtils.findAndThen(projectMap, purchaseRequisition.getAssociationProject(), project -> purchaseRequisition.setProjectName(project.getName()));
+            MapUtils.findAndThen(userMap, Long.parseLong(purchaseRequisition.getCreator()), user -> purchaseRequisition.setCreatorName(user.getNickname()));
+        });
     }
 
 //    // ==================== 子表（请购产品） ====================

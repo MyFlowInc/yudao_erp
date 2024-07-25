@@ -41,6 +41,10 @@ public class PurchaseRequisitionRespVO {
     @ExcelProperty("关联项目")
     private Long associationProject;
 
+    @Schema(description = "关联项目名称")
+    @ExcelProperty("关联项目名称")
+    private String projectName;
+
     @Schema(description = "附件")
     @ExcelProperty("附件")
     private String annex;
@@ -52,8 +56,13 @@ public class PurchaseRequisitionRespVO {
     @Schema(description = "备注", example = "你猜")
     @ExcelProperty("备注")
     private String remark;
+
     @Schema(description = "创建人")
     private String creator;
+
+    @Schema(description = "创建人名称")
+    @ExcelProperty("创建人名称")
+    private String creatorName;
 
     @Schema(description = "产品名称")
     private String productName;

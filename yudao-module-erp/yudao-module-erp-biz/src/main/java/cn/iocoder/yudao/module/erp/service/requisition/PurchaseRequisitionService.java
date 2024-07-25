@@ -71,12 +71,4 @@ public interface PurchaseRequisitionService {
      * @param status 状态
      */
     void updatePurchaseRequisitionStatus(Long id, Integer status);
-
-	/**
-	 * 获得请购产品
-	 *
-	 * @param id 编号
-     * @return 请购产品
-	 */
-    List<RequisitionProductDO> selectListProductId(Long id);
 }

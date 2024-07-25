@@ -196,11 +196,6 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
         requisitionProductMapper.deleteById(id);
     }
 
-    @Override
-    public List<RequisitionProductDO> selectListProductId(Long id) {
-        return requisitionProductMapper.selectListProductId(id);
-    }
-
     private void validateRequisitionProductExists(Long id) {
         if (requisitionProductMapper.selectById(id) == null) {
             throw exception(REQUISITION_PRODUCT_NOT_EXISTS);

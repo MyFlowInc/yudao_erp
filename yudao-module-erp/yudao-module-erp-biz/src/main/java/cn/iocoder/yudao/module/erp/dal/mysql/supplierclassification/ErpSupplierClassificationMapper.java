@@ -29,6 +29,14 @@ public interface ErpSupplierClassificationMapper extends BaseMapperX<ErpSupplier
                 .orderByDesc(ErpSupplierClassificationDO::getId));
     }
 
+    default List<ErpSupplierClassificationDO> selecStatusIsZeroList(ErpSupplierClassificationListReqVO reqVO) {
+        LambdaQueryWrapperX<ErpSupplierClassificationDO> queryWrapper = (LambdaQueryWrapperX<ErpSupplierClassificationDO>) new LambdaQueryWrapperX<ErpSupplierClassificationDO>()
+                .apply("status != 1")
+                .orderByDesc(ErpSupplierClassificationDO::getId);
+        // 如果前端传递了参数，则根据参数进行条件查询
+        return selectList(queryWrapper);
+    }
+
 	default ErpSupplierClassificationDO selectByParentIdAndName(Long parentId, String name) {
 	    return selectOne(ErpSupplierClassificationDO::getParentId, parentId, ErpSupplierClassificationDO::getName, name);
 	}

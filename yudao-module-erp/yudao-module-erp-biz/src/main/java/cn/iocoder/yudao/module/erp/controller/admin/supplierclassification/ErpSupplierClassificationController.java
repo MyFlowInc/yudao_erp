@@ -73,12 +73,19 @@ public class ErpSupplierClassificationController {
         return success(BeanUtils.toBean(supplierClassification, ErpSupplierClassificationRespVO.class));
     }
 
-    @PermitAll
     @GetMapping("/list")
     @Operation(summary = "获得供应商分类列表")
     @PreAuthorize("@ss.hasPermission('erp:supplier-classification:query')")
     public CommonResult<List<ErpSupplierClassificationRespVO>> getSupplierClassificationList(@Valid ErpSupplierClassificationListReqVO listReqVO) {
         List<ErpSupplierClassificationDO> list = supplierClassificationService.getSupplierClassificationList(listReqVO);
+        return success(BeanUtils.toBean(list, ErpSupplierClassificationRespVO.class));
+    }
+
+    @GetMapping("/enlist")
+    @Operation(summary = "获得供应商分类列表")
+    @PreAuthorize("@ss.hasPermission('erp:supplier-classification:query')")
+    public CommonResult<List<ErpSupplierClassificationRespVO>> getStatusIsZeroList(@Valid ErpSupplierClassificationListReqVO listReqVO) {
+        List<ErpSupplierClassificationDO> list = supplierClassificationService.selecStatusIsZeroList(listReqVO);
         return success(BeanUtils.toBean(list, ErpSupplierClassificationRespVO.class));
     }
 

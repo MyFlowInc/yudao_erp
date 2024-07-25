@@ -58,5 +58,4 @@ public class BeanUtils {
         }
         return new PageResult<>(list, source.getTotal());
     }
-
 }

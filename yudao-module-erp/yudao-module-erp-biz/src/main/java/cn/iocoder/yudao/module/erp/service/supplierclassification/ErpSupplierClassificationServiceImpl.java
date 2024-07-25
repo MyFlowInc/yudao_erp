@@ -54,12 +54,38 @@ public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassifi
         validateParentSupplierClassification(updateReqVO.getId(), updateReqVO.getParentId());
         // 校验分类名称的唯一性
         validateSupplierClassificationNameUnique(updateReqVO.getId(), updateReqVO.getParentId(), updateReqVO.getName());
-
         // 更新
+
+        if (updateReqVO.getStatus() == 1) {
+            // 查询并递归更新所有子节点状态为1
+            recursiveUpdateStatus(updateReqVO.getId());
+        }
         ErpSupplierClassificationDO updateObj = BeanUtils.toBean(updateReqVO, ErpSupplierClassificationDO.class);
         supplierClassificationMapper.updateById(updateObj);
     }
-
+    /**
+     * 递归更新所有子节点及其后代节点的状态为1
+     * @param id 当前节点ID
+     */
+    private void recursiveUpdateStatus(Long id) {
+        // 查询当前节点的子节点
+        ErpSupplierClassificationListReqVO queryVO = new ErpSupplierClassificationListReqVO();
+        queryVO.setParentId(id);
+        List<ErpSupplierClassificationDO> children = supplierClassificationMapper.selectList(queryVO);
+        if (children != null && !children.isEmpty()) {
+            // 递归更新每个子节点及其子节点的状态为1
+            for (ErpSupplierClassificationDO child : children) {
+                if (child != null) {
+                    // 设置状态为1
+                    child.setStatus("1");
+                    // 更新子节点状态为1
+                    supplierClassificationMapper.updateById(child);
+                    // 递归更新子节点的子节点
+                    recursiveUpdateStatus(child.getId());
+                }
+            }
+        }
+    }
     @Override
     public void deleteSupplierClassification(Long id) {
         // 校验存在
@@ -92,7 +118,8 @@ public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassifi
             throw exception(SUPPLIER_CLASSIFICATION_PARENT_NOT_EXITS);
         }
         // 3. 递归校验父供应商分类，如果父供应商分类是自己的子供应商分类，则报错，避免形成环路
-        if (id == null) { // id 为空，说明新增，不需要考虑环路
+        // id 为空，说明新增，不需要考虑环路
+        if (id == null) {
             return;
         }
         for (int i = 0; i < Short.MAX_VALUE; i++) {
@@ -134,6 +161,11 @@ public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassifi
     @Override
     public List<ErpSupplierClassificationDO> getSupplierClassificationList(ErpSupplierClassificationListReqVO listReqVO) {
         return supplierClassificationMapper.selectList(listReqVO);
+    }
+
+    @Override
+    public List<ErpSupplierClassificationDO> selecStatusIsZeroList(ErpSupplierClassificationListReqVO listReqVO) {
+        return supplierClassificationMapper.selecStatusIsZeroList(listReqVO);
     }
 
 }

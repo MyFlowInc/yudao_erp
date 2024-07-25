@@ -2,7 +2,9 @@ package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionServiceImpl;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -17,6 +19,7 @@ import javax.servlet.http.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -103,7 +106,24 @@ public class PurchaseRequisitionController {
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<PageResult<PurchaseRequisitionRespVO>> getPurchaseRequisitionPage(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
         PageResult<PurchaseRequisitionDO> pageResult = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO);
-        return success(BeanUtils.toBean(pageResult, PurchaseRequisitionRespVO.class));
+        // 转换 PurchaseRequisitionDO 到 PurchaseRequisitionRespVO
+        List<PurchaseRequisitionRespVO> respVOList = pageResult.getList().stream()
+                .map(reqDO -> {
+                    PurchaseRequisitionRespVO respVO = BeanUtils.toBean(reqDO, PurchaseRequisitionRespVO.class);
+                    return respVO;
+                })
+                .collect(Collectors.toList());
+        // 处理每个 PurchaseRequisitionRespVO 的产品名称
+        respVOList.forEach(respVO -> {
+            List<String> productNames = purchaseRequisitionService.selectListProductId(respVO.getId()).stream()
+                    .map(product -> productService.getProduct(product.getProductId()).getName())
+                    .collect(Collectors.toList());
+            respVO.setProductName(productNames.toString());
+        });
+        // 替换原来的列表
+        PageResult<PurchaseRequisitionRespVO> respPageResult = new PageResult<>();
+        respPageResult.setList(respVOList);
+        return success(respPageResult);
     }
 
     @GetMapping("/export-excel")

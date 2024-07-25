@@ -55,6 +55,9 @@ public class PurchaseRequisitionRespVO {
     @Schema(description = "创建人")
     private String creator;
 
+    @Schema(description = "产品名称")
+    private String productName;
+
     @Schema(description = "创建时间")
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;

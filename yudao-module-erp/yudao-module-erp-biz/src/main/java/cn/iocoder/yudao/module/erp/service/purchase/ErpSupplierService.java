@@ -73,4 +73,12 @@ public interface ErpSupplierService {
      */
     PageResult<ErpSupplierDO> getSupplierPage(ErpSupplierPageReqVO pageReqVO);
 
+    /**
+     * 获得供应商已开启列表
+     *
+     * @param status 编号状态
+     * @return 供应商列表
+     */
+    List<ErpSupplierDO> selectListByStatus(Integer status);
+
 }

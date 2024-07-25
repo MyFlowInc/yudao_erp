@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.supplierclassification.vo;
 
+import cn.iocoder.yudao.module.erp.dal.dataobject.supplierclassification.ErpSupplierClassificationDO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -39,5 +40,4 @@ public class ErpSupplierClassificationRespVO {
     @Schema(description = "创建时间")
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
-
 }

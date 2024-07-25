@@ -82,4 +82,10 @@ public class ErpSupplierServiceImpl implements ErpSupplierService {
         return supplierMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public List<ErpSupplierDO> selectListByStatus(Integer status) {
+        status = 0;
+        return supplierMapper.selectListByStatus(status);
+    }
+
 }

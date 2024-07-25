@@ -40,22 +40,17 @@ import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionService {
 
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private PurchaseRequisitionMapper purchaseRequisitionMapper;
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private RequisitionProductMapper requisitionProductMapper;
 
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private ErpNoRedisDAO noRedisDAO;
 
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private ErpProductService productService;
 
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private ErpAccountService accountService;
 
     @Override
@@ -202,10 +197,9 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     }
 
     @Override
-    public List<RequisitionProductDO> getRequisitionProduct(Long id) {
+    public List<RequisitionProductDO> selectListProductId(Long id) {
         return requisitionProductMapper.selectListProductId(id);
     }
-
 
     private void validateRequisitionProductExists(Long id) {
         if (requisitionProductMapper.selectById(id) == null) {

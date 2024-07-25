@@ -74,13 +74,14 @@ public class ErpSupplierController {
     @PreAuthorize("@ss.hasPermission('erp:supplier:query')")
     public CommonResult<PageResult<ErpSupplierRespVO>> getSupplierPage(@Valid ErpSupplierPageReqVO pageReqVO) {
         PageResult<ErpSupplierDO> pageResult = supplierService.getSupplierPage(pageReqVO);
-        if (pageResult != null){
-            for (ErpSupplierDO page : pageResult.getList()){
-                ErpSupplierClassificationDO supplierClassification = supplierClassificationService.getSupplierClassification(page.getSupplierClassification());
-                page.setChildren(supplierClassification);
-            }
-        }
         return success(BeanUtils.toBean(pageResult, ErpSupplierRespVO.class));
+    }
+    @GetMapping("/list")
+    @Operation(summary = "获得ERP 供应商分页")
+    @PreAuthorize("@ss.hasPermission('erp:supplier:query')")
+    public CommonResult<List<ErpSupplierRespVO>> selectListByStatus() {
+        List<ErpSupplierDO> erpSupplierDOS = supplierService.selectListByStatus(null);
+        return success(BeanUtils.toBean(erpSupplierDOS, ErpSupplierRespVO.class));
     }
 
     @GetMapping("/export-excel")

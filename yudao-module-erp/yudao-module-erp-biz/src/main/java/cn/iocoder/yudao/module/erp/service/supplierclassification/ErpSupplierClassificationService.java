@@ -53,4 +53,5 @@ public interface ErpSupplierClassificationService {
      */
     List<ErpSupplierClassificationDO> getSupplierClassificationList(ErpSupplierClassificationListReqVO listReqVO);
 
+    List<ErpSupplierClassificationDO>selecStatusIsZeroList(ErpSupplierClassificationListReqVO listReqVO);
 }

@@ -1,4 +1,4 @@
-package cn.iocoder.yudao.module.erp.controller.admin.requisition.vo;
+package cn.iocoder.yudao.module.erp.controller.admin.project.vo;
 
 import lombok.Data;
 

@@ -54,6 +54,10 @@ spring:
           url: jdbc:mysql://127.0.0.1:3306/ruoyi?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
           username: root
           password: 123456
+        ailuo:
+          url: jdbc:mysql://rm-uf6d0o1236tchk4pg7o.mysql.rds.aliyuncs.com/pear-admin-pro?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
+          username: flow
+          password: "@zjyfrank5903143"
 
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
   redis:

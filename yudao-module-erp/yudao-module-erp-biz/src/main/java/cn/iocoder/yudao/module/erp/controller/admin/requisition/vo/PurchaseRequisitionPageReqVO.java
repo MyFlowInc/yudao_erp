@@ -22,7 +22,7 @@ public class PurchaseRequisitionPageReqVO extends PageParam {
     private String requisitionCode;
 
     @Schema(description = "请购类型", example = "2")
-    private String requisitionType;
+    private Integer requisitionType;
 
     @Schema(description = "请购单时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

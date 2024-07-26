@@ -34,7 +34,7 @@ public class PurchaseRequisitionDO extends BaseDO {
     /**
      * 请购类型
      */
-    private String requisitionType;
+    private Integer requisitionType;
     /**
      * 请购单时间
      */
@@ -46,7 +46,7 @@ public class PurchaseRequisitionDO extends BaseDO {
     /**
      * 关联项目
      */
-    private String associationProject;
+    private Long associationProject;
     /**
      * 附件
      */

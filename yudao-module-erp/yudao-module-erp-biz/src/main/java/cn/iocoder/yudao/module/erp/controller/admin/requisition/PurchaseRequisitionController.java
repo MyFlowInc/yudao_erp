@@ -138,7 +138,7 @@ public class PurchaseRequisitionController {
         }
         // 1.1 项目列表
         Map<Long, ErpAiluoProjectDO> projectMap = ailuoProjectsService.getProjectMap(
-                convertSet(pageResult.getList(), purchaseRequisition -> Long.parseLong(purchaseRequisition.getAssociationProject())));
+                convertSet(pageResult.getList(), purchaseRequisition -> purchaseRequisition.getAssociationProject()));
         // 1.2 管理员信息
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
                 convertSet(pageResult.getList(), purchaseRequisition -> Long.parseLong(purchaseRequisition.getCreator())));

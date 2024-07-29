@@ -117,23 +117,24 @@ public class ErpPurchaseOrderController {
                 convertSet(purchaseOrderItemList, ErpPurchaseOrderItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseOrder, ErpPurchaseOrderRespVO.class, purchaseOrderVO ->
                 purchaseOrderVO.setItems(BeanUtils.toBean(purchaseOrderItemList, ErpPurchaseOrderRespVO.Item.class, item -> {
-                    if (item.getAssociatedBatchId() != null&&!item.getAssociatedBatchId().isEmpty()){
-                        ErpProductBatchDO productBatch = productBatchService.getProductBatch(Long.valueOf(item.getAssociatedBatchId()));
+                    if (item.getAssociatedBatchId() != null){
+                        ErpProductBatchDO productBatch = productBatchService.getProductBatch(item.getAssociatedBatchId());
                         //设置单价
                         item.setProductPrice(productBatch.getUnitPrice());
                         //拼接批次信息
-                        item.setErpProductBatchRespVO(BeanUtils.toBean(productBatch,ErpProductBatchRespVO.class));
+                        item.setAssociatedBatchId(productBatch.getId());
+                        item.setAssociatedBatchName(productBatch.getName());
                     }
-                    if (item.getAssociatedRequisitionProductId()!=null && !item.getAssociatedRequisitionProductId().isEmpty()){
+                    if (item.getAssociatedRequisitionProductId()!=null){
                         //拼接请购项及请购单信息返回
                         RequisitionProductDO purchaseRequisitionProduct =
-                                purchaseRequisitionService.getPurchaseRequisitionProduct(Long.valueOf(item.getAssociatedRequisitionProductId()));
+                                purchaseRequisitionService.getPurchaseRequisitionProduct(item.getAssociatedRequisitionProductId());
                         if (purchaseRequisitionProduct != null) {
-                            PurchaseRequisitionDO purchaseRequisition =
-                                    purchaseRequisitionService.getPurchaseRequisition(purchaseRequisitionProduct.getAssociationRequisition());
-                            item.setPurchaseRequisitionRespVO(BeanUtils.toBean(purchaseRequisition,
-                                            PurchaseRequisitionRespVO.class)
-                                    .setItems(Collections.singletonList(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.Item.class))));
+                            PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(purchaseRequisitionProduct.getAssociationRequisition());
+                            item.setAssociatedRequisitionProductId(purchaseRequisitionProduct.getId());
+                            item.setAssociatedRequisitionProductNum(String.valueOf(purchaseRequisitionProduct.getCount()));
+                            item.setAssociatedRequisitionId(purchaseRequisition.getId());
+                            item.setAssociatedRequisitionCode(purchaseRequisition.getRequisitionCode());
                         }
                     }
                     BigDecimal purchaseCount = stockService.getStockCount(item.getProductId());

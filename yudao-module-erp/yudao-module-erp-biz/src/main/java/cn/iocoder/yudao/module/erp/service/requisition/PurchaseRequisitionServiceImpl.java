@@ -61,7 +61,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 
         // 2.1 插入订单
         PurchaseRequisitionDO purchaseRequisition = BeanUtils.toBean(createReqVO, PurchaseRequisitionDO.class, in -> in
-                .setRequisitionCode(no).setStatus(String.valueOf(ErpAuditStatus.PROCESS.getStatus())));
+                .setRequisitionCode(no).setStatus(ErpAuditStatus.PROCESS.getStatus()));
         purchaseRequisitionMapper.insert(purchaseRequisition);
         // 2.2 插入订单项
         requisitionItems.forEach(o -> o.setAssociationRequisition(purchaseRequisition.getId()));
@@ -169,8 +169,8 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
         }
 
         // 2. 更新状态
-        int updateCount = purchaseRequisitionMapper.updateByIdAndStatus(id, Integer.valueOf(purchaseRequisition.getStatus()),
-                new PurchaseRequisitionDO().setStatus(String.valueOf(status)));
+        int updateCount = purchaseRequisitionMapper.updateByIdAndStatus(id, purchaseRequisition.getStatus(),
+                new PurchaseRequisitionDO().setStatus(Integer.valueOf(String.valueOf(status))));
         if (updateCount == 0) {
             throw exception(approve ? REQUISITION_ORDER_UPDATE_FAIL_APPROVE : REQUISITION_ORDER__PROCESS_FAIL);
         }

@@ -130,18 +130,24 @@ public class ErpPurchaseOrderRespVO {
          * 关联批次信息id
          */
         @Schema(description = "关联批次信息id", example = "随便")
-        private String associatedBatchId;
+        private Long associatedBatchId;
+
+        @Schema(description = "关联批次信息名称", example = "随便")
+        private String associatedBatchName;
         /**
          * 关联请购产品项id
          */
         @Schema(description = "关联请购产品项id", example = "随便")
-        private String associatedRequisitionProductId;
+        private Long associatedRequisitionProductId;
 
-        @Schema(description = "批次信息", requiredMode = Schema.RequiredMode.REQUIRED)
-        private ErpProductBatchRespVO erpProductBatchRespVO;
+        @Schema(description = "关联请购产品数量", example = "随便")
+        private String associatedRequisitionProductNum;
 
-        @Schema(description = "请购项及请购单信息", requiredMode = Schema.RequiredMode.REQUIRED)
-        private PurchaseRequisitionRespVO purchaseRequisitionRespVO;
+        @Schema(description = "关联请购单Id", example = "随便")
+        private Long associatedRequisitionId;
+
+        @Schema(description = "关联请购单编号", example = "随便")
+        private String associatedRequisitionCode;
 
         // ========== 采购入库 ==========
 

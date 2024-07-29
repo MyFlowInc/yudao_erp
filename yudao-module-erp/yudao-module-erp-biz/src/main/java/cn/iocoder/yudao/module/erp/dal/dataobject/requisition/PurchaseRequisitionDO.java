@@ -54,7 +54,7 @@ public class PurchaseRequisitionDO extends BaseDO {
     /**
      * 审核类型
      */
-    private String status;
+    private Integer status;
     /**
      * 备注
      */

@@ -94,7 +94,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             o.setOrderId(purchaseOrder.getId());
             RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(Long.valueOf(o.getAssociatedRequisitionProductId()));
             //校验此采购项关联的请购项是否已被其他采购单选中
-            verifyIfselected(requisitionProductDO.getSelected());
+//            verifyIfselected(requisitionProductDO.getSelected());
             requisitionProductMapper.updateById(new RequisitionProductDO().setId(Long.valueOf(o.getAssociatedRequisitionProductId())).setSelected("yes"));
         });
         purchaseOrderItemMapper.insertBatch(purchaseOrderItems);
@@ -171,17 +171,17 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                 RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
                 int result = compareBigDecimal(o.getCount(), requisitionProductDO.getCount());
                 if (result == ONE){
-                    requisitionProductDO.setStatus(END);
+                    requisitionProductDO.setStatus(ONE);
                     requisitionProductMapper.updateById(requisitionProductDO);
                     List<RequisitionProductDO> requisitionProductDOS = requisitionProductMapper.selectListByOrderId(requisitionProductDO.getAssociationRequisition());
                     if (!requisitionProductDOS.isEmpty()) {
                         // 过滤出状态等于特定值的元素
                         List<RequisitionProductDO> filteredList = requisitionProductDOS.stream()
-                                .filter(product -> END.equals(product.getStatus()))
+                                .filter(product -> ONE == product.getStatus())
                                 .collect(Collectors.toList());
                         if (requisitionProductDOS.size() == filteredList.size()) {
                             RequisitionProductDO requisitionProductDO1 = requisitionProductDOS.get(0);
-                            purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProductDO1.getAssociationRequisition()).setStatus("end"));
+                            purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProductDO1.getAssociationRequisition()).setStatus(ONE));
                         }
                     }
 
@@ -228,7 +228,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
-            diffList.get(0).forEach(o -> o.setOrderId(id));
+            diffList.get(0).forEach(o -> {
+
+                o.setOrderId(id);
+            });
             purchaseOrderItemMapper.insertBatch(diffList.get(0));
         }
         if (CollUtil.isNotEmpty(diffList.get(1))) {

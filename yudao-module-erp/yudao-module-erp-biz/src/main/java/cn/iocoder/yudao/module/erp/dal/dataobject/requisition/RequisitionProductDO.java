@@ -40,7 +40,7 @@ public class RequisitionProductDO extends BaseDO {
     /**
      * 状态
      */
-    private String status;
+    private Integer status;
     /**
      * 是否被选中yes？no
      */

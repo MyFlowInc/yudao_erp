@@ -40,7 +40,7 @@ public class ErpProductBatchDO extends BaseDO {
     /**
      * 关联产品
      */
-    private String associationProductId;
+    private Long associationProductId;
 
     /**
      * 产品单价

@@ -40,6 +40,8 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
+import static com.fhs.common.constant.Constant.ONE;
+import static com.fhs.common.constant.Constant.THREE;
 import static org.apache.commons.lang3.BooleanUtils.NO;
 
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
@@ -138,7 +140,7 @@ public class PurchaseRequisitionController {
                             purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
                     // 过滤出 selected = "no" 的数据
                     List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
-                            .filter(item -> NO.equals(item.getSelected()))
+                            .filter(item -> ONE != item.getStatus())
                             .collect(Collectors.toList());
                     Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                             convertSet(filteredList, RequisitionProductDO::getProductId));

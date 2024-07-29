@@ -221,12 +221,14 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     private void updatePurchaseInItemList(Long id, List<ErpPurchaseInItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpPurchaseInItemDO> oldList = purchaseInItemMapper.selectListByInId(id);
-        List<List<ErpPurchaseInItemDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<ErpPurchaseInItemDO>> diffList = diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
 
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
             diffList.get(0).forEach(o -> o.setInId(id));
+
             purchaseInItemMapper.insertBatch(diffList.get(0));
         }
         if (CollUtil.isNotEmpty(diffList.get(1))) {

@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
+import reactor.core.publisher.Sinks;
 
 /**
  * 新增请购 Mapper
@@ -37,7 +38,7 @@ public interface PurchaseRequisitionMapper extends BaseMapperX<PurchaseRequisiti
             wrapper.eq(PurchaseRequisitionDO::getId, reqVO.getId());
         }
         // 添加状态不等于 "end" 的条件
-        wrapper.ne(PurchaseRequisitionDO::getStatus, "end");
+        wrapper.ne(PurchaseRequisitionDO::getStatus, 1);
         wrapper.orderByDesc(PurchaseRequisitionDO::getId);
         return selectList(wrapper);
     }

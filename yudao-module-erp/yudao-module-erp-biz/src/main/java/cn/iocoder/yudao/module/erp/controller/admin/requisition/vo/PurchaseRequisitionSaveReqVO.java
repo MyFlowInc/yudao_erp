@@ -20,7 +20,7 @@ public class PurchaseRequisitionSaveReqVO {
     @Schema(description = "请购编号")
     private String requisitionCode;
 
-    @Schema(description = "请购类型", example = "2")
+    @Schema(description = "请购类型")
     private String requisitionType;
 
     @Schema(description = "请购单时间")
@@ -56,7 +56,8 @@ public class PurchaseRequisitionSaveReqVO {
         @Schema(description = "产品数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
         @NotNull(message = "产品数量不能为空")
         private BigDecimal count;
-
+        @Schema(description = "状态", example = "随便")
+        private String status;
         @Schema(description = "备注", example = "随便")
         private String remark;
 

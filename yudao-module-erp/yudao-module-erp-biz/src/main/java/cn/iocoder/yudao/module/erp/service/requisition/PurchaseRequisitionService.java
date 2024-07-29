@@ -3,11 +3,9 @@ package cn.iocoder.yudao.module.erp.service.requisition;
 import java.util.*;
 import javax.validation.*;
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 
 /**
  * 新增请购 Service 接口
@@ -54,6 +52,14 @@ public interface PurchaseRequisitionService {
      */
     PageResult<PurchaseRequisitionDO> getPurchaseRequisitionPage(PurchaseRequisitionPageReqVO pageReqVO);
 
+    /**
+     * 获得所有未完成的请购单
+     *
+     * @param reqVO 分页查询
+     * @return 未完成的请购单
+     */
+    List<PurchaseRequisitionDO> selectStatusIsNotEndList(PurchaseRequisitionPageReqVO reqVO);
+
     // ==================== 请购单项 ====================
 
     /**
@@ -71,4 +77,13 @@ public interface PurchaseRequisitionService {
      * @param status 状态
      */
     void updatePurchaseRequisitionStatus(Long id, Integer status);
+    /**
+     * 获得请购项
+     *
+     * @param id 编号
+     * @return 请购项
+     */
+    RequisitionProductDO getPurchaseRequisitionProduct(Long id);
+
+
 }

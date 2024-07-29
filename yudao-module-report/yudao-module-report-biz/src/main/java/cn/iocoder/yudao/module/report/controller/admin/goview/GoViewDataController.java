@@ -46,7 +46,8 @@ public class GoViewDataController {
             @RequestBody(required = false) String body) { // params、body 按照需要去接收，这里仅仅是示例
         GoViewDataRespVO respVO = new GoViewDataRespVO();
         // 1. 数据维度
-        respVO.setDimensions(Arrays.asList("日期", "PV", "UV")); // PV 是每天访问次数；UV 是每天访问人数
+        // PV 是每天访问次数；UV 是每天访问人数
+        respVO.setDimensions(Arrays.asList("日期", "PV", "UV"));
         // 2. 明细数据列表
         // 目前通过随机的方式生成。一般来说，这里你可以写逻辑来实现数据的返回
         respVO.setSource(new LinkedList<>());

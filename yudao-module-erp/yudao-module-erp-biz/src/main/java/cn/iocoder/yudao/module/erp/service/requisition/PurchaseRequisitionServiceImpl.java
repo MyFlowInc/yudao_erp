@@ -1,25 +1,21 @@
 package cn.iocoder.yudao.module.erp.service.requisition;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.*;
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.erp.dal.mysql.requisition.PurchaseRequisitionMapper;
@@ -65,7 +61,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 
         // 2.1 插入订单
         PurchaseRequisitionDO purchaseRequisition = BeanUtils.toBean(createReqVO, PurchaseRequisitionDO.class, in -> in
-                .setRequisitionCode(no).setStatus(ErpAuditStatus.PROCESS.getStatus()));
+                .setRequisitionCode(no).setStatus(String.valueOf(ErpAuditStatus.PROCESS.getStatus())));
         purchaseRequisitionMapper.insert(purchaseRequisition);
         // 2.2 插入订单项
         requisitionItems.forEach(o -> o.setAssociationRequisition(purchaseRequisition.getId()));
@@ -131,6 +127,11 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
         return purchaseRequisitionMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public List<PurchaseRequisitionDO> selectStatusIsNotEndList(PurchaseRequisitionPageReqVO reqVO) {
+        return purchaseRequisitionMapper.selectStatusIsNotEndList(reqVO);
+    }
+
     private List<RequisitionProductDO> validateRequisitionItems(List<PurchaseRequisitionSaveReqVO.Item> list) {
         // 1. 校验产品存在
         productService.validProductList(convertSet(list, PurchaseRequisitionSaveReqVO.Item::getProductId));
@@ -168,12 +169,14 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
         }
 
         // 2. 更新状态
-        int updateCount = purchaseRequisitionMapper.updateByIdAndStatus(id, purchaseRequisition.getStatus(),
-                new PurchaseRequisitionDO().setStatus(status));
+        int updateCount = purchaseRequisitionMapper.updateByIdAndStatus(id, Integer.valueOf(purchaseRequisition.getStatus()),
+                new PurchaseRequisitionDO().setStatus(String.valueOf(status)));
         if (updateCount == 0) {
             throw exception(approve ? REQUISITION_ORDER_UPDATE_FAIL_APPROVE : REQUISITION_ORDER__PROCESS_FAIL);
         }
     }
+
+
 
     // ==================== 请购单项 ====================
 
@@ -181,7 +184,10 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     public List<RequisitionProductDO> getRequisitionProductListByOrderId(Long orderId) {
         return requisitionProductMapper.selectListByOrderId(orderId);
     }
-
+    @Override
+    public RequisitionProductDO getPurchaseRequisitionProduct(Long id) {
+        return requisitionProductMapper.selectById(id);
+    }
     public void updateRequisitionProduct(RequisitionProductDO requisitionProduct) {
         // 校验存在
         validateRequisitionProductExists(requisitionProduct.getId());
@@ -201,6 +207,7 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
             throw exception(REQUISITION_PRODUCT_NOT_EXISTS);
         }
     }
+
     public List<RequisitionProductDO> getRequisitionProductListByOrderIds (Collection<Long> orderIds) {
         if (CollUtil.isEmpty(orderIds)) {
             return Collections.emptyList();

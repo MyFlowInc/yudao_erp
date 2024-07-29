@@ -18,6 +18,8 @@ import javax.annotation.Resource;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
+import static com.fhs.common.constant.Constant.DISABLE;
+import static com.fhs.common.constant.Constant.ENABLED;
 
 /**
  * 供应商分类 Service 实现类
@@ -56,8 +58,8 @@ public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassifi
         validateSupplierClassificationNameUnique(updateReqVO.getId(), updateReqVO.getParentId(), updateReqVO.getName());
         // 更新
 
-        if (updateReqVO.getStatus() == 1) {
-            // 查询并递归更新所有子节点状态为1
+        if (Objects.equals(updateReqVO.getStatus(), ENABLED)) {
+            // 查询并递归更新所有子节点状态为关闭
             recursiveUpdateStatus(updateReqVO.getId());
         }
         ErpSupplierClassificationDO updateObj = BeanUtils.toBean(updateReqVO, ErpSupplierClassificationDO.class);
@@ -73,12 +75,12 @@ public class ErpSupplierClassificationServiceImpl implements ErpSupplierClassifi
         queryVO.setParentId(id);
         List<ErpSupplierClassificationDO> children = supplierClassificationMapper.selectList(queryVO);
         if (children != null && !children.isEmpty()) {
-            // 递归更新每个子节点及其子节点的状态为1
+            // 递归更新每个子节点及其子节点的状态为关闭
             for (ErpSupplierClassificationDO child : children) {
                 if (child != null) {
-                    // 设置状态为1
-                    child.setStatus("1");
-                    // 更新子节点状态为1
+                    // 设置状态为关闭
+                    child.setStatus(String.valueOf(ENABLED));
+                    // 更新子节点状态为全部关闭
                     supplierClassificationMapper.updateById(child);
                     // 递归更新子节点的子节点
                     recursiveUpdateStatus(child.getId());

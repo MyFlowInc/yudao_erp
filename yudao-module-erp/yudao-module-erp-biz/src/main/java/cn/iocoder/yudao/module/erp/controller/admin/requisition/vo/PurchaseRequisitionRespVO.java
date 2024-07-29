@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import com.alibaba.excel.annotation.*;
 
@@ -86,7 +85,10 @@ public class PurchaseRequisitionRespVO {
         @Schema(description = "产品数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
         @NotNull(message = "产品数量不能为空")
         private BigDecimal count;
-
+        @Schema(description = "状态", example = "随便")
+        private String status;
+        @Schema(description = "是否已被选中", example = "随便")
+        private String selected;
         @Schema(description = "备注", example = "随便")
         private String remark;
 
@@ -100,9 +102,9 @@ public class PurchaseRequisitionRespVO {
         private String productUnitName;
 
         @Schema(description = "库存数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
-        private BigDecimal stockCount; // 该字段仅仅在“详情”和“编辑”时使用
+        private BigDecimal stockCount;
 
+        @Schema(description = "已采购数量")
+        private BigDecimal purchasedNum; // 该字段仅仅在“详情”和“编辑”时使用
     }
-    @Schema(description = "子项产品")
-    List<RequisitionProductDO> children;
 }

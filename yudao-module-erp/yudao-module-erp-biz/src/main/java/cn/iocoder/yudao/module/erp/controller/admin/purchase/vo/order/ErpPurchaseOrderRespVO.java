@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order;
 
+import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBatchRespVO;
+import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.PurchaseRequisitionRespVO;
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,7 +65,7 @@ public class ErpPurchaseOrderRespVO {
     @Schema(description = "定金金额，单位：元", requiredMode = Schema.RequiredMode.REQUIRED, example = "7127")
     private BigDecimal depositPrice;
 
-    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
+    @Schema(description = "附件地址")
     @ExcelProperty("附件地址")
     private String fileUrl;
 
@@ -124,6 +126,22 @@ public class ErpPurchaseOrderRespVO {
 
         @Schema(description = "备注", example = "随便")
         private String remark;
+        /**
+         * 关联批次信息id
+         */
+        @Schema(description = "关联批次信息id", example = "随便")
+        private String associatedBatchId;
+        /**
+         * 关联请购产品项id
+         */
+        @Schema(description = "关联请购产品项id", example = "随便")
+        private String associatedRequisitionProductId;
+
+        @Schema(description = "批次信息", requiredMode = Schema.RequiredMode.REQUIRED)
+        private ErpProductBatchRespVO erpProductBatchRespVO;
+
+        @Schema(description = "请购项及请购单信息", requiredMode = Schema.RequiredMode.REQUIRED)
+        private PurchaseRequisitionRespVO purchaseRequisitionRespVO;
 
         // ========== 采购入库 ==========
 

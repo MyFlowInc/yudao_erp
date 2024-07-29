@@ -34,14 +34,14 @@ public class TenantContextHolder {
      *
      * @return 租户编号
      */
-    public static Long getRequiredTenantId() {
-        Long tenantId = getTenantId();
-//        if (tenantId == null) {
-//            throw new NullPointerException("TenantContextHolder 不存在租户编号！可参考文档："
-//                + DocumentEnum.TENANT.getUrl());
-//        }
-        return tenantId;
-    }
+//    public static Long getRequiredTenantId() {
+//        Long tenantId = getTenantId();
+////        if (tenantId == null) {
+////            throw new NullPointerException("TenantContextHolder 不存在租户编号！可参考文档："
+////                + DocumentEnum.TENANT.getUrl());
+////        }
+//        return tenantId;
+//    }
 
     public static void setTenantId(Long tenantId) {
         TENANT_ID.set(tenantId);

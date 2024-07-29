@@ -27,4 +27,7 @@ public interface ErpPurchaseOrderItemMapper extends BaseMapperX<ErpPurchaseOrder
         return delete(ErpPurchaseOrderItemDO::getOrderId, orderId);
     }
 
+    default ErpPurchaseOrderItemDO getPurchaseOrderItemByRequisitionProductId(Long id) {
+        return selectOne(ErpPurchaseOrderItemDO::getAssociatedRequisitionProductId, id);
+    }
 }

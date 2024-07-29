@@ -166,6 +166,7 @@ ErrorCode PURCHASE_ORDER_ITEM_RETURN_FAIL_IN_EXCEED = new ErrorCode(1_030_101_00
     ErrorCode FINANCE_RECEIPT_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_602_005, "收款单({})已审核，无法修改");
     ErrorCode PURCHASE_REQUISITION_NOT_EXISTS = new ErrorCode(1_030_602_006, "新增请购不存在");
     ErrorCode REQUISITION_PRODUCT_NOT_EXISTS = new ErrorCode(1_030_602_007, "请购产品不存在");
+    ErrorCode REQUISITION_PRODUCT_IS_SELECTED = new ErrorCode(1_030_602_008, "请购产品已被选中，不可再选");
     // ========== ERP 请购单（1-030-700-000） ==========
     ErrorCode REQUISITION_ORDER_NO_EXISTS = new ErrorCode(1-030-700-000, "生成请购单号失败，请重新提交");
     ErrorCode REQUISITION_ORDER_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_700_002, "请购单({})已审核，无法修改");
@@ -177,6 +178,7 @@ ErrorCode PURCHASE_ORDER_ITEM_RETURN_FAIL_IN_EXCEED = new ErrorCode(1_030_101_00
     ErrorCode SUPPLIER_CLASSIFICATION_PARENT_ERROR = new ErrorCode(1_030_700_012, "不能设置自己为父供应商分类");
     ErrorCode SUPPLIER_CLASSIFICATION_NAME_DUPLICATE = new ErrorCode(1_030_700_013, "已经存在该分类名称的供应商分类");
     ErrorCode SUPPLIER_CLASSIFICATION_PARENT_IS_CHILD = new ErrorCode(1_030_700_014, "不能设置自己的子ErpSupplierClassification为父ErpSupplierClassification");
-
+    //产品批次信息
+    ErrorCode PRODUCT_BATCH_NOT_EXISTS = new ErrorCode(1_030_700_015, "ERP产品批次信息为空");
 
 }

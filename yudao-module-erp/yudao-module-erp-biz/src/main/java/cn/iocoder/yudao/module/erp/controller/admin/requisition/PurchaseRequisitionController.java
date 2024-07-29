@@ -10,6 +10,7 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
+import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseOrderService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
@@ -26,6 +27,7 @@ import javax.servlet.http.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -38,6 +40,7 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
+import static org.apache.commons.lang3.BooleanUtils.NO;
 
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
@@ -49,6 +52,8 @@ import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionServic
 @RequestMapping("/erp/purchase-requisition")
 @Validated
 public class PurchaseRequisitionController {
+    @Resource
+    private ErpPurchaseOrderService purchaseOrderService;
     @Resource
     private PurchaseRequisitionService purchaseRequisitionService;
     @Resource
@@ -97,6 +102,10 @@ public class PurchaseRequisitionController {
         return success(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class, purchaseRequisitionVO ->
                 purchaseRequisitionVO.setItems(BeanUtils.toBean(requisitionProductItemList, PurchaseRequisitionRespVO.Item.class, item -> {
                     BigDecimal purchaseCount = stockService.getStockCount(item.getProductId());
+                    ErpPurchaseOrderItemDO purchaseOrderItem = purchaseOrderService.getPurchaseOrderItemByRequisitionProductId(item.getId());
+                    if (purchaseOrderItem != null){
+                        item.setPurchasedNum(purchaseOrderItem.getCount());
+                    }
                     item.setStockCount(purchaseCount != null ? purchaseCount : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
@@ -118,7 +127,33 @@ public class PurchaseRequisitionController {
         PageResult<PurchaseRequisitionDO> pageResult = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO);
         return success(buildPurchaseRequisitionVOPageResult(pageResult));
     }
-
+    @GetMapping("/list")
+    @Operation(summary = "获得新增请购分页")
+    @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
+    public CommonResult<List<PurchaseRequisitionRespVO>> getPurchaseRequisitionListAndProductList(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
+        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.selectStatusIsNotEndList(pageReqVO);
+        List<PurchaseRequisitionRespVO> result = purchaseRequisitionDOS.stream()
+                .map(o -> {
+                    List<RequisitionProductDO> requisitionProductItemList =
+                            purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
+                    // 过滤出 selected = "no" 的数据
+                    List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
+                            .filter(item -> NO.equals(item.getSelected()))
+                            .collect(Collectors.toList());
+                    Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
+                            convertSet(filteredList, RequisitionProductDO::getProductId));
+                    return BeanUtils.toBean(o, PurchaseRequisitionRespVO.class,
+                        purchaseRequisitionRespVO -> {
+                        purchaseRequisitionRespVO.setItems(
+                                BeanUtils.toBean(filteredList, PurchaseRequisitionRespVO.Item.class, item -> {
+                                    MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
+                                            .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
+                                }));
+                    });
+                })
+                .collect(Collectors.toList());
+        return success(result);
+    }
     @GetMapping("/export-excel")
     @Operation(summary = "导出新增请购 Excel")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:export')")
@@ -147,6 +182,7 @@ public class PurchaseRequisitionController {
             List<RequisitionProductDO> productItemList = purchaseRequisitionService.getRequisitionProductListByOrderId(purchaseRequisition.getId());
             List<String> productNames = CollectionUtils.convertList(productItemList, item -> productService.getProduct(item.getProductId()).getName());
             purchaseRequisition.setProductName(String.join("，", productNames));
+
             MapUtils.findAndThen(projectMap, purchaseRequisition.getAssociationProject(), project -> purchaseRequisition.setProjectName(project.getName()));
             MapUtils.findAndThen(userMap, Long.parseLong(purchaseRequisition.getCreator()), user -> purchaseRequisition.setCreatorName(user.getNickname()));
         });

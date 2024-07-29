@@ -38,6 +38,15 @@ public class RequisitionProductDO extends BaseDO {
      */
     private BigDecimal count;
     /**
+     * 状态
+     */
+    private String status;
+    /**
+     * 是否被选中yes？no
+     */
+    private String selected;
+
+    /**
      * 用途
      */
     private String useTo;
@@ -45,6 +54,7 @@ public class RequisitionProductDO extends BaseDO {
      * 关联请购单
      */
     private Long associationRequisition;
+
     /**
      * 备注
      */

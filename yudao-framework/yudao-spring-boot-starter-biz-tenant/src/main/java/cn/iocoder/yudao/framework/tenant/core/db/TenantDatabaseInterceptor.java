@@ -31,15 +31,16 @@ public class TenantDatabaseInterceptor implements TenantLineHandler {
 
     @Override
     public Expression getTenantId() {
-        return new LongValue(TenantContextHolder.getRequiredTenantId());
+//        return new LongValue(TenantContextHolder.getRequiredTenantId());
+        return null;
     }
 
     @Override
     public boolean ignoreTable(String tableName) {
         // 情况一，全局忽略多租户
-        return TenantContextHolder.isIgnore()
-                // 情况二，忽略多租户的表
-            || CollUtil.contains(ignoreTables, tableName);
+        return TenantContextHolder.isIgnore();
+//                // 情况二，忽略多租户的表
+//            || CollUtil.contains(ignoreTables, tableName);
     }
 
 }

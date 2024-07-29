@@ -64,8 +64,8 @@ public interface AuthConvert {
             // 获得父节点
             AuthPermissionInfoRespVO.MenuVO parentNode = treeNodeMap.get(childNode.getParentId());
             if (parentNode == null) {
-                LoggerFactory.getLogger(getClass()).error("[buildRouterTree][resource({}) 找不到父资源({})]",
-                        childNode.getId(), childNode.getParentId());
+//                LoggerFactory.getLogger(getClass()).error("[buildRouterTree][resource({}) 找不到父资源({})]",
+//                        childNode.getId(), childNode.getParentId());
                 return;
             }
             // 将自己添加到父节点中

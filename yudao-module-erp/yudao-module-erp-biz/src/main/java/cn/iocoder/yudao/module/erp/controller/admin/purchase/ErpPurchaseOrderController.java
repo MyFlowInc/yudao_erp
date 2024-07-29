@@ -9,15 +9,22 @@ import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
+import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBatchRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderSaveReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.PurchaseRequisitionRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpSupplierDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseOrderService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpSupplierService;
+import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
@@ -33,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +63,12 @@ public class ErpPurchaseOrderController {
     private ErpProductService productService;
     @Resource
     private ErpSupplierService supplierService;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private AdminUserApi adminUserApi;
+    @Resource
+    private PurchaseRequisitionService purchaseRequisitionService;
 
     @PostMapping("/create")
     @Operation(summary = "创建采购订单")
@@ -106,6 +117,25 @@ public class ErpPurchaseOrderController {
                 convertSet(purchaseOrderItemList, ErpPurchaseOrderItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseOrder, ErpPurchaseOrderRespVO.class, purchaseOrderVO ->
                 purchaseOrderVO.setItems(BeanUtils.toBean(purchaseOrderItemList, ErpPurchaseOrderRespVO.Item.class, item -> {
+                    if (item.getAssociatedBatchId() != null&&!item.getAssociatedBatchId().isEmpty()){
+                        ErpProductBatchDO productBatch = productBatchService.getProductBatch(Long.valueOf(item.getAssociatedBatchId()));
+                        //设置单价
+                        item.setProductPrice(productBatch.getUnitPrice());
+                        //拼接批次信息
+                        item.setErpProductBatchRespVO(BeanUtils.toBean(productBatch,ErpProductBatchRespVO.class));
+                    }
+                    if (item.getAssociatedRequisitionProductId()!=null && !item.getAssociatedRequisitionProductId().isEmpty()){
+                        //拼接请购项及请购单信息返回
+                        RequisitionProductDO purchaseRequisitionProduct =
+                                purchaseRequisitionService.getPurchaseRequisitionProduct(Long.valueOf(item.getAssociatedRequisitionProductId()));
+                        if (purchaseRequisitionProduct != null) {
+                            PurchaseRequisitionDO purchaseRequisition =
+                                    purchaseRequisitionService.getPurchaseRequisition(purchaseRequisitionProduct.getAssociationRequisition());
+                            item.setPurchaseRequisitionRespVO(BeanUtils.toBean(purchaseRequisition,
+                                            PurchaseRequisitionRespVO.class)
+                                    .setItems(Collections.singletonList(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.Item.class))));
+                        }
+                    }
                     BigDecimal purchaseCount = stockService.getStockCount(item.getProductId());
                     item.setStockCount(purchaseCount != null ? purchaseCount : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())

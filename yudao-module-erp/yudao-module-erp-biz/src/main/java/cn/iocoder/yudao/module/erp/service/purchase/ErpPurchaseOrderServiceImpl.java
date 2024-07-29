@@ -10,8 +10,13 @@ import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchas
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpSupplierMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.requisition.PurchaseRequisitionMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.requisition.RequisitionProductMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
@@ -26,10 +31,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
+import static com.fhs.common.constant.Constant.*;
 
 // TODO 芋艿：记录操作日志
 
@@ -46,17 +53,19 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     private ErpPurchaseOrderMapper purchaseOrderMapper;
     @Resource
     private ErpPurchaseOrderItemMapper purchaseOrderItemMapper;
-
+    @Resource
+    private PurchaseRequisitionMapper purchaseRequisitionMapper;
     @Resource
     private ErpNoRedisDAO noRedisDAO;
 
     @Resource
     private ErpProductService productService;
     @Resource
-    private ErpSupplierService supplierService;
-    @Resource
     private ErpAccountService accountService;
-
+    @Resource
+    private RequisitionProductMapper requisitionProductMapper;
+    @Resource
+    private ErpSupplierMapper supplierMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPurchaseOrder(ErpPurchaseOrderSaveReqVO createReqVO) {
@@ -80,7 +89,14 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         calculateTotalPrice(purchaseOrder, purchaseOrderItems);
         purchaseOrderMapper.insert(purchaseOrder);
         // 2.2 插入订单项
-        purchaseOrderItems.forEach(o -> o.setOrderId(purchaseOrder.getId()));
+//        purchaseOrderItems.forEach(o -> o.setOrderId(purchaseOrder.getId()));
+        purchaseOrderItems.forEach(o -> {
+            o.setOrderId(purchaseOrder.getId());
+            RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(Long.valueOf(o.getAssociatedRequisitionProductId()));
+            //校验此采购项关联的请购项是否已被其他采购单选中
+            verifyIfselected(requisitionProductDO.getSelected());
+            requisitionProductMapper.updateById(new RequisitionProductDO().setId(Long.valueOf(o.getAssociatedRequisitionProductId())).setSelected("yes"));
+        });
         purchaseOrderItemMapper.insertBatch(purchaseOrderItems);
         return purchaseOrder.getId();
     }
@@ -94,14 +110,13 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             throw exception(PURCHASE_ORDER_UPDATE_FAIL_APPROVE, purchaseOrder.getNo());
         }
         // 1.2 校验供应商
-//        supplierService.validateSupplier(updateReqVO.getSupplierId());
+        supplierMapper.selectById(updateReqVO.getSupplierId());
         // 1.3 校验结算账户
         if (updateReqVO.getAccountId() != null) {
             accountService.validateAccount(updateReqVO.getAccountId());
         }
         // 1.4 校验订单项的有效性
         List<ErpPurchaseOrderItemDO> purchaseOrderItems = validatePurchaseOrderItems(updateReqVO.getItems());
-
         // 2.1 更新订单
         ErpPurchaseOrderDO updateObj = BeanUtils.toBean(updateReqVO, ErpPurchaseOrderDO.class);
         calculateTotalPrice(updateObj, purchaseOrderItems);
@@ -123,6 +138,14 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         purchaseOrder.setTotalPrice(purchaseOrder.getTotalPrice().subtract(purchaseOrder.getDiscountPrice()));
     }
 
+    public static int compareBigDecimal(BigDecimal bd1, BigDecimal bd2) {
+        int comparisonResult = bd1.compareTo(bd2);
+        if (comparisonResult >= ONE) {
+            return ZERO;
+        } else {
+            return ONE;
+        }
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePurchaseOrderStatus(Long id, Integer status) {
@@ -141,7 +164,30 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         if (!approve && purchaseOrder.getReturnCount().compareTo(BigDecimal.ZERO) > 0) {
             throw exception(PURCHASE_ORDER_PROCESS_FAIL_EXISTS_RETURN);
         }
+        //遍历采购项，如果采购数量大于或等于请购数量，结束请购项目状态
+        List<ErpPurchaseOrderItemDO> erpPurchaseOrderDO = purchaseOrderItemMapper.selectListByOrderId(id);
+        if (!erpPurchaseOrderDO.isEmpty()) {
+            erpPurchaseOrderDO.forEach(o -> {
+                RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
+                int result = compareBigDecimal(o.getCount(), requisitionProductDO.getCount());
+                if (result == ONE){
+                    requisitionProductDO.setStatus(END);
+                    requisitionProductMapper.updateById(requisitionProductDO);
+                    List<RequisitionProductDO> requisitionProductDOS = requisitionProductMapper.selectListByOrderId(requisitionProductDO.getAssociationRequisition());
+                    if (!requisitionProductDOS.isEmpty()) {
+                        // 过滤出状态等于特定值的元素
+                        List<RequisitionProductDO> filteredList = requisitionProductDOS.stream()
+                                .filter(product -> END.equals(product.getStatus()))
+                                .collect(Collectors.toList());
+                        if (requisitionProductDOS.size() == filteredList.size()) {
+                            RequisitionProductDO requisitionProductDO1 = requisitionProductDOS.get(0);
+                            purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProductDO1.getAssociationRequisition()).setStatus("end"));
+                        }
+                    }
 
+                }
+            });
+        }
         // 2. 更新状态
         int updateCount = purchaseOrderMapper.updateByIdAndStatus(id, purchaseOrder.getStatus(),
                 new ErpPurchaseOrderDO().setStatus(status));
@@ -167,7 +213,12 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             }
         }));
     }
-
+    //校验此采购项关联的请购项是否已被其他采购单选中
+    public void verifyIfselected(String isSelected){
+        if ("yes".equals(isSelected)) {
+            throw exception(REQUISITION_PRODUCT_IS_SELECTED);
+        }
+    }
     private void updatePurchaseOrderItemList(Long id, List<ErpPurchaseOrderItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpPurchaseOrderItemDO> oldList = purchaseOrderItemMapper.selectListByOrderId(id);
@@ -184,6 +235,8 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             purchaseOrderItemMapper.updateBatch(diffList.get(1));
         }
         if (CollUtil.isNotEmpty(diffList.get(2))) {
+            //将请购项状态变更回未选中
+            diffList.get(2).forEach(item -> requisitionProductMapper.updateById(new RequisitionProductDO().setId(Long.valueOf(item.getAssociatedRequisitionProductId())).setSelected("no")));
             purchaseOrderItemMapper.deleteBatchIds(convertList(diffList.get(2), ErpPurchaseOrderItemDO::getId));
         }
     }
@@ -291,6 +344,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             return Collections.emptyList();
         }
         return purchaseOrderItemMapper.selectListByOrderIds(orderIds);
+    }
+    @Override
+    public ErpPurchaseOrderItemDO getPurchaseOrderItemByRequisitionProductId(Long id) {
+        return purchaseOrderItemMapper.getPurchaseOrderItemByRequisitionProductId(id);
     }
 
 }

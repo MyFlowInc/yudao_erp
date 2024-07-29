@@ -67,7 +67,16 @@ public class ErpPurchaseOrderSaveReqVO {
 
         @Schema(description = "备注", example = "随便")
         private String remark;
-
+        /**
+         * 关联批次信息id
+         */
+        @Schema(description = "关联批次信息id", example = "随便")
+        private String associatedBatchId;
+        /**
+         * 关联请购产品项id
+         */
+        @Schema(description = "关联请购产品项id", example = "随便")
+        private String associatedRequisitionProductId;
     }
 
 }

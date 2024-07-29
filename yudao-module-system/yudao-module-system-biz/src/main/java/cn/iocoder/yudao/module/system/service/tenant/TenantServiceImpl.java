@@ -272,9 +272,9 @@ public class TenantServiceImpl implements TenantService {
             return;
         }
         // 获得租户
-        TenantDO tenant = getTenant(TenantContextHolder.getRequiredTenantId());
+//        TenantDO tenant = getTenant(TenantContextHolder.getRequiredTenantId());
         // 执行处理器
-        handler.handle(tenant);
+        handler.handle((TenantDO) handler);
     }
 
     @Override

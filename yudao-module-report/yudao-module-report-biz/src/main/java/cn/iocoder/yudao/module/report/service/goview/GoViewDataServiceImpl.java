@@ -41,7 +41,8 @@ public class GoViewDataServiceImpl implements GoViewDataService {
         String[] columnNames = metaData.getColumnNames();
         respVO.setDimensions(Arrays.asList(columnNames));
         // 2.2 解析数据明细
-        respVO.setSource(new LinkedList<>()); // 由于数据量不确认，使用 LinkedList 虽然内存占用大一点，但是不存在扩容复制的问题
+        // 由于数据量不确认，使用 LinkedList 虽然内存占用大一点，但是不存在扩容复制的问题
+        respVO.setSource(new LinkedList<>());
         while (sqlRowSet.next()) {
             Map<String, Object> data = Maps.newHashMapWithExpectedSize(columnNames.length);
             for (String columnName : columnNames) {

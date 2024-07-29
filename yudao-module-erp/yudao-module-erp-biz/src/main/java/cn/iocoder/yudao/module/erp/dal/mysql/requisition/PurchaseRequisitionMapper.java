@@ -6,6 +6,8 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
+import com.alibaba.excel.util.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
@@ -28,6 +30,16 @@ public interface PurchaseRequisitionMapper extends BaseMapperX<PurchaseRequisiti
                 .eqIfPresent(PurchaseRequisitionDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(PurchaseRequisitionDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(PurchaseRequisitionDO::getId));
+    }
+    default List<PurchaseRequisitionDO> selectStatusIsNotEndList(PurchaseRequisitionPageReqVO reqVO) {
+        LambdaQueryWrapper<PurchaseRequisitionDO> wrapper = new LambdaQueryWrapper<>();
+        if (Objects.nonNull(reqVO.getId())) {
+            wrapper.eq(PurchaseRequisitionDO::getId, reqVO.getId());
+        }
+        // 添加状态不等于 "end" 的条件
+        wrapper.ne(PurchaseRequisitionDO::getStatus, "end");
+        wrapper.orderByDesc(PurchaseRequisitionDO::getId);
+        return selectList(wrapper);
     }
 
     default PurchaseRequisitionDO selectByNo(String no) {

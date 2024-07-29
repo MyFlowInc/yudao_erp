@@ -26,7 +26,7 @@ public class PurchaseRequisitionRespVO {
 
     @Schema(description = "请购类型", example = "2")
     @ExcelProperty("请购类型")
-    private String requisitionType;
+    private Integer requisitionType;
 
     @Schema(description = "请购单时间")
     @ExcelProperty("请购单时间")

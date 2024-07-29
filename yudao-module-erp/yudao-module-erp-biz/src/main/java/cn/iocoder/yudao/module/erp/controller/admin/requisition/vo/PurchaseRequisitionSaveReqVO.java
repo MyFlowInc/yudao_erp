@@ -20,8 +20,8 @@ public class PurchaseRequisitionSaveReqVO {
     @Schema(description = "请购编号")
     private String requisitionCode;
 
-    @Schema(description = "请购类型")
-    private String requisitionType;
+    @Schema(description = "请购类型", example = "2")
+    private Integer requisitionType;
 
     @Schema(description = "请购单时间")
     private LocalDateTime requisitionTime;
@@ -30,7 +30,7 @@ public class PurchaseRequisitionSaveReqVO {
     private LocalDateTime estimatedTime;
 
     @Schema(description = "关联项目")
-    private String associationProject;
+    private Long associationProject;
 
     @Schema(description = "附件")
     private String annex;

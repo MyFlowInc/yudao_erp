@@ -108,4 +108,6 @@ public interface ErpPurchaseOrderService {
     List<ErpPurchaseOrderItemDO> getPurchaseOrderItemListByOrderIds(Collection<Long> orderIds);
 
     ErpPurchaseOrderItemDO getPurchaseOrderItemByRequisitionProductId(Long id);
+
+    List<ErpPurchaseOrderItemDO> selectItemList(Long id);
 }

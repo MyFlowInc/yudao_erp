@@ -52,6 +52,10 @@ public class PurchaseRequisitionRespVO {
     @ExcelProperty("审核类型")
     private Integer status;
 
+    @Schema(description = "审核类型", example = "2")
+    @ExcelProperty("开启关闭")
+    private Integer open;
+
     @Schema(description = "备注", example = "你猜")
     @ExcelProperty("备注")
     private String remark;

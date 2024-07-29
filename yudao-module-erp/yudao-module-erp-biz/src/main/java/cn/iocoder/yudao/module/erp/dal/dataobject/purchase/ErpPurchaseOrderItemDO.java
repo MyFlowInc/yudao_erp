@@ -84,7 +84,7 @@ public class ErpPurchaseOrderItemDO extends BaseDO {
     /**
      * 关联请购产品项id
      */
-    private String associatedRequisitionProductId;
+    private Long associatedRequisitionProductId;
     // ========== 采购入库 ==========
     /**
      * 采购入库数量

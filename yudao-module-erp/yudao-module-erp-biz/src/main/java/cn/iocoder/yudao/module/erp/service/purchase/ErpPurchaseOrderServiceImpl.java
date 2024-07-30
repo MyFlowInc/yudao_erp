@@ -36,6 +36,7 @@ import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionU
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 import static com.fhs.common.constant.Constant.*;
+import static sun.print.ServiceDialog.APPROVE;
 
 // TODO 芋艿：记录操作日志
 
@@ -165,19 +166,19 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         if (!approve && purchaseOrder.getReturnCount().compareTo(BigDecimal.ZERO) > 0) {
             throw exception(PURCHASE_ORDER_PROCESS_FAIL_EXISTS_RETURN);
         }
-
-        // 查询订单相关的所有采购项
-        List<ErpPurchaseOrderItemDO> purchaseOrderItems = purchaseOrderItemMapper.selectListByOrderId(id);
+        if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
+            // 查询订单相关的所有采购项
+            List<ErpPurchaseOrderItemDO> purchaseOrderItems = purchaseOrderItemMapper.selectListByOrderId(id);
 // 如果订单中存在采购项
             if (!purchaseOrderItems.isEmpty()) {
                 // 根据 AssociatedRequisitionProductId 分组
                 Map<Long, List<ErpPurchaseOrderItemDO>> groupedByProductIds = purchaseOrderItems.stream()
                         .collect(Collectors.groupingBy(ErpPurchaseOrderItemDO::getAssociatedRequisitionProductId));
-            List<ErpPurchaseOrderItemDO> itemsWithDifferentProductId = groupedByProductIds.values().stream()
-                    // 只保留 AssociatedRequisitionProductId 唯一的项
-                    .filter(list -> list.size() == 1)
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
+                List<ErpPurchaseOrderItemDO> itemsWithDifferentProductId = groupedByProductIds.values().stream()
+                        // 只保留 AssociatedRequisitionProductId 唯一的项
+                        .filter(list -> list.size() == 1)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
 
                 // 处理相同和不同 AssociatedRequisitionProductId 的采购项
                 groupedByProductIds.values().forEach(itemList -> {
@@ -193,30 +194,32 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                         if (compareBigDecimal(totalSum, requisitionProduct.getCount()) >= 0) {
                             // 更新请购项目状态为 关闭
                             requisitionProductMapper.updateById(new RequisitionProductDO().setId(requisitionProduct.getId()).setStatus(ONE));
-                            guanbi(requisitionProduct.getAssociationRequisition());
+                            //关闭请购单
+                            closeThePurchaserequisition(requisitionProduct.getAssociationRequisition());
                         }
                     }
                 });
 
-            // 没有相同的采购项
-            if (!itemsWithDifferentProductId.isEmpty()) {
-                itemsWithDifferentProductId.forEach(item -> {
-                    RequisitionProductDO requisitionProduct = requisitionProductMapper.selectById(item.getAssociatedRequisitionProductId());
+                // 没有相同的采购项
+                if (!itemsWithDifferentProductId.isEmpty()) {
+                    itemsWithDifferentProductId.forEach(item -> {
+                        RequisitionProductDO requisitionProduct = requisitionProductMapper.selectById(item.getAssociatedRequisitionProductId());
 
-                    // 比较采购数量与请购数量
-                    if (compareBigDecimal(item.getCount(), requisitionProduct.getCount()) == 1) {
-                        requisitionProduct.setStatus(1);
-                        requisitionProductMapper.updateById(requisitionProduct);
-                        // 检查关联请购单的所有请购项目是否已关闭
-                        guanbi(requisitionProduct.getAssociationRequisition());
-                    }
-                });
-            }
-            // 2. 更新状态
-            int updateCount = purchaseOrderMapper.updateByIdAndStatus(id, purchaseOrder.getStatus(),
-                    new ErpPurchaseOrderDO().setStatus(status));
-            if (updateCount == 0) {
-                throw exception(approve ? PURCHASE_ORDER_APPROVE_FAIL : PURCHASE_ORDER_PROCESS_FAIL);
+                        // 比较采购数量与请购数量
+                        if (compareBigDecimal(item.getCount(), requisitionProduct.getCount()) == 1) {
+                            requisitionProduct.setStatus(1);
+                            requisitionProductMapper.updateById(requisitionProduct);
+                            // 检查关联请购单的所有请购项目是否已关闭
+                            closeThePurchaserequisition(requisitionProduct.getAssociationRequisition());
+                        }
+                    });
+                }
+                // 2. 更新状态
+                int updateCount = purchaseOrderMapper.updateByIdAndStatus(id, purchaseOrder.getStatus(),
+                        new ErpPurchaseOrderDO().setStatus(status));
+                if (updateCount == 0) {
+                    throw exception(approve ? PURCHASE_ORDER_APPROVE_FAIL : PURCHASE_ORDER_PROCESS_FAIL);
+                }
             }
         }
     }
@@ -239,7 +242,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         }));
     }
 
-    public void guanbi(Long id){
+    public void closeThePurchaserequisition(Long id){
         // 查询关联请购单的所有请购项目
         List<RequisitionProductDO> allRequisitionProducts = requisitionProductMapper.selectListByOrderId(id);
         // 检查是否所有请购项目都已关闭
@@ -265,10 +268,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
             diffList.get(0).forEach(o -> {
-                RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
-                requisitionProductDO.setStatus(ZERO);
-                requisitionProductMapper.updateById(requisitionProductDO);
-                purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProductDO.getAssociationRequisition()).setStatus(ZERO));
+//                RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
+//                requisitionProductDO.setStatus(ZERO);
+//                requisitionProductMapper.updateById(requisitionProductDO);
+//                purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProductDO.getAssociationRequisition()).setStatus(ZERO));
                 o.setOrderId(id);
             });
             purchaseOrderItemMapper.insertBatch(diffList.get(0));
@@ -278,7 +281,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         }
         if (CollUtil.isNotEmpty(diffList.get(2))) {
             //将请购项状态变更回未选中
-            diffList.get(2).forEach(item -> requisitionProductMapper.updateById(new RequisitionProductDO().setId(item.getAssociatedRequisitionProductId()).setSelected("no")));
+//            diffList.get(2).forEach(item -> requisitionProductMapper.updateById(new RequisitionProductDO().setId(item.getAssociatedRequisitionProductId()).setSelected("no")));
             purchaseOrderItemMapper.deleteBatchIds(convertList(diffList.get(2), ErpPurchaseOrderItemDO::getId));
         }
     }
@@ -399,7 +402,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         while (iterator.hasNext()) {
             ErpPurchaseOrderItemDO item = iterator.next();
             ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(item.getOrderId());
-            if (erpPurchaseOrderDO != null && erpPurchaseOrderDO.getStatus() == 10) {
+            if (erpPurchaseOrderDO != null && Objects.equals(erpPurchaseOrderDO.getStatus(), ErpAuditStatus.PROCESS.getStatus())) {
                 // 移除满足条件的项目
                 iterator.remove();
             }

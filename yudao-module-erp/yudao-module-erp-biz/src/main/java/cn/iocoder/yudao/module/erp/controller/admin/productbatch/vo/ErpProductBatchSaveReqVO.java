@@ -25,10 +25,10 @@ public class ErpProductBatchSaveReqVO {
 
     @Schema(description = "关联产品", requiredMode = Schema.RequiredMode.REQUIRED, example = "7724")
     @NotEmpty(message = "关联产品不能为空")
-    private String associationProductId;
+    private Long associationProductId;
     @Schema(description = "关联批次", requiredMode = Schema.RequiredMode.REQUIRED, example = "7724")
     @NotEmpty(message = "关联批次不可为空")
-    private String associatedBatchId;
+    private Long associatedBatchId;
 
     @Schema(description = "产品单价", requiredMode = Schema.RequiredMode.REQUIRED, example = "4601")
     @NotEmpty(message = "产品单价不能为空")

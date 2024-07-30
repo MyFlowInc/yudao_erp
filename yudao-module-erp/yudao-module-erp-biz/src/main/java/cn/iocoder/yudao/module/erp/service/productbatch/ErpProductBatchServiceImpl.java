@@ -52,7 +52,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         ErpProductDO erpProductDO = productMapper.selectById(productBatch.getAssociationProductId());
         //获取同类型产品得批次信息，并进行后缀拼接
         Integer i = batchProduct(productBatch);
-        productBatch.setName(erpProductDO.getName()+"批次"+i);
+        productBatch.setName(erpProductDO.getName()+"-"+"批次"+i);
         // 1.4 生成编号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
         if (productBatchMapper.selectPage(new ErpProductBatchPageReqVO().setCode(no)) != null) {
@@ -88,7 +88,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         }
     }
     //检查新增时是否选中批次
-    private void validateProductAssociationProductIdExists(String id) {
+    private void validateProductAssociationProductIdExists(Long id) {
         if (id == null) {
             throw exception(PRODUCT_BATCH_NOT_EXISTS);
         }

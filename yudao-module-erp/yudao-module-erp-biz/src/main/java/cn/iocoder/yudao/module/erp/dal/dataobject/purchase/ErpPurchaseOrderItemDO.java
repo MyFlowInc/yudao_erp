@@ -86,7 +86,7 @@ public class ErpPurchaseOrderItemDO extends BaseDO {
     /**
      * 关联批次信息id
      */
-    private String associatedBatchId;
+    private Long associatedBatchId;
     /**
      * 关联请购产品项id
      */

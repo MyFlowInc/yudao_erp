@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.number.MoneyUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBatchSaveReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
@@ -21,6 +22,7 @@ import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -54,7 +56,8 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     private PurchaseRequisitionMapper purchaseRequisitionMapper;
     @Resource
     private ErpNoRedisDAO noRedisDAO;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private ErpProductService productService;
     @Resource
@@ -89,9 +92,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 //        purchaseOrderItems.forEach(o -> o.setOrderId(purchaseOrder.getId()));
         purchaseOrderItems.forEach(o -> {
             o.setOrderId(purchaseOrder.getId());
-//            RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
-            //校验此采购项关联的请购项是否已被其他采购单选中
-//            verifyIfselected(requisitionProductDO.getSelected());
+            if (o.getAssociatedBatchId() == null) {
+             Long productBatch = productBatchService.createProductBatch(new ErpProductBatchSaveReqVO().setAssociationProductId(o.getProductId()));
+             o.setAssociatedBatchId(productBatch);
+            }
             requisitionProductMapper.updateById(new RequisitionProductDO().setId(o.getAssociatedRequisitionProductId()).setSelected("yes"));
         });
         purchaseOrderItemMapper.insertBatch(purchaseOrderItems);

@@ -39,6 +39,7 @@ public interface PurchaseRequisitionMapper extends BaseMapperX<PurchaseRequisiti
         }
         // 添加状态不等于 "end" 的条件
         wrapper.ne(PurchaseRequisitionDO::getOpen, 1);
+        wrapper.eq(PurchaseRequisitionDO::getStatus, 20);
         wrapper.orderByDesc(PurchaseRequisitionDO::getId);
         return selectList(wrapper);
     }

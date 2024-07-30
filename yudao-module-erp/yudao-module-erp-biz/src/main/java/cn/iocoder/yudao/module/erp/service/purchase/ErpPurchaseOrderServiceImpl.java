@@ -87,17 +87,23 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         ErpPurchaseOrderDO purchaseOrder = BeanUtils.toBean(createReqVO, ErpPurchaseOrderDO.class, in -> in
                 .setNo(no).setStatus(ErpAuditStatus.PROCESS.getStatus()));
         calculateTotalPrice(purchaseOrder, purchaseOrderItems);
-        purchaseOrderMapper.insert(purchaseOrder);
         // 2.2 插入订单项
 //        purchaseOrderItems.forEach(o -> o.setOrderId(purchaseOrder.getId()));
         purchaseOrderItems.forEach(o -> {
             o.setOrderId(purchaseOrder.getId());
+            RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
+            if (requisitionProductDO.getStatus() == ONE) {
+                //新增的采购项所关联的清购项如果已被关闭则不可添加
+                verifyIfselected();
+            }
+
             if (o.getAssociatedBatchId() == null) {
              Long productBatch = productBatchService.createProductBatch(new ErpProductBatchSaveReqVO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
              o.setAssociatedBatchId(productBatch);
             }
 //            requisitionProductMapper.updateById(new RequisitionProductDO().setId(o.getAssociatedRequisitionProductId()).setSelected("yes"));
         });
+        purchaseOrderMapper.insert(purchaseOrder);
         purchaseOrderItemMapper.insertBatch(purchaseOrderItems);
         return purchaseOrder.getId();
     }
@@ -168,6 +174,14 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
             // 查询订单相关的所有采购项
             List<ErpPurchaseOrderItemDO> purchaseOrderItems = purchaseOrderItemMapper.selectListByOrderId(id);
+            //晓燕是否请购单已被关闭
+            purchaseOrderItems.forEach( o ->{
+                RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
+                if (requisitionProductDO.getStatus() == ONE) {
+                    //新增的采购项所关联的清购项如果已被关闭则不可添加
+                    verifyIfselected();
+                }
+            });
 // 如果订单中存在采购项
             if (!purchaseOrderItems.isEmpty()) {
                 // 根据 AssociatedRequisitionProductId 分组

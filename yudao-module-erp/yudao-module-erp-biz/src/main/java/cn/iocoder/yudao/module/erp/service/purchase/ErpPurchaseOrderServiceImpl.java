@@ -394,9 +394,12 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 
     @Override
     public List<ErpPurchaseOrderItemDO> getPurchaseOrderItemListByOrderId(Long orderId) {
-        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectItemList(orderId);
-        filterPurchaseOrderItems(erpPurchaseOrderItemDOS);
-        return erpPurchaseOrderItemDOS;
+        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectListByOrderId(orderId);
+// 使用流过滤已逻辑删除的项
+        List<ErpPurchaseOrderItemDO> filteredItems = erpPurchaseOrderItemDOS.stream()
+                .filter(item -> !item.getDeleted())
+                .collect(Collectors.toList());
+        return filteredItems;
     }
 
     @Override
@@ -424,11 +427,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         while (iterator.hasNext()) {
             ErpPurchaseOrderItemDO item = iterator.next();
             ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(item.getOrderId());
-            if (erpPurchaseOrderDO != null && Objects.equals(erpPurchaseOrderDO.getStatus(), ErpAuditStatus.PROCESS.getStatus())) {
-                iterator.remove();
-            }
-            if (erpPurchaseOrderDO != null && erpPurchaseOrderDO.getDeleted().equals(Boolean.TRUE)){
-                iterator.remove();
+            if (erpPurchaseOrderDO != null) {
+                if (Objects.equals(erpPurchaseOrderDO.getStatus(), ErpAuditStatus.PROCESS.getStatus())) {
+                    iterator.remove();
+                }
             }
         }
     }

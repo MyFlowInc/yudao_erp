@@ -31,7 +31,7 @@ public interface ErpProductBatchMapper extends BaseMapperX<ErpProductBatchDO> {
                 .eqIfPresent(ErpProductBatchDO::getRemark, reqVO.getRemark())
                 .eqIfPresent(ErpProductBatchDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(ErpProductBatchDO::getCreateTime, reqVO.getCreateTime())
-                .ne(ErpProductBatchDO::getDeleted,1)
+                .ne(ErpProductBatchDO::getDeleted,false)
                 .orderByDesc(ErpProductBatchDO::getId));
     }
 }

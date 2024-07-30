@@ -116,6 +116,7 @@ public class ErpPurchaseOrderController {
 
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(purchaseOrderItemList, ErpPurchaseOrderItemDO::getProductId));
+
         return success(BeanUtils.toBean(purchaseOrder, ErpPurchaseOrderRespVO.class, purchaseOrderVO ->
                 purchaseOrderVO.setItems(BeanUtils.toBean(purchaseOrderItemList, ErpPurchaseOrderRespVO.Item.class, item -> {
                     if (item.getAssociatedBatchId() != null){

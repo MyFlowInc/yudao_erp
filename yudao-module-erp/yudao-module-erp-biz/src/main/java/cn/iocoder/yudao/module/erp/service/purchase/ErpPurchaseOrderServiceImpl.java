@@ -36,7 +36,6 @@ import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionU
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 import static com.fhs.common.constant.Constant.*;
-import static sun.print.ServiceDialog.APPROVE;
 
 // TODO 芋艿：记录操作日志
 

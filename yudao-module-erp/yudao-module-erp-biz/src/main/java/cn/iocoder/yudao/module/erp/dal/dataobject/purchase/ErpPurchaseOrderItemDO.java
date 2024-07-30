@@ -56,6 +56,12 @@ public class ErpPurchaseOrderItemDO extends BaseDO {
      * 数量
      */
     private BigDecimal count;
+
+    /**
+     * 已入库数量
+     */
+    private Integer quantityInStock;
+
     /**
      * 总价，单位：元
      *
@@ -96,5 +102,7 @@ public class ErpPurchaseOrderItemDO extends BaseDO {
      * 采购退货数量
      */
     private BigDecimal returnCount;
+
+
 
 }

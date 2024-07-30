@@ -51,6 +51,10 @@ public class ErpProductBatchDO extends BaseDO {
      */
     private String code;
     /**
+     * 批次入库数量
+     */
+    private Integer inventoryQuantity;
+    /**
      * 备注
      */
     private String remark;

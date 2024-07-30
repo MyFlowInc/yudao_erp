@@ -14,6 +14,7 @@ import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseOrderService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
+import org.apache.ibatis.annotations.One;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
@@ -40,8 +41,7 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
-import static com.fhs.common.constant.Constant.ONE;
-import static com.fhs.common.constant.Constant.THREE;
+import static com.fhs.common.constant.Constant.*;
 import static org.apache.commons.lang3.BooleanUtils.NO;
 
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
@@ -104,9 +104,45 @@ public class PurchaseRequisitionController {
         return success(BeanUtils.toBean(purchaseRequisition, PurchaseRequisitionRespVO.class, purchaseRequisitionVO ->
                 purchaseRequisitionVO.setItems(BeanUtils.toBean(requisitionProductItemList, PurchaseRequisitionRespVO.Item.class, item -> {
                     BigDecimal purchaseCount = stockService.getStockCount(item.getProductId());
-                    ErpPurchaseOrderItemDO purchaseOrderItem = purchaseOrderService.getPurchaseOrderItemByRequisitionProductId(item.getId());
-                    if (purchaseOrderItem != null){
-                        item.setPurchasedNum(purchaseOrderItem.getCount());
+                    List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderService.selectItemList(item.getId());
+                    if (erpPurchaseOrderItemDOS != null){
+                        // 分组：相同 AssociatedRequisitionProductId 的放在一组，唯一的放在另一组
+                        Map<Long, List<ErpPurchaseOrderItemDO>> groupedByProductId = erpPurchaseOrderItemDOS.stream()
+                                .collect(Collectors.groupingBy(ErpPurchaseOrderItemDO::getAssociatedRequisitionProductId));
+                        // 分组后的结果
+                        List<List<ErpPurchaseOrderItemDO>> duplicateGroups = new ArrayList<>();
+                        List<ErpPurchaseOrderItemDO> uniqueItems = new ArrayList<>();
+                        for (Map.Entry<Long, List<ErpPurchaseOrderItemDO>> entry : groupedByProductId.entrySet()) {
+                            List<ErpPurchaseOrderItemDO> group = entry.getValue();
+                            if (group.size() > 1) {
+                                //重复组
+                                duplicateGroups.add(group);
+                            } else {
+                                //唯一组
+                                uniqueItems.add(group.get(0));
+                            }
+                        }
+                        if (!duplicateGroups.isEmpty()){
+                            // 计算每个分组中的 count 总和，将结果存储在 Map<Long, BigDecimal> 中
+                            Map<Long, BigDecimal> sumByProductId = new HashMap<>();
+                            groupedByProductId.forEach((productId, items) -> {
+                                BigDecimal sum = items.stream()
+                                        // 获取 BigDecimal 类型的值
+                                        .map(ErpPurchaseOrderItemDO::getCount)
+                                        // 使用 reduce 方法进行求和
+                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                                sumByProductId.put(productId, sum);
+                            });;
+                            item.setPurchasedNum(sumByProductId.get(item.getId()));
+                        };
+                        //唯一组
+                        if (!uniqueItems.isEmpty()){
+                            uniqueItems.forEach( o->{
+                                if (Objects.equals(o.getAssociatedRequisitionProductId(), item.getId())){
+                                    item.setPurchasedNum(o.getCount());
+                                }
+                            });
+                        }
                     }
                     item.setStockCount(purchaseCount != null ? purchaseCount : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
@@ -138,9 +174,8 @@ public class PurchaseRequisitionController {
                 .map(o -> {
                     List<RequisitionProductDO> requisitionProductItemList =
                             purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
-                    // 过滤出 selected = "no" 的数据
                     List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
-                            .filter(item -> ONE != item.getStatus())
+                            .filter(item -> ZREO != item.getStatus())
                             .collect(Collectors.toList());
                     Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                             convertSet(filteredList, RequisitionProductDO::getProductId));

@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.erp.service.productbatch;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.product.ErpProductMapper;
+import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -40,6 +41,8 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
     private ErpProductBatchMapper productBatchMapper;
     @Resource
     private ErpProductMapper productMapper;
+    @Resource
+    private ErpNoRedisDAO noRedisDAO;
     @Override
     public Long createProductBatch(ErpProductBatchSaveReqVO createReqVO) {
         //检查新增时是否选中关联产品
@@ -49,7 +52,13 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         ErpProductDO erpProductDO = productMapper.selectById(productBatch.getAssociationProductId());
         //获取同类型产品得批次信息，并进行后缀拼接
         Integer i = batchProduct(productBatch);
-        productBatch.setCode(erpProductDO.getName()+"批次"+i);
+        productBatch.setName(erpProductDO.getName()+"批次"+i);
+        // 1.4 生成编号，并校验唯一性
+        String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
+        if (productBatchMapper.selectPage(new ErpProductBatchPageReqVO().setCode(no)) != null) {
+            throw exception(PURCHASE_ORDER_NO_EXISTS);
+        }
+        productBatch.setCode(no);
         productBatchMapper.insert(productBatch);
         // 返回
         return productBatch.getId();
@@ -98,7 +107,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         Pattern pattern = Pattern.compile("批次(\\d+)");
         int maxSuffix = Integer.MIN_VALUE;
         for (ErpProductBatchDO obj : proBatchlist) {
-            Matcher matcher = pattern.matcher(obj.getCode());
+            Matcher matcher = pattern.matcher(obj.getName());
             if (matcher.find()) {
                 String numberStr = matcher.group(1);
                 int number = Integer.parseInt(numberStr);
@@ -106,7 +115,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
                     maxSuffix = number;
                 }
             } else {
-                System.out.println("未找到匹配的批次号：" + obj.getCode());
+                System.out.println("未找到匹配的批次号：" + obj.getName());
             }
         }
         return maxSuffix;

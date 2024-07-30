@@ -118,6 +118,9 @@ public class ErpPurchaseOrderRespVO {
         @NotNull(message = "产品数量不能为空")
         private BigDecimal count;
 
+        @Schema(description = "已入库数量")
+        private Integer quantityInStock;
+
         @Schema(description = "税率，百分比", example = "99.88")
         private BigDecimal taxPercent;
 

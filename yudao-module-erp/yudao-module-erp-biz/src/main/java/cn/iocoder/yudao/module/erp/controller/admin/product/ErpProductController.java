@@ -10,8 +10,12 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ProductSaveReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBatchPageReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBatchRespVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +41,8 @@ public class ErpProductController {
 
     @Resource
     private ErpProductService productService;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @PostMapping("/create")
     @Operation(summary = "创建产品")
     @PreAuthorize("@ss.hasPermission('erp:product:create')")
@@ -76,6 +81,19 @@ public class ErpProductController {
     @PreAuthorize("@ss.hasPermission('erp:product:query')")
     public CommonResult<PageResult<ErpProductRespVO>> getProductPage(@Valid ErpProductPageReqVO pageReqVO) {
         return success(productService.getProductVOPage(pageReqVO));
+    }
+
+    @GetMapping("/list")
+    @Operation(summary = "获得产品信息及对应批次信息")
+    @PreAuthorize("@ss.hasPermission('erp:product:query')")
+    public CommonResult<PageResult<ErpProductRespVO>> getProductAndProductBatchList(@Valid ErpProductPageReqVO pageReqVO) {
+        PageResult<ErpProductRespVO> productVOPage = productService.getProductVOPage(pageReqVO);
+        productVOPage.getList().forEach( o->{
+            List<ErpProductBatchDO> list = productBatchService.getProductBatchPage(
+                    new ErpProductBatchPageReqVO().setAssociationProductId(o.getId())).getList();
+            o.setItem(BeanUtils.toBean(list, ErpProductBatchRespVO.class));
+        });
+        return success(productVOPage);
     }
 
     @GetMapping("/simple-list")

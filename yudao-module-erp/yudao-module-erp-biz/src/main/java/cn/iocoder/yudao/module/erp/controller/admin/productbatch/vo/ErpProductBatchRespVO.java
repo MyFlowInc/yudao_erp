@@ -32,6 +32,12 @@ public class ErpProductBatchRespVO {
     @Schema(description = "产品单价", requiredMode = Schema.RequiredMode.REQUIRED, example = "4601")
     @ExcelProperty("产品单价")
     private BigDecimal unitPrice;
+    /**
+     * 批次入库数量
+     */
+    @Schema(description = "批次入库数量")
+    @ExcelProperty("批次入库数量")
+    private Integer inventoryQuantity;
 
     @Schema(description = "批次编号")
     @ExcelProperty("批次编号")

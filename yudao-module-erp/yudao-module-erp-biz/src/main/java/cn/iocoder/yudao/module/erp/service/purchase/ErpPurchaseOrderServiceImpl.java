@@ -27,10 +27,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -395,7 +392,17 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 
     @Override
     public List<ErpPurchaseOrderItemDO> selectItemList(Long id) {
-        return purchaseOrderItemMapper.selectItemList(id);
+        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectItemList(id);
+        Iterator<ErpPurchaseOrderItemDO> iterator = erpPurchaseOrderItemDOS.iterator();
+        while (iterator.hasNext()) {
+            ErpPurchaseOrderItemDO item = iterator.next();
+            ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(item.getOrderId());
+            if (erpPurchaseOrderDO != null && erpPurchaseOrderDO.getStatus() == 10) {
+                // 移除满足条件的项目
+                iterator.remove();
+            }
+        }
+        return erpPurchaseOrderItemDOS;
     }
 
 }

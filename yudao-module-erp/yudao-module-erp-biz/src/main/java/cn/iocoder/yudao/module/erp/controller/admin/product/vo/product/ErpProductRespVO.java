@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.product.vo.product;
 
+import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBatchRespVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -75,4 +76,8 @@ public class ErpProductRespVO {
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
+
+
+    @Schema(description = "关联相关产品批次")
+    private List<ErpProductBatchRespVO> item;
 }

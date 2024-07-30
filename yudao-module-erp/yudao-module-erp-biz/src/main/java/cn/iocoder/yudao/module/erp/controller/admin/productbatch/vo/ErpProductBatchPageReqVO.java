@@ -27,7 +27,7 @@ public class ErpProductBatchPageReqVO extends PageParam {
     private String type;
 
     @Schema(description = "关联产品", example = "7724")
-    private String associationProductId;
+    private Long associationProductId;
 
     @Schema(description = "产品单价", example = "4601")
     private BigDecimal unitPrice;

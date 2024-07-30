@@ -77,7 +77,10 @@ public class ErpProductBatchController {
     @PreAuthorize("@ss.hasPermission('erp:product-batch:query')")
     public CommonResult<ErpProductBatchRespVO> getProductBatch(@RequestParam("id") Long id) {
         ErpProductBatchDO productBatch = productBatchService.getProductBatch(id);
-        return success(BeanUtils.toBean(productBatch, ErpProductBatchRespVO.class));
+        ErpProductDO product = productService.getProduct(productBatch.getAssociationProductId());
+        ErpProductBatchRespVO bean = BeanUtils.toBean(productBatch, ErpProductBatchRespVO.class);
+        bean.setProductName(product.getName());
+        return success(bean);
     }
 
     @GetMapping("/page")
@@ -87,7 +90,7 @@ public class ErpProductBatchController {
         PageResult<ErpProductBatchDO> pageResult = productBatchService.getProductBatchPage(pageReqVO);
         // 1.1 项目列表
         Map<Long, ErpProductRespVO> productList = productService.getProductVOMap(
-                convertSet(pageResult.getList(), products -> Long.parseLong(String.valueOf(products.getAssociationProductId()))));
+                convertSet(pageResult.getList(), ErpProductBatchDO::getAssociationProductId));
         return success(BeanUtils.toBean(pageResult, ErpProductBatchRespVO.class,productMap ->{
             MapUtils.findAndThen(productList,Long.valueOf(productMap.getAssociationProductId()),product -> productMap.setProductName(product.getName()));}));
     }

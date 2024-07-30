@@ -93,10 +93,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         purchaseOrderItems.forEach(o -> {
             o.setOrderId(purchaseOrder.getId());
             if (o.getAssociatedBatchId() == null) {
-             Long productBatch = productBatchService.createProductBatch(new ErpProductBatchSaveReqVO().setAssociationProductId(o.getProductId()));
+             Long productBatch = productBatchService.createProductBatch(new ErpProductBatchSaveReqVO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
              o.setAssociatedBatchId(productBatch);
             }
-            requisitionProductMapper.updateById(new RequisitionProductDO().setId(o.getAssociatedRequisitionProductId()).setSelected("yes"));
+//            requisitionProductMapper.updateById(new RequisitionProductDO().setId(o.getAssociatedRequisitionProductId()).setSelected("yes"));
         });
         purchaseOrderItemMapper.insertBatch(purchaseOrderItems);
         return purchaseOrder.getId();

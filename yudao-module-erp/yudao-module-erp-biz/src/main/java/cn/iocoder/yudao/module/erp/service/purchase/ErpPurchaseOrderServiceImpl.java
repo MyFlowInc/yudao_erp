@@ -177,28 +177,19 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 
                 // 处理相同和不同 AssociatedRequisitionProductId 的采购项
                 groupedByProductIds.values().forEach(itemList -> {
+                    // 获取关联的请购单项
+                    RequisitionProductDO requisitionProduct = requisitionProductMapper.selectById(itemList.get(0).getAssociatedRequisitionProductId());
                     // 只处理有多个项的组（相同 AssociatedRequisitionProductId 的项）
                     if (itemList.size() > 1) {
                         // 计算总数
                         BigDecimal totalSum = itemList.stream()
                                 .map(ErpPurchaseOrderItemDO::getCount)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-                        // 获取关联的请购单项
-                        RequisitionProductDO requisitionProduct = requisitionProductMapper.selectById(itemList.get(0).getAssociatedRequisitionProductId());
                         // 比较采购数量与请购数量
                         if (compareBigDecimal(totalSum, requisitionProduct.getCount()) >= 0) {
-                            // 更新请购项目状态为 20
-                            requisitionProductMapper.updateById(new RequisitionProductDO().setId(requisitionProduct.getId()).setStatus(20));
-
-                            // 查询关联请购单的所有请购项目
-                            List<RequisitionProductDO> allRequisitionProducts = requisitionProductMapper.selectListByOrderId(requisitionProduct.getAssociationRequisition());
-                            // 检查是否所有请购项目都已关闭
-                            boolean allClosed = !allRequisitionProducts.isEmpty() && allRequisitionProducts.stream().allMatch(p -> p.getStatus() == 1);
-                            if (allClosed) {
-                                // 关闭整个请购单
-                                purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProduct.getAssociationRequisition()).setOpen(1));
-                            }
+                            // 更新请购项目状态为 关闭
+                            requisitionProductMapper.updateById(new RequisitionProductDO().setId(requisitionProduct.getId()).setStatus(ONE));
+                            guanbi(requisitionProduct.getAssociationRequisition());
                         }
                     }
                 });
@@ -212,14 +203,8 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                     if (compareBigDecimal(item.getCount(), requisitionProduct.getCount()) == 1) {
                         requisitionProduct.setStatus(1);
                         requisitionProductMapper.updateById(requisitionProduct);
-
                         // 检查关联请购单的所有请购项目是否已关闭
-                        List<RequisitionProductDO> allRequisitionProducts = requisitionProductMapper.selectListByOrderId(requisitionProduct.getAssociationRequisition());
-                        boolean allClosed = !allRequisitionProducts.isEmpty() && allRequisitionProducts.stream().allMatch(p -> p.getStatus() == 1);
-
-                        if (allClosed) {
-                            purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProduct.getAssociationRequisition()).setOpen(1));
-                        }
+                        guanbi(requisitionProduct.getAssociationRequisition());
                     }
                 });
             }
@@ -249,6 +234,19 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             }
         }));
     }
+
+    public void guanbi(Long id){
+        // 查询关联请购单的所有请购项目
+        List<RequisitionProductDO> allRequisitionProducts = requisitionProductMapper.selectListByOrderId(id);
+        // 检查是否所有请购项目都已关闭
+        boolean allClosed = !allRequisitionProducts.isEmpty() && allRequisitionProducts.stream().allMatch(p -> p.getStatus() == 1);
+        if (allClosed) {
+            // 关闭整个请购单
+            purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(id).setOpen(1));
+        }
+    }
+
+
     //校验此采购项关联的请购项是否已被其他采购单选中
     public void verifyIfselected(){
             throw exception(REQUISITION_PRODUCT_IS_SELECTED);

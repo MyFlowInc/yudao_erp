@@ -175,7 +175,7 @@ public class PurchaseRequisitionController {
                     List<RequisitionProductDO> requisitionProductItemList =
                             purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
                     List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
-                            .filter(item -> ZREO != item.getStatus())
+                            .filter(item -> ZREO == item.getStatus())
                             .collect(Collectors.toList());
                     Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                             convertSet(filteredList, RequisitionProductDO::getProductId));

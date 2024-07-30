@@ -88,6 +88,7 @@ public class ErpProductController {
     @PreAuthorize("@ss.hasPermission('erp:product:query')")
     public CommonResult<PageResult<ErpProductRespVO>> getProductAndProductBatchList(@Valid ErpProductPageReqVO pageReqVO) {
         PageResult<ErpProductRespVO> productVOPage = productService.getProductVOPage(pageReqVO);
+
         productVOPage.getList().forEach( o->{
             List<ErpProductBatchDO> list = productBatchService.getProductBatchPage(
                     new ErpProductBatchPageReqVO().setAssociationProductId(o.getId())).getList();

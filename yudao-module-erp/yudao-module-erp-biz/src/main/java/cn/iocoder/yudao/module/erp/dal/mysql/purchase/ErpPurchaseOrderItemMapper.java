@@ -16,7 +16,6 @@ import java.util.List;
 public interface ErpPurchaseOrderItemMapper extends BaseMapperX<ErpPurchaseOrderItemDO> {
 
     default List<ErpPurchaseOrderItemDO> selectListByOrderId(Long orderId) {
-
         return selectList(ErpPurchaseOrderItemDO::getOrderId, orderId);
     }
     default List<ErpPurchaseOrderItemDO> selectItemList(Long Id) {

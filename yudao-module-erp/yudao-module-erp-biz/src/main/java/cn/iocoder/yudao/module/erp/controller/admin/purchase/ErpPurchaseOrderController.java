@@ -113,6 +113,7 @@ public class ErpPurchaseOrderController {
             return success(null);
         }
         List<ErpPurchaseOrderItemDO> purchaseOrderItemList = purchaseOrderService.getPurchaseOrderItemListByOrderId(id);
+
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(purchaseOrderItemList, ErpPurchaseOrderItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseOrder, ErpPurchaseOrderRespVO.class, purchaseOrderVO ->
@@ -125,10 +126,10 @@ public class ErpPurchaseOrderController {
                         item.setAssociatedBatchId(productBatch.getId());
                         item.setAssociatedBatchName(productBatch.getName());
                     }
+
                     if (item.getAssociatedRequisitionProductId()!=null){
                         //拼接请购项及请购单信息返回
-                        RequisitionProductDO purchaseRequisitionProduct =
-                                purchaseRequisitionService.getPurchaseRequisitionProduct(item.getAssociatedRequisitionProductId());
+                        RequisitionProductDO purchaseRequisitionProduct = purchaseRequisitionService.getPurchaseRequisitionProduct(item.getAssociatedRequisitionProductId());
                         if (purchaseRequisitionProduct != null) {
                             PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(purchaseRequisitionProduct.getAssociationRequisition());
                             item.setAssociatedRequisitionProductId(purchaseRequisitionProduct.getId());

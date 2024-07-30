@@ -23,6 +23,7 @@ import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -174,7 +175,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
             // 查询订单相关的所有采购项
             List<ErpPurchaseOrderItemDO> purchaseOrderItems = purchaseOrderItemMapper.selectListByOrderId(id);
-            //晓燕是否请购单已被关闭
+            //校验是否请购单已被关闭
             purchaseOrderItems.forEach( o ->{
                 RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
                 if (requisitionProductDO.getStatus() == ONE) {
@@ -393,7 +394,9 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 
     @Override
     public List<ErpPurchaseOrderItemDO> getPurchaseOrderItemListByOrderId(Long orderId) {
-        return purchaseOrderItemMapper.selectListByOrderId(orderId);
+        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectItemList(orderId);
+        filterPurchaseOrderItems(erpPurchaseOrderItemDOS);
+        return erpPurchaseOrderItemDOS;
     }
 
     @Override
@@ -411,16 +414,22 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     @Override
     public List<ErpPurchaseOrderItemDO> selectItemList(Long id) {
         List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectItemList(id);
-        Iterator<ErpPurchaseOrderItemDO> iterator = erpPurchaseOrderItemDOS.iterator();
+        filterPurchaseOrderItems(erpPurchaseOrderItemDOS);
+        return erpPurchaseOrderItemDOS;
+    }
+
+    // 过滤采购订单项列表
+    public void filterPurchaseOrderItems(List<ErpPurchaseOrderItemDO> items) {
+        Iterator<ErpPurchaseOrderItemDO> iterator = items.iterator();
         while (iterator.hasNext()) {
             ErpPurchaseOrderItemDO item = iterator.next();
             ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(item.getOrderId());
             if (erpPurchaseOrderDO != null && Objects.equals(erpPurchaseOrderDO.getStatus(), ErpAuditStatus.PROCESS.getStatus())) {
-                // 移除满足条件的项目
+                iterator.remove();
+            }
+            if (erpPurchaseOrderDO != null && erpPurchaseOrderDO.getDeleted().equals(Boolean.TRUE)){
                 iterator.remove();
             }
         }
-        return erpPurchaseOrderItemDOS;
     }
-
 }

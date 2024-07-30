@@ -396,10 +396,9 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     public List<ErpPurchaseOrderItemDO> getPurchaseOrderItemListByOrderId(Long orderId) {
         List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectListByOrderId(orderId);
 // 使用流过滤已逻辑删除的项
-        List<ErpPurchaseOrderItemDO> filteredItems = erpPurchaseOrderItemDOS.stream()
+        return erpPurchaseOrderItemDOS.stream()
                 .filter(item -> !item.getDeleted())
                 .collect(Collectors.toList());
-        return filteredItems;
     }
 
     @Override

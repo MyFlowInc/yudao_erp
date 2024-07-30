@@ -22,6 +22,7 @@ public interface ErpProductMapper extends BaseMapperX<ErpProductDO> {
                 .likeIfPresent(ErpProductDO::getName, reqVO.getName())
                 .eqIfPresent(ErpProductDO::getCategoryId, reqVO.getCategoryId())
                 .betweenIfPresent(ErpProductDO::getCreateTime, reqVO.getCreateTime())
+                .ne(ErpProductDO::getDeleted,true)
                 .orderByDesc(ErpProductDO::getId));
     }
 

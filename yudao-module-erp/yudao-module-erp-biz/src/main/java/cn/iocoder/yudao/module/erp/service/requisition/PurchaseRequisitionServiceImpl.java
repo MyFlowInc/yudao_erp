@@ -12,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 import cn.iocoder.yudao.module.erp.controller.admin.requisition.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
@@ -182,7 +184,12 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 
     @Override
     public List<RequisitionProductDO> getRequisitionProductListByOrderId(Long orderId) {
-        return requisitionProductMapper.selectListByOrderId(orderId);
+        List<RequisitionProductDO> requisitionProductDOS = requisitionProductMapper.selectListByOrderId(orderId);
+        // 使用流过滤已逻辑删除的项
+        List<RequisitionProductDO> filteredItems = requisitionProductDOS.stream()
+                .filter(item -> !item.getDeleted())
+                .collect(Collectors.toList());
+        return filteredItems;
     }
     @Override
     public RequisitionProductDO getPurchaseRequisitionProduct(Long id) {

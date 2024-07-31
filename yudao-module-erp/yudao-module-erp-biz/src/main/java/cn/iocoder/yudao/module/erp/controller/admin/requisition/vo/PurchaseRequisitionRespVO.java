@@ -90,7 +90,7 @@ public class PurchaseRequisitionRespVO {
         @NotNull(message = "产品数量不能为空")
         private BigDecimal count;
         @Schema(description = "状态", example = "随便")
-        private String status;
+        private Integer status;
         @Schema(description = "是否已被选中", example = "随便")
         private String selected;
         @Schema(description = "备注", example = "随便")

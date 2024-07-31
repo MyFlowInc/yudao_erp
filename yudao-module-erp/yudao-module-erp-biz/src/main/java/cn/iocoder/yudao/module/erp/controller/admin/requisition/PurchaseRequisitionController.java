@@ -170,17 +170,26 @@ public class PurchaseRequisitionController {
     @Operation(summary = "获得新增请购分页")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<List<PurchaseRequisitionRespVO>> getPurchaseRequisitionListAndProductList(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
-        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO).getList();
+        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.selectStatusIsNotEndList(pageReqVO);
         List<PurchaseRequisitionRespVO> result = purchaseRequisitionDOS.stream()
                 .map(o -> {
                     List<RequisitionProductDO> requisitionProductItemList =
                             purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
+                    List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
+                            .sorted(
+                                    // 首先按照 status 排序，status=0 的在前面
+                                    Comparator.comparingInt((RequisitionProductDO item) -> item.getStatus() == 0 ? 0 : 1)
+                                            // 在 status 相同的情况下按照创建时间倒序排序
+                                            .thenComparing(Comparator.comparing(RequisitionProductDO::getCreateTime).reversed())
+                            )
+                            .collect(Collectors.toList());
+
                     Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
-                            convertSet(requisitionProductItemList, RequisitionProductDO::getProductId));
+                            convertSet(filteredList, RequisitionProductDO::getProductId));
                     return BeanUtils.toBean(o, PurchaseRequisitionRespVO.class,
                         purchaseRequisitionRespVO -> {
                         purchaseRequisitionRespVO.setItems(
-                                BeanUtils.toBean(requisitionProductItemList, PurchaseRequisitionRespVO.Item.class, item -> {
+                                BeanUtils.toBean(filteredList, PurchaseRequisitionRespVO.Item.class, item -> {
                                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
                                 }));

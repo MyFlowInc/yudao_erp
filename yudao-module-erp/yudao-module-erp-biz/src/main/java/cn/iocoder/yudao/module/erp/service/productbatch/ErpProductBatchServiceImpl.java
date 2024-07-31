@@ -141,8 +141,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
                 System.out.println("未找到匹配的批次号：" + obj.getName());
             }
         }
-        maxSuffix++;
-        return maxSuffix;
+        return maxSuffix+1;
     }
     @Override
     public ErpProductBatchDO getProductBatch(Long id) {

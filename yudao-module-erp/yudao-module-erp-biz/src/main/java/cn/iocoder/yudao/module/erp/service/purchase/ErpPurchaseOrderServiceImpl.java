@@ -99,7 +99,6 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                 //新增的采购项所关联的清购项如果已被关闭则不可添加
                 verifyIfselected();
             }
-
             if (o.getAssociatedBatchId() == null && o.getProductPrice()!= null) {
              Long productBatch = productBatchService.createProductBatchDO(new ErpProductBatchDO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
              o.setAssociatedBatchId(productBatch);
@@ -147,14 +146,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         purchaseOrder.setTotalPrice(purchaseOrder.getTotalPrice().subtract(purchaseOrder.getDiscountPrice()));
     }
 
-    public static int compareBigDecimal(BigDecimal bd1, BigDecimal bd2) {
-        int comparisonResult = bd1.compareTo(bd2);
-        if (comparisonResult >= ONE) {
-            return ZERO;
-        } else {
-            return ONE;
-        }
-    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePurchaseOrderStatus(Long id, Integer status) {
@@ -176,6 +168,10 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
             // 查询订单相关的所有采购项
             List<ErpPurchaseOrderItemDO> purchaseOrderItems = purchaseOrderItemMapper.selectListByOrderId(id);
+// 使用流操作过滤掉 deleted 不等于 false 的项
+            purchaseOrderItems = purchaseOrderItems.stream()
+                    .filter(item -> !item.getDeleted())
+                    .collect(Collectors.toList());
             //校验是否请购单已被关闭
             purchaseOrderItems.forEach( o ->{
                 RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
@@ -194,7 +190,6 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                         .filter(list -> list.size() == 1)
                         .flatMap(List::stream)
                         .collect(Collectors.toList());
-
                 // 处理相同和不同 AssociatedRequisitionProductId 的采购项
                 groupedByProductIds.values().forEach(itemList -> {
                     // 获取关联的请购单项
@@ -206,7 +201,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                                 .map(ErpPurchaseOrderItemDO::getCount)
                                 .reduce(BigDecimal.ZERO, BigDecimal::add);
                         // 比较采购数量与请购数量
-                        if (compareBigDecimal(totalSum, requisitionProduct.getCount()) >= 0) {
+                        if (compareBigDecimal(totalSum, requisitionProduct.getCount()) == ZERO) {
                             // 更新请购项目状态为 关闭
                             requisitionProductMapper.updateById(new RequisitionProductDO().setId(requisitionProduct.getId()).setStatus(ONE));
                             //关闭请购单
@@ -214,14 +209,21 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                         }
                     }
                 });
-
                 // 没有相同的采购项
                 if (!itemsWithDifferentProductId.isEmpty()) {
                     itemsWithDifferentProductId.forEach(item -> {
                         RequisitionProductDO requisitionProduct = requisitionProductMapper.selectById(item.getAssociatedRequisitionProductId());
-
+                        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS =
+                                purchaseOrderItemMapper.selectItemList(item.getAssociatedRequisitionProductId());
+                        BigDecimal totalCount = erpPurchaseOrderItemDOS.stream()
+                                // 获取每个对象的 count 字段值
+                                .map(ErpPurchaseOrderItemDO::getCount)
+                                // 过滤掉空值
+                                .filter(Objects::nonNull)
+                                // 初始值为 BigDecimal.ZERO，累加所有值
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
                         // 比较采购数量与请购数量
-                        if (compareBigDecimal(item.getCount(), requisitionProduct.getCount()) == 1) {
+                        if (compareBigDecimal(totalCount, requisitionProduct.getCount()) == ZERO) {
                             requisitionProduct.setStatus(1);
                             requisitionProductMapper.updateById(requisitionProduct);
                             // 检查关联请购单的所有请购项目是否已关闭
@@ -238,7 +240,14 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
             }
         }
     }
-
+    public static int compareBigDecimal(BigDecimal bd1, BigDecimal bd2) {
+        int comparisonResult = bd1.compareTo(bd2);
+        if (comparisonResult >= 0) {
+            return ZERO;
+        } else {
+            return -1;
+        }
+    }
     private List<ErpPurchaseOrderItemDO> validatePurchaseOrderItems(List<ErpPurchaseOrderSaveReqVO.Item> list) {
         // 1. 校验产品存在
         List<ErpProductDO> productList = productService.validProductList(

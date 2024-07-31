@@ -9,6 +9,7 @@ import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.ErpProductBa
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
@@ -73,7 +74,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         // 1.1 校验订单项的有效性
         List<ErpPurchaseOrderItemDO> purchaseOrderItems = validatePurchaseOrderItems(createReqVO.getItems());
         // 1.2 校验供应商
-//        supplierService.validateSupplier(createReqVO.getSupplierId());
+//        supplierMapper.selectById(createReqVO.getSupplierId());
         // 1.3 校验结算账户
         if (createReqVO.getAccountId() != null) {
             accountService.validateAccount(createReqVO.getAccountId());
@@ -90,6 +91,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         calculateTotalPrice(purchaseOrder, purchaseOrderItems);
         // 2.2 插入订单项
 //        purchaseOrderItems.forEach(o -> o.setOrderId(purchaseOrder.getId()));
+        purchaseOrderMapper.insert(purchaseOrder);
         purchaseOrderItems.forEach(o -> {
             o.setOrderId(purchaseOrder.getId());
             RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
@@ -98,13 +100,12 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                 verifyIfselected();
             }
 
-            if (o.getAssociatedBatchId() == null) {
-             Long productBatch = productBatchService.createProductBatch(new ErpProductBatchSaveReqVO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
+            if (o.getAssociatedBatchId() == null && o.getProductPrice()!= null) {
+             Long productBatch = productBatchService.createProductBatchDO(new ErpProductBatchDO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
              o.setAssociatedBatchId(productBatch);
             }
 //            requisitionProductMapper.updateById(new RequisitionProductDO().setId(o.getAssociatedRequisitionProductId()).setSelected("yes"));
         });
-        purchaseOrderMapper.insert(purchaseOrder);
         purchaseOrderItemMapper.insertBatch(purchaseOrderItems);
         return purchaseOrder.getId();
     }
@@ -282,15 +283,21 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
             diffList.get(0).forEach(o -> {
-//                RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociatedRequisitionProductId());
-//                requisitionProductDO.setStatus(ZERO);
-//                requisitionProductMapper.updateById(requisitionProductDO);
-//                purchaseRequisitionMapper.updateById(new PurchaseRequisitionDO().setId(requisitionProductDO.getAssociationRequisition()).setStatus(ZERO));
+                if (o.getAssociatedBatchId() == null && o.getProductPrice()!= null) {
+                    Long productBatch = productBatchService.createProductBatchDO(new ErpProductBatchDO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
+                    o.setAssociatedBatchId(productBatch);
+                }
                 o.setOrderId(id);
             });
             purchaseOrderItemMapper.insertBatch(diffList.get(0));
         }
         if (CollUtil.isNotEmpty(diffList.get(1))) {
+            diffList.get(1).forEach( o->{
+            if (o.getAssociatedBatchId() == null && o.getProductPrice()!= null) {
+                Long productBatch = productBatchService.createProductBatchDO(new ErpProductBatchDO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
+                o.setAssociatedBatchId(productBatch);
+            }
+            });
             purchaseOrderItemMapper.updateBatch(diffList.get(1));
         }
         if (CollUtil.isNotEmpty(diffList.get(2))) {

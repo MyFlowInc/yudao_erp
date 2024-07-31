@@ -78,11 +78,12 @@ public class ErpNoRedisDAO {
      */
     public static final String FINANCE_RECEIPT_NO_PREFIX = "SKD";
 
-
     /**
      * 产品批次单 {@link cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO}
      */
     public static final String PRODUCT_BATCH_NO_PREFIX = "PBN";
+
+
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

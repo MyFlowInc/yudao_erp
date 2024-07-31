@@ -65,6 +65,28 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
     }
 
     @Override
+    public Long createProductBatchDO(ErpProductBatchDO createDO) {
+        //检查新增时是否选中关联产品
+        validateProductAssociationProductIdExists(createDO.getAssociationProductId());
+
+        // 插入
+        ErpProductDO erpProductDO = productMapper.selectById(createDO.getAssociationProductId());
+        //获取同类型产品得批次信息，并进行后缀拼接
+        Integer i = batchProduct(createDO);
+        createDO.setName(erpProductDO.getName()+"-"+"批次"+i);
+        // 1.4 生成编号，并校验唯一性
+        String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
+        System.out.println(no);
+        if (productBatchMapper.selectByNo(no) != null) {
+            throw exception(PURCHASE_ORDER_NO_EXISTS);
+        }
+        createDO.setCode(no);
+        productBatchMapper.insert(createDO);
+        // 返回
+        return createDO.getId();
+    }
+
+    @Override
     public void updateProductBatch(ErpProductBatchSaveReqVO updateReqVO) {
         // 校验存在
         validateProductBatchExists(updateReqVO.getId());
@@ -103,8 +125,9 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         }
         return getMaxSuffix(productBatchMapper.selectList(erpProductBatchDO));
     }
-    public static int getMaxSuffix(List<ErpProductBatchDO> proBatchlist) {
-        Pattern pattern = Pattern.compile("批次(\\d+)");
+
+    public Integer getMaxSuffix(List<ErpProductBatchDO> proBatchlist) {
+        Pattern pattern = Pattern.compile("批次-(\\d+)");
         int maxSuffix = Integer.MIN_VALUE;
         for (ErpProductBatchDO obj : proBatchlist) {
             Matcher matcher = pattern.matcher(obj.getName());
@@ -118,6 +141,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
                 System.out.println("未找到匹配的批次号：" + obj.getName());
             }
         }
+        maxSuffix++;
         return maxSuffix;
     }
     @Override

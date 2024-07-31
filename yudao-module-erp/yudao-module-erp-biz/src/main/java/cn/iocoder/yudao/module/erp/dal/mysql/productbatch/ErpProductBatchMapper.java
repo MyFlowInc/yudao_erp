@@ -7,6 +7,7 @@ import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.*;
 
@@ -27,11 +28,15 @@ public interface ErpProductBatchMapper extends BaseMapperX<ErpProductBatchDO> {
                 .eqIfPresent(ErpProductBatchDO::getType, reqVO.getType())
                 .eqIfPresent(ErpProductBatchDO::getAssociationProductId, reqVO.getAssociationProductId())
                 .eqIfPresent(ErpProductBatchDO::getUnitPrice, reqVO.getUnitPrice())
+                .eqIfPresent(ErpProductBatchDO::getCode,reqVO.getCode())
                 .eqIfPresent(ErpProductBatchDO::getCode, reqVO.getCode())
                 .eqIfPresent(ErpProductBatchDO::getRemark, reqVO.getRemark())
                 .eqIfPresent(ErpProductBatchDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(ErpProductBatchDO::getCreateTime, reqVO.getCreateTime())
                 .ne(ErpProductBatchDO::getDeleted,true)
                 .orderByDesc(ErpProductBatchDO::getId));
+    }
+    default ErpProductBatchDO selectByNo(String no) {
+        return selectOne(ErpProductBatchDO::getCode, no);
     }
 }

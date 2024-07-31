@@ -25,6 +25,14 @@ public interface ErpProductBatchService {
     Long createProductBatch(@Valid ErpProductBatchSaveReqVO createReqVO);
 
     /**
+     * 创建ERP产品批次信息
+     *
+     * @param createDO 创建信息
+     * @return 编号
+     */
+    Long createProductBatchDO(@Valid ErpProductBatchDO createDO);
+
+    /**
      * 更新ERP产品批次信息
      *
      * @param updateReqVO 更新信息

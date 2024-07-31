@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
@@ -169,20 +170,17 @@ public class PurchaseRequisitionController {
     @Operation(summary = "获得新增请购分页")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<List<PurchaseRequisitionRespVO>> getPurchaseRequisitionListAndProductList(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
-        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.selectStatusIsNotEndList(pageReqVO);
+        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO).getList();
         List<PurchaseRequisitionRespVO> result = purchaseRequisitionDOS.stream()
                 .map(o -> {
                     List<RequisitionProductDO> requisitionProductItemList =
                             purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
-                    List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
-                            .filter(item -> ZREO == item.getStatus())
-                            .collect(Collectors.toList());
                     Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
-                            convertSet(filteredList, RequisitionProductDO::getProductId));
+                            convertSet(requisitionProductItemList, RequisitionProductDO::getProductId));
                     return BeanUtils.toBean(o, PurchaseRequisitionRespVO.class,
                         purchaseRequisitionRespVO -> {
                         purchaseRequisitionRespVO.setItems(
-                                BeanUtils.toBean(filteredList, PurchaseRequisitionRespVO.Item.class, item -> {
+                                BeanUtils.toBean(requisitionProductItemList, PurchaseRequisitionRespVO.Item.class, item -> {
                                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
                                 }));

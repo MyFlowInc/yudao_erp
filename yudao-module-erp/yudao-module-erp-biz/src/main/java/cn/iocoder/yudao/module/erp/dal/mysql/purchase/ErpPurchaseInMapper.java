@@ -49,7 +49,8 @@ public interface ErpPurchaseInMapper extends BaseMapperX<ErpPurchaseInDO> {
             query.leftJoin(ErpPurchaseInItemDO.class, ErpPurchaseInItemDO::getInId, ErpPurchaseInDO::getId)
                     .eq(reqVO.getWarehouseId() != null, ErpPurchaseInItemDO::getWarehouseId, reqVO.getWarehouseId())
                     .eq(reqVO.getProductId() != null, ErpPurchaseInItemDO::getProductId, reqVO.getProductId())
-                    .groupBy(ErpPurchaseInDO::getId); // 避免 1 对多查询，产生相同的 1
+                    // 避免 1 对多查询，产生相同的 1
+                    .groupBy(ErpPurchaseInDO::getId);
         }
         return selectJoinPage(reqVO, ErpPurchaseInDO.class, query);
     }

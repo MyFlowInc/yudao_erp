@@ -8,11 +8,18 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseInItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseInMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderItemMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.enums.stock.ErpStockRecordBizTypeEnum;
@@ -28,14 +35,14 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
+import static com.fhs.common.constant.Constant.ONE;
+import static com.fhs.common.constant.Constant.ZERO;
 
 // TODO 芋艿：记录操作日志
 
@@ -52,20 +59,22 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     private ErpPurchaseInMapper purchaseInMapper;
     @Resource
     private ErpPurchaseInItemMapper purchaseInItemMapper;
-
+    @Resource
+    private ErpPurchaseOrderMapper purchaseOrderMapper;
     @Resource
     private ErpNoRedisDAO noRedisDAO;
-
+    @Resource
+    private ErpProductBatchMapper productBatchMapper;
     @Resource
     private ErpProductService productService;
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private ErpPurchaseOrderService purchaseOrderService;
+    @Resource
+    private ErpPurchaseOrderItemMapper purchaseOrderItemMapper;
     @Resource
     private ErpAccountService accountService;
     @Resource
     private ErpStockRecordService stockRecordService;
-
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -76,14 +85,13 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         ErpPurchaseOrderDO purchaseOrder = purchaseOrderService.validatePurchaseOrder(createReqVO.getOrderId());
         // 1.2 校验入库项的有效性
         List<ErpPurchaseInItemDO> purchaseInItems = validatePurchaseInItems(createReqVO.getItems());
-        // 1.3 校验结算账户
-        accountService.validateAccount(createReqVO.getAccountId());
+//        // 1.3 校验结算账户
+//        accountService.validateAccount(createReqVO.getAccountId());
         // 1.4 生成入库单号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PURCHASE_IN_NO_PREFIX);
         if (purchaseInMapper.selectByNo(no) != null) {
             throw exception(PURCHASE_IN_NO_EXISTS);
         }
-
         // 2.1 插入入库
         ErpPurchaseInDO purchaseIn = BeanUtils.toBean(createReqVO, ErpPurchaseInDO.class, in -> in
                 .setNo(no).setStatus(ErpAuditStatus.PROCESS.getStatus()))
@@ -92,7 +100,17 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
 
         purchaseInMapper.insert(purchaseIn);
         // 2.2 插入入库项
-        purchaseInItems.forEach(o -> o.setInId(purchaseIn.getId()));
+        purchaseInItems.forEach(o ->{
+            ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(o.getOrderItemId());
+            if (erpPurchaseOrderItemDO != null){
+                //如果已被关闭则不再进行提交
+                if(erpPurchaseOrderItemDO.getOpen() == ONE){
+                    verifyIfselected();
+                }
+                o.setInId(purchaseIn.getId());
+                o.setAssociationBatchId(erpPurchaseOrderItemDO.getAssociatedBatchId());
+            }
+        } );
         purchaseInItemMapper.insertBatch(purchaseInItems);
 
         // 3. 更新采购订单的入库数量
@@ -153,7 +171,10 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         // 2. 更新采购订单的入库数量
         purchaseOrderService.updatePurchaseOrderInCount(orderId, returnCountMap);
     }
-
+    //校验此采购项是否已结束流程
+    public void verifyIfselected(){
+        throw exception(PURCHASE_RETURN_IS_END);
+    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePurchaseInStatus(Long id, Integer status) {
@@ -168,6 +189,78 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         if (!approve && purchaseIn.getPaymentPrice().compareTo(BigDecimal.ZERO) > 0) {
             throw exception(PURCHASE_IN_PROCESS_FAIL_EXISTS_PAYMENT);
         }
+        //1.4校验订单项所有关联的采购项是否有已被关闭的
+        List<ErpPurchaseInItemDO> erpPurchaseInItemDOS = purchaseInItemMapper.selectListByInId(id);
+        // 使用流操作过滤掉 deleted 不等于 false 的项
+        erpPurchaseInItemDOS = erpPurchaseInItemDOS.stream()
+                .filter(item -> !item.getDeleted())
+                .collect(Collectors.toList());
+        erpPurchaseInItemDOS.forEach( o->{
+            ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(o.getOrderItemId());
+            if (erpPurchaseOrderItemDO != null){
+                //如果已被关闭则不再进行提交
+                if(erpPurchaseOrderItemDO.getOpen() == ONE){
+                    verifyIfselected();
+                }
+            }
+        });
+        if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
+            // 如果订单中存在采购项
+            if (!erpPurchaseInItemDOS.isEmpty()) {
+                // 根据 OrderItemId 分组
+                Map<Long, List<ErpPurchaseInItemDO>> groupedByProductIds = erpPurchaseInItemDOS.stream()
+                        .collect(Collectors.groupingBy(ErpPurchaseInItemDO::getOrderItemId));
+                List<ErpPurchaseInItemDO> itemsWithDifferentProductId = groupedByProductIds.values().stream()
+                        // 只保留 AssociatedRequisitionProductId 唯一的项
+                        .filter(list -> list.size() == 1)
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
+                // 处理相同和不同 OrderItemId 的采购项
+                groupedByProductIds.values().forEach(itemList -> {
+                    // 获取关联的采购单项
+                    ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(itemList.get(0).getOrderItemId());
+                    // 只处理有多个项的组（相同 OrderItemId 的项）
+                    if (itemList.size() > 1) {
+                        // 计算总数
+                        BigDecimal totalSum = itemList.stream()
+                                .map(ErpPurchaseInItemDO::getCount)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                        // 比较入库单数量与采购数量
+                        if (compareBigDecimal(totalSum, erpPurchaseOrderItemDO.getCount()) == ZERO) {
+                            // 更新采购项状态为 关闭
+                            purchaseOrderItemMapper.updateById(new ErpPurchaseOrderItemDO().setId(erpPurchaseOrderItemDO.getId()).setOpen(ONE));
+                            //关闭采购单
+                            closeThePurchaserequisition(erpPurchaseOrderItemDO.getOrderId());
+                            //更新批次数量
+                            updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),totalSum);
+                        }
+                    }
+                });
+                // 没有相同的采购项
+                if (!itemsWithDifferentProductId.isEmpty()) {
+                    itemsWithDifferentProductId.forEach(item -> {
+                        ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(item.getOrderItemId());
+                        List<ErpPurchaseInItemDO> erpPurchaseInItemDOS1 = purchaseInItemMapper.selectListByOrderId(erpPurchaseOrderItemDO.getId());
+                        BigDecimal totalCount = erpPurchaseInItemDOS1.stream()
+                                // 获取每个对象的 count 字段值
+                                .map(ErpPurchaseInItemDO::getCount)
+                                // 过滤掉空值
+                                .filter(Objects::nonNull)
+                                // 初始值为 BigDecimal.ZERO，累加所有值
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                        // 比较入库单数量与采购数量
+                        if (compareBigDecimal(totalCount, erpPurchaseOrderItemDO.getCount()) == ZERO) {
+                            // 更新采购项状态为 关闭
+                            purchaseOrderItemMapper.updateById(new ErpPurchaseOrderItemDO().setId(erpPurchaseOrderItemDO.getId()).setOpen(ONE));
+                            //关闭采购单
+                            closeThePurchaserequisition(erpPurchaseOrderItemDO.getOrderId());
+                            //更新批次数量
+                            updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),totalCount);
+                        }
+                    });
+                }
+                }
+            }
 
         // 2. 更新状态
         int updateCount = purchaseInMapper.updateByIdAndStatus(id, purchaseIn.getStatus(),
@@ -216,6 +309,35 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                 item.setTaxPrice(MoneyUtils.priceMultiplyPercent(item.getTotalPrice(), item.getTaxPercent()));
             }
         }));
+    }
+
+    public static int compareBigDecimal(BigDecimal bd1, BigDecimal bd2) {
+        return bd1.compareTo(bd2);
+    }
+    //关闭采购单
+    public void closeThePurchaserequisition(Long id){
+        // 查询关联请购单的所有请购项目
+        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectListByOrderId(id);
+        // 检查是否所有请购项目都已关闭
+        boolean allClosed = !erpPurchaseOrderItemDOS.isEmpty() && erpPurchaseOrderItemDOS.stream().allMatch(p -> p.getOpen() == ONE);
+        if (allClosed) {
+            // 关闭整个请购单
+            purchaseOrderMapper.updateById(new ErpPurchaseOrderDO().setId(id).setOpen(ONE));
+        }
+    }
+    //更新产品批次数量
+    public void updateBatchQuantity(Long id,BigDecimal count){
+        ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(id);
+        // 空值检查
+        if (erpProductBatchDO != null && count != null) {
+            // 获取当前的库存数量
+            BigDecimal currentQuantity = erpProductBatchDO.getInventoryQuantity();
+            // 将 count 添加到当前库存数量
+            BigDecimal newQuantity = currentQuantity.add(count);
+            // 更新 ErpProductBatchDO 对象的库存数量
+            erpProductBatchDO.setInventoryQuantity(newQuantity);
+            productBatchMapper.updateById(erpProductBatchDO);
+        }
     }
 
     private void updatePurchaseInItemList(Long id, List<ErpPurchaseInItemDO> newList) {

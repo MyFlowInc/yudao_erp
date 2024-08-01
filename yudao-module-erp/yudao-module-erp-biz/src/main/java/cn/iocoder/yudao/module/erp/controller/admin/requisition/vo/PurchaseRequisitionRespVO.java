@@ -109,6 +109,6 @@ public class PurchaseRequisitionRespVO {
         private BigDecimal stockCount;
 
         @Schema(description = "已采购数量")
-        private BigDecimal purchasedNum; // 该字段仅仅在“详情”和“编辑”时使用
+        private BigDecimal purchasedNum;
     }
 }

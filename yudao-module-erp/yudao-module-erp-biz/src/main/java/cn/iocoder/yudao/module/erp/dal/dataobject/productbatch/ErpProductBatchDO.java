@@ -53,7 +53,7 @@ public class ErpProductBatchDO extends BaseDO {
     /**
      * 批次入库数量
      */
-    private Integer inventoryQuantity;
+    private BigDecimal inventoryQuantity;
     /**
      * 备注
      */

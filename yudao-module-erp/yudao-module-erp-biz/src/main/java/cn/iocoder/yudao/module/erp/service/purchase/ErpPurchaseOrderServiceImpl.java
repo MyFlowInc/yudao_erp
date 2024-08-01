@@ -73,8 +73,8 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     public Long createPurchaseOrder(ErpPurchaseOrderSaveReqVO createReqVO) {
         // 1.1 校验订单项的有效性
         List<ErpPurchaseOrderItemDO> purchaseOrderItems = validatePurchaseOrderItems(createReqVO.getItems());
-        // 1.2 校验供应商
-//        supplierMapper.selectById(createReqVO.getSupplierId());
+//         1.2 校验供应商
+        supplierMapper.selectById(createReqVO.getSupplierId());
         // 1.3 校验结算账户
         if (createReqVO.getAccountId() != null) {
             accountService.validateAccount(createReqVO.getAccountId());
@@ -185,6 +185,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                 // 根据 AssociatedRequisitionProductId 分组
                 Map<Long, List<ErpPurchaseOrderItemDO>> groupedByProductIds = purchaseOrderItems.stream()
                         .collect(Collectors.groupingBy(ErpPurchaseOrderItemDO::getAssociatedRequisitionProductId));
+
                 List<ErpPurchaseOrderItemDO> itemsWithDifferentProductId = groupedByProductIds.values().stream()
                         // 只保留 AssociatedRequisitionProductId 唯一的项
                         .filter(list -> list.size() == 1)

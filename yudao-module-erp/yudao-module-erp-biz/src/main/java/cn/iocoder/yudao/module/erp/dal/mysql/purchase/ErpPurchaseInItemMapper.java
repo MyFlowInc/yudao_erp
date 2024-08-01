@@ -29,7 +29,9 @@ public interface ErpPurchaseInItemMapper extends BaseMapperX<ErpPurchaseInItemDO
     default List<ErpPurchaseInItemDO> selectListByInIds(Collection<Long> inIds) {
         return selectList(ErpPurchaseInItemDO::getInId, inIds);
     }
-
+    default List<ErpPurchaseInItemDO> selectListByOrderId(Long Id) {
+        return selectList(ErpPurchaseInItemDO::getOrderItemId, Id);
+    }
     default int deleteByInId(Long inId) {
         return delete(ErpPurchaseInItemDO::getInId, inId);
     }

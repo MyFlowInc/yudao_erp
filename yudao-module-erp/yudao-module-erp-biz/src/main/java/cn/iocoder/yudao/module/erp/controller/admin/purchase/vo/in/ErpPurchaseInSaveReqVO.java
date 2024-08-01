@@ -63,6 +63,9 @@ public class ErpPurchaseInSaveReqVO {
         @NotNull(message = "产品单位单位不能为空")
         private Long productUnitId;
 
+        @Schema(description = "关联批次id")
+        private Long associationBatchId;
+        
         @Schema(description = "产品单价", example = "100.00")
         private BigDecimal productPrice;
 

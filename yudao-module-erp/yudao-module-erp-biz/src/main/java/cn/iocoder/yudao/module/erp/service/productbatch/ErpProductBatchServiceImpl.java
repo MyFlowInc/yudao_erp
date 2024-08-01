@@ -25,8 +25,7 @@ import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
-import static com.fhs.common.constant.Constant.ENABLED;
-import static com.fhs.common.constant.Constant.ONE;
+import static com.fhs.common.constant.Constant.*;
 
 /**
  * ERP产品批次信息 Service 实现类
@@ -52,7 +51,8 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         ErpProductDO erpProductDO = productMapper.selectById(productBatch.getAssociationProductId());
         //获取同类型产品得批次信息，并进行后缀拼接
         Integer i = batchProduct(productBatch);
-        productBatch.setName(erpProductDO.getName()+"-"+"批次"+i);
+        int num = i + 1;
+        productBatch.setName(erpProductDO.getName()+"-"+"批次"+"-"+num);
         // 1.4 生成编号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
         if (productBatchMapper.selectPage(new ErpProductBatchPageReqVO().setCode(no)) != null) {
@@ -68,12 +68,12 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
     public Long createProductBatchDO(ErpProductBatchDO createDO) {
         //检查新增时是否选中关联产品
         validateProductAssociationProductIdExists(createDO.getAssociationProductId());
-
         // 插入
         ErpProductDO erpProductDO = productMapper.selectById(createDO.getAssociationProductId());
         //获取同类型产品得批次信息，并进行后缀拼接
         Integer i = batchProduct(createDO);
-        createDO.setName(erpProductDO.getName()+"-"+"批次"+i);
+        int num = i + 1;
+        createDO.setName(erpProductDO.getName()+"-"+"批次"+"-"+num);
         // 1.4 生成编号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
         System.out.println(no);
@@ -118,10 +118,11 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
     public Integer batchProduct(ErpProductBatchDO productBatch) {
         //查询同类型产品批次数量
         QueryWrapper<ErpProductBatchDO> erpProductBatchDO = new QueryWrapper<ErpProductBatchDO>()
-                .eq("association_product_id",productBatch.getAssociationProductId() );
+                .eq("association_product_id",productBatch.getAssociationProductId() )
+                .ne("deleted",true);
         //选中后判断批次号
         if (productBatchMapper.selectList(erpProductBatchDO).isEmpty()){
-            return ONE;
+            return ZERO;
         }
         return getMaxSuffix(productBatchMapper.selectList(erpProductBatchDO));
     }
@@ -141,7 +142,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
                 System.out.println("未找到匹配的批次号：" + obj.getName());
             }
         }
-        return maxSuffix+1;
+        return maxSuffix;
     }
     @Override
     public ErpProductBatchDO getProductBatch(Long id) {

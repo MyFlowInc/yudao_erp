@@ -29,6 +29,10 @@ public class ErpPurchaseOrderRespVO {
     @ExcelProperty("采购状态")
     private Integer status;
 
+    @Schema(description = "采购开启状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @ExcelProperty("采购开启状态")
+    private Integer open;
+
     @Schema(description = "供应商编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1724")
     private Long supplierId;
     @Schema(description = "供应商名称", example = "芋道")
@@ -118,11 +122,15 @@ public class ErpPurchaseOrderRespVO {
         @NotNull(message = "产品数量不能为空")
         private BigDecimal count;
 
-        @Schema(description = "已入库数量")
-        private Integer quantityInStock;
+//        @Schema(description = "已入库数量")
+//        private Integer quantityInStock;
 
         @Schema(description = "税率，百分比", example = "99.88")
         private BigDecimal taxPercent;
+
+        @Schema(description = "采购项开启状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+        @ExcelProperty("采购项开启状态")
+        private Integer open;
 
         @Schema(description = "税额，单位：元", example = "100.00")
         private BigDecimal taxPrice;

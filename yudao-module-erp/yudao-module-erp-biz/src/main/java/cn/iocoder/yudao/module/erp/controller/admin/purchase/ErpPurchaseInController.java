@@ -12,11 +12,14 @@ import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProduc
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInSaveReqVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseInService;
+import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseOrderService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpSupplierService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
@@ -56,6 +59,8 @@ public class ErpPurchaseInController {
     @Resource
     private ErpSupplierService supplierService;
 
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -106,6 +111,14 @@ public class ErpPurchaseInController {
                 convertSet(purchaseInItemList, ErpPurchaseInItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseIn, ErpPurchaseInRespVO.class, purchaseInVO ->
                 purchaseInVO.setItems(BeanUtils.toBean(purchaseInItemList, ErpPurchaseInRespVO.Item.class, item -> {
+                    ErpProductBatchDO productBatch = productBatchService.getProductBatch(item.getAssociationBatchId());
+                    if (productBatch != null) {
+                        item.setAssociationBatchId(productBatch.getId());
+                        item.setAssociationBatchName(productBatch.getName());
+                        if (productBatch.getInventoryQuantity()!=null){
+                            item.setAssociationBatchNum(productBatch.getInventoryQuantity().intValue());
+                        }
+                    }
                     ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())

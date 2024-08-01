@@ -127,7 +127,6 @@ public class ErpPurchaseOrderController {
                         item.setAssociatedBatchId(productBatch.getId());
                         item.setAssociatedBatchName(productBatch.getName());
                     }
-
                     if (item.getAssociatedRequisitionProductId()!=null){
                         //拼接请购项及请购单信息返回
                         RequisitionProductDO purchaseRequisitionProduct = purchaseRequisitionService.getPurchaseRequisitionProduct(item.getAssociatedRequisitionProductId());

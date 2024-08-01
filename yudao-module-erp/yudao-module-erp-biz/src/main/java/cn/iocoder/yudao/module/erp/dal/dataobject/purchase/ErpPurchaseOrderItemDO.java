@@ -61,6 +61,10 @@ public class ErpPurchaseOrderItemDO extends BaseDO {
      * 已入库数量
      */
     private Integer quantityInStock;
+    /**
+     * 已入库数量
+     */
+    private Integer open;
 
     /**
      * 总价，单位：元

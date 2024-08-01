@@ -112,6 +112,15 @@ public class ErpPurchaseInRespVO {
         @Schema(description = "产品单位单位", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         private Long productUnitId;
 
+        @Schema(description = "关联批次id")
+        private Long associationBatchId;
+
+        @Schema(description = "关联批次名称")
+        private String associationBatchName;
+
+        @Schema(description = "关联批次库存数量")
+        private Integer associationBatchNum;
+
         @Schema(description = "产品单价", example = "100.00")
         private BigDecimal productPrice;
 
@@ -137,7 +146,7 @@ public class ErpPurchaseInRespVO {
         @Schema(description = "产品单位名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "盒")
         private String productUnitName;
 
-        @Schema(description = "库存数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
+        @Schema(description = "库存总库存数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
         private BigDecimal stockCount; // 该字段仅仅在“详情”和“编辑”时使用
 
     }

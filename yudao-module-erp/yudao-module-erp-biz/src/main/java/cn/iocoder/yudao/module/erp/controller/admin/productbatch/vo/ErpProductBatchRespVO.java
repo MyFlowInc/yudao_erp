@@ -37,7 +37,7 @@ public class ErpProductBatchRespVO {
      */
     @Schema(description = "批次入库数量")
     @ExcelProperty("批次入库数量")
-    private Integer inventoryQuantity;
+    private BigDecimal inventoryQuantity;
 
     @Schema(description = "批次编号")
     @ExcelProperty("批次编号")

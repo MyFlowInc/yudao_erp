@@ -68,6 +68,9 @@ public class ErpPurchaseOrderPageReqVO extends PageParam {
     @Schema(description = "入库状态", example = "2")
     private Integer inStatus;
 
+    @Schema(description = "开启状态")
+    private Integer open;
+
     @Schema(description = "退货状态", example = "2")
     private Integer returnStatus;
 

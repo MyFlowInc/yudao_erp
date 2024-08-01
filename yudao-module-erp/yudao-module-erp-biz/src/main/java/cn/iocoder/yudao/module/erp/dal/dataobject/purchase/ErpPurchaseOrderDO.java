@@ -42,6 +42,9 @@ public class ErpPurchaseOrderDO extends BaseDO {
      * 枚举 {@link cn.iocoder.yudao.module.erp.enums.ErpAuditStatus}
      */
     private Integer status;
+
+    //开启关闭
+    private Integer open;
     /**
      * 供应商编号
      *

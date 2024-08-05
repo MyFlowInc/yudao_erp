@@ -111,9 +111,9 @@ public class ErpPurchaseInController {
                 convertSet(purchaseInItemList, ErpPurchaseInItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseIn, ErpPurchaseInRespVO.class, purchaseInVO ->
                 purchaseInVO.setItems(BeanUtils.toBean(purchaseInItemList, ErpPurchaseInRespVO.Item.class, item -> {
-                    ErpProductBatchDO productBatch = productBatchService.getProductBatch(item.getAssociationBatchId());
+                    ErpProductBatchDO productBatch = productBatchService.getProductBatch(item.getAssociatedBatchId());
                     if (productBatch != null) {
-                        item.setAssociationBatchId(productBatch.getId());
+                        item.setAssociatedBatchId(productBatch.getId());
                         item.setAssociationBatchName(productBatch.getName());
                         if (productBatch.getInventoryQuantity()!=null){
                             item.setAssociationBatchNum(productBatch.getInventoryQuantity().intValue());

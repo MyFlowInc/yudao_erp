@@ -51,9 +51,10 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
     @Resource
     private ErpPurchaseInService purchaseInService;
     @Resource
+    private ErpPurchaseOrderMapper purchaseOrderMapper;
+    @Resource
     private ErpProductService productService;
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private ErpPurchaseOrderService purchaseOrderService;
     @Resource
     private ErpPurchaseOrderItemMapper purchaseOrderItemMapper;
@@ -211,6 +212,8 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
                         // 如果 subtract 小于 0 的处理逻辑
                         throw exception(PURCHASE_RETURN_ITEM_IS_GREATER_THAN_ORDER_IN_ITEM);
                     }
+                    ErpPurchaseOrderDO purchaseOrder = purchaseOrderService.getPurchaseOrder(erpPurchaseOrderItemDO.getOrderId());
+                    purchaseOrderMapper.updateById(purchaseOrder.setInCount(purchaseOrder.getInCount().subtract(total)));
                     purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setReturnCount(total).setInCount(subtract));
                     //更新批次数量
                     purchaseInService.updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),total, 20);

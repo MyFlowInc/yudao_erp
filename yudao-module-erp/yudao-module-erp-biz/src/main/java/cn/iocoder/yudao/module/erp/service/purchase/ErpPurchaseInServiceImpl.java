@@ -191,11 +191,9 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
 
         if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
             List<ErpPurchaseInItemDO> erpPurchaseInItemDOS = purchaseInItemMapper.selectListByInId(id);
-
             erpPurchaseInItemDOS = erpPurchaseInItemDOS.stream()
                     .filter(item -> !item.getDeleted())
                     .collect(Collectors.toList());
-
             erpPurchaseInItemDOS.forEach( o->{
                         ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(o.getOrderItemId());
                         if (erpPurchaseOrderItemDO != null){
@@ -205,7 +203,6 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                             }
                         }
                     });
-
             // 如果订单中存在采购项
             if (!erpPurchaseInItemDOS.isEmpty()) {
                 // 根据 OrderItemId 分组
@@ -242,12 +239,12 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                         if (compareBigDecimal(totalCount, erpPurchaseOrderItemDO.getCount()) > ZERO) {
                             throw exception(PURCHASE_IN_PROCESS_FAIL_MAX_STOCK);
                         }
+                            //更新采购项已采购数量
+                            purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setInCount(totalCount));
                             //更新采购订单的入库数量
                             updatePurchaseOrderInCount(erpPurchaseOrderDO.getId());
                             //更新批次数量
                             updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),totalCount,10);
-                            //更新采购项已采购数量
-                            purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setInCount(totalCount));
 //                        }
                     });
                 }

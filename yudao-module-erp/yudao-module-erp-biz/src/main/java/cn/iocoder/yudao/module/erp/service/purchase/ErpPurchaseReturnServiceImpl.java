@@ -8,16 +8,16 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.returns.ErpPurchaseReturnPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.returns.ErpPurchaseReturnSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseReturnDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseReturnItemDO;
-import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseReturnItemMapper;
-import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseReturnMapper;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.*;
+import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.purchase.*;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.enums.stock.ErpStockRecordBizTypeEnum;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.bo.ErpStockRecordCreateReqBO;
 import org.springframework.context.annotation.Lazy;
@@ -51,15 +51,17 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
     private ErpPurchaseReturnMapper purchaseReturnMapper;
     @Resource
     private ErpPurchaseReturnItemMapper purchaseReturnItemMapper;
-
     @Resource
     private ErpNoRedisDAO noRedisDAO;
-
+    @Resource
+    private ErpPurchaseInService purchaseInService;
     @Resource
     private ErpProductService productService;
     @Resource
     @Lazy // 延迟加载，避免循环依赖
     private ErpPurchaseOrderService purchaseOrderService;
+    @Resource
+    private ErpPurchaseOrderItemMapper purchaseOrderItemMapper;
     @Resource
     private ErpAccountService accountService;
     @Resource
@@ -72,8 +74,8 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         ErpPurchaseOrderDO purchaseOrder = purchaseOrderService.validatePurchaseOrder(createReqVO.getOrderId());
         // 1.2 校验退货项的有效性
         List<ErpPurchaseReturnItemDO> purchaseReturnItems = validatePurchaseReturnItems(createReqVO.getItems());
-        // 1.3 校验结算账户
-        accountService.validateAccount(createReqVO.getAccountId());
+//        // 1.3 校验结算账户
+//        accountService.validateAccount(createReqVO.getAccountId());
         // 1.4 生成退货单号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PURCHASE_RETURN_NO_PREFIX);
         if (purchaseReturnMapper.selectByNo(no) != null) {
@@ -90,8 +92,6 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         purchaseReturnItems.forEach(o -> o.setReturnId(purchaseReturn.getId()));
         purchaseReturnItemMapper.insertBatch(purchaseReturnItems);
 
-        // 3. 更新采购订单的退货数量
-        updatePurchaseOrderReturnCount(createReqVO.getOrderId());
         return purchaseReturn.getId();
     }
 
@@ -118,8 +118,9 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         // 2.2 更新退货项
         updatePurchaseReturnItemList(updateReqVO.getId(), purchaseReturnItems);
 
-        // 3.1 更新采购订单的出库数量
-        updatePurchaseOrderReturnCount(updateObj.getOrderId());
+//        // 3.1 更新采购订单的出库数量
+//        updatePurchaseOrderReturnCount(updateObj.getOrderId());
+
         // 3.2 注意：如果采购订单编号变更了，需要更新“老”采购订单的出库数量
         if (ObjectUtil.notEqual(purchaseReturn.getOrderId(), updateObj.getOrderId())) {
             updatePurchaseOrderReturnCount(purchaseReturn.getOrderId());
@@ -163,7 +164,6 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         if (!approve && purchaseReturn.getRefundPrice().compareTo(BigDecimal.ZERO) > 0) {
             throw exception(PURCHASE_RETURN_PROCESS_FAIL_EXISTS_REFUND);
         }
-
         // 2. 更新状态
         int updateCount = purchaseReturnMapper.updateByIdAndStatus(id, purchaseReturn.getStatus(),
                 new ErpPurchaseReturnDO().setStatus(status));
@@ -175,13 +175,44 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         List<ErpPurchaseReturnItemDO> purchaseReturnItems = purchaseReturnItemMapper.selectListByReturnId(id);
         Integer bizType = approve ? ErpStockRecordBizTypeEnum.PURCHASE_RETURN.getType()
                 : ErpStockRecordBizTypeEnum.PURCHASE_RETURN_CANCEL.getType();
+        //变更批次数量
         purchaseReturnItems.forEach(purchaseReturnItem -> {
+            ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(purchaseReturnItem.getOrderItemId());
+            //更新采购订单的出库数量
+            updatePurchaseOrderReturnCount(erpPurchaseOrderItemDO.getOrderId());
+            //更新批次数量
+            updatePurchaseOrderBatchCount(purchaseReturnItem.getOrderItemId(),20);
+            //通过approve判断还是入库
             BigDecimal count = approve ? purchaseReturnItem.getCount().negate() : purchaseReturnItem.getCount();
+            //创建库存明细信息
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     purchaseReturnItem.getProductId(), purchaseReturnItem.getWarehouseId(), count,
                     bizType, purchaseReturnItem.getReturnId(), purchaseReturnItem.getId(), purchaseReturn.getNo()));
         });
     }
+
+    private void updatePurchaseOrderBatchCount(Long id,Integer status) {
+        List<ErpPurchaseReturnItemDO> erpPurchaseReturnItemDOS = purchaseReturnItemMapper.selectListByItemId(id);
+        if (!erpPurchaseReturnItemDOS.isEmpty()){
+            //累加所有
+            BigDecimal total = erpPurchaseReturnItemDOS.stream()
+                    // 获取每个 PurchaseReturnItem 的 count 属性
+                    .map(ErpPurchaseReturnItemDO::getCount)
+                    // 利用 reduce 进行累加操作，初始值为 BigDecimal.ZERO
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            erpPurchaseReturnItemDOS.forEach(o -> {
+                //更新采购项退货数量
+                ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(o.getOrderItemId());
+                if (erpPurchaseOrderItemDO!=null){
+                    purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setReturnCount(total));
+                    //更新批次数量
+                    purchaseInService.updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),total,status);
+                }
+            });
+        }
+    }
+
+
 
     @Override
     public void updatePurchaseReturnRefundPrice(Long id, BigDecimal refundPrice) {
@@ -202,7 +233,7 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         Map<Long, ErpProductDO> productMap = convertMap(productList, ErpProductDO::getId);
         // 2. 转化为 ErpPurchaseReturnItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpPurchaseReturnItemDO.class, item -> {
-            item.setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()));
+            item.setProductUnitId(productMap.get(item.getProductId()).getUnitId());
             item.setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()));
             if (item.getTotalPrice() == null) {
                 return;
@@ -216,9 +247,9 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
     private void updatePurchaseReturnItemList(Long id, List<ErpPurchaseReturnItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpPurchaseReturnItemDO> oldList = purchaseReturnItemMapper.selectListByReturnId(id);
-        List<List<ErpPurchaseReturnItemDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<ErpPurchaseReturnItemDO>> diffList = diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
-
         // 第二步，批量添加、修改、删除
         if (CollUtil.isNotEmpty(diffList.get(0))) {
             diffList.get(0).forEach(o -> o.setReturnId(id));

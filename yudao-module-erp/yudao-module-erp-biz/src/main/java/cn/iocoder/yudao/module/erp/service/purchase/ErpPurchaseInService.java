@@ -98,4 +98,5 @@ public interface ErpPurchaseInService {
      */
     List<ErpPurchaseInItemDO> getPurchaseInItemListByInIds(Collection<Long> inIds);
 
+    void updateBatchQuantity(Long id,BigDecimal count,Integer status);
 }

@@ -26,6 +26,10 @@ public interface ErpPurchaseReturnItemMapper extends BaseMapperX<ErpPurchaseRetu
         return selectList(ErpPurchaseReturnItemDO::getReturnId, returnId);
     }
 
+    default List<ErpPurchaseReturnItemDO> selectListByItemId(Long id) {
+        return selectList(ErpPurchaseReturnItemDO::getOrderItemId, id);
+    }
+
     default List<ErpPurchaseReturnItemDO> selectListByReturnIds(Collection<Long> returnIds) {
         return selectList(ErpPurchaseReturnItemDO::getReturnId, returnIds);
     }

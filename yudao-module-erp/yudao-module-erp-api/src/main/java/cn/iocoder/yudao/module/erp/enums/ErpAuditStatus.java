@@ -16,9 +16,10 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 @Getter
 public enum ErpAuditStatus implements IntArrayValuable {
-
-    PROCESS(10, "未审核"), // 审核中
-    APPROVE(20, "已审核"); // 审核通过
+    // 审核中
+    PROCESS(10, "未审核"),
+    // 审核通过
+    APPROVE(20, "已审核");
 
     public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(ErpAuditStatus::getStatus).toArray();
 

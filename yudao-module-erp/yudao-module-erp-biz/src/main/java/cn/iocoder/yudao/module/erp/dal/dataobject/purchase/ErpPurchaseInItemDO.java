@@ -64,7 +64,7 @@ public class ErpPurchaseInItemDO extends BaseDO {
     private Long productUnitId;
 
 
-    private Long associationBatchId;
+    private Long associatedBatchId;
 
     /**
      * 产品单位单价，单位：元

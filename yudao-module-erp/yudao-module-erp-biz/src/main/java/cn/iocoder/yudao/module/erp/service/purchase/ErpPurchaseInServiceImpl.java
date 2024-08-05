@@ -110,7 +110,7 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                     throw exception(PURCHASE_IN_PROCESS_FAIL_MAX_STOCK);
                 }
                 o.setInId(purchaseIn.getId());
-                o.setAssociationBatchId(erpPurchaseOrderItemDO.getAssociatedBatchId());
+                o.setAssociatedBatchId(erpPurchaseOrderItemDO.getAssociatedBatchId());
             }
         } );
         purchaseInItemMapper.insertBatch(purchaseInItems);

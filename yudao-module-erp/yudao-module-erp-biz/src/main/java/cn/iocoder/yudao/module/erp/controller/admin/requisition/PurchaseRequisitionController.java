@@ -170,7 +170,7 @@ public class PurchaseRequisitionController {
     @Operation(summary = "获得新增请购分页")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<List<PurchaseRequisitionRespVO>> getPurchaseRequisitionListAndProductList(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
-        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.selectStatusIsNotEndList(pageReqVO);
+        List<PurchaseRequisitionDO> purchaseRequisitionDOS = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO).getList();
         List<PurchaseRequisitionRespVO> result = purchaseRequisitionDOS.stream()
                 .map(o -> {
                     List<RequisitionProductDO> requisitionProductItemList =

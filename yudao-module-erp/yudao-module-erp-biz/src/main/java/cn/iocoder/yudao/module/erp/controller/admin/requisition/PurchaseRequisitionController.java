@@ -183,7 +183,6 @@ public class PurchaseRequisitionController {
                                             .thenComparing(Comparator.comparing(RequisitionProductDO::getCreateTime).reversed())
                             )
                             .collect(Collectors.toList());
-
                     Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                             convertSet(filteredList, RequisitionProductDO::getProductId));
                     return BeanUtils.toBean(o, PurchaseRequisitionRespVO.class,

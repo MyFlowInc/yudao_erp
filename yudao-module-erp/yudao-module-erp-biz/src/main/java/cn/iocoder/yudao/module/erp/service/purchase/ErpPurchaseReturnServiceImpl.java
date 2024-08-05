@@ -8,16 +8,13 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.returns.ErpPurchaseReturnPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.returns.ErpPurchaseReturnSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.*;
-import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.*;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.enums.stock.ErpStockRecordBizTypeEnum;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
-import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.bo.ErpStockRecordCreateReqBO;
 import org.springframework.context.annotation.Lazy;
@@ -181,7 +178,7 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
             //更新采购订单的出库数量
             updatePurchaseOrderReturnCount(erpPurchaseOrderItemDO.getOrderId());
             //更新批次数量
-            updatePurchaseOrderBatchCount(purchaseReturnItem.getOrderItemId(),20);
+            updatePurchaseOrderBatchCount(purchaseReturnItem.getOrderItemId());
             //通过approve判断还是入库
             BigDecimal count = approve ? purchaseReturnItem.getCount().negate() : purchaseReturnItem.getCount();
             //创建库存明细信息
@@ -191,7 +188,7 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         });
     }
 
-    private void updatePurchaseOrderBatchCount(Long id,Integer status) {
+    private void updatePurchaseOrderBatchCount(Long id) {
         List<ErpPurchaseReturnItemDO> erpPurchaseReturnItemDOS = purchaseReturnItemMapper.selectListByItemId(id);
         if (!erpPurchaseReturnItemDOS.isEmpty()){
             //累加所有
@@ -204,15 +201,14 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
                 //更新采购项退货数量
                 ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(o.getOrderItemId());
                 if (erpPurchaseOrderItemDO!=null){
+
                     purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setReturnCount(total));
                     //更新批次数量
-                    purchaseInService.updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),total,status);
+                    purchaseInService.updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),total, 20);
                 }
             });
         }
     }
-
-
 
     @Override
     public void updatePurchaseReturnRefundPrice(Long id, BigDecimal refundPrice) {

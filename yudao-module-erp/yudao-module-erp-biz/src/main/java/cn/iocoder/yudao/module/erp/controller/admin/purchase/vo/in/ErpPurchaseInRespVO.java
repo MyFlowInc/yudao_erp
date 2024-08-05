@@ -111,9 +111,11 @@ public class ErpPurchaseInRespVO {
 
         @Schema(description = "产品单位单位", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         private Long productUnitId;
-
-        @Schema(description = "关联批次id")
-        private Long associationBatchId;
+        /**
+         * 关联批次信息id
+         */
+        @Schema(description = "关联批次信息id", example = "随便")
+        private Long associatedBatchId;
 
         @Schema(description = "关联批次名称")
         private String associationBatchName;

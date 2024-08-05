@@ -102,7 +102,7 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         // 1.2 校验采购订单已审核
         ErpPurchaseOrderDO purchaseOrder = purchaseOrderService.validatePurchaseOrder(updateReqVO.getOrderId());
         // 1.3 校验结算账户
-        accountService.validateAccount(updateReqVO.getAccountId());
+//        accountService.validateAccount(updateReqVO.getAccountId());
         // 1.4 校验订单项的有效性
         List<ErpPurchaseReturnItemDO> purchaseReturnItems = validatePurchaseReturnItems(updateReqVO.getItems());
 

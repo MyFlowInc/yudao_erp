@@ -24,14 +24,12 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
+import static com.fhs.common.constant.Constant.ZREO;
 
 // TODO 芋艿：记录操作日志
 
@@ -119,9 +117,9 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
 //        updatePurchaseOrderReturnCount(updateObj.getOrderId());
 
         // 3.2 注意：如果采购订单编号变更了，需要更新“老”采购订单的出库数量
-        if (ObjectUtil.notEqual(purchaseReturn.getOrderId(), updateObj.getOrderId())) {
-            updatePurchaseOrderReturnCount(purchaseReturn.getOrderId());
-        }
+//        if (ObjectUtil.notEqual(purchaseReturn.getOrderId(), updateObj.getOrderId())) {
+//            updatePurchaseOrderReturnCount(purchaseReturn.getOrderId());
+//        }
     }
 
     private void calculateTotalPrice(ErpPurchaseReturnDO purchaseReturn, List<ErpPurchaseReturnItemDO> purchaseReturnItems) {
@@ -161,13 +159,6 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
         if (!approve && purchaseReturn.getRefundPrice().compareTo(BigDecimal.ZERO) > 0) {
             throw exception(PURCHASE_RETURN_PROCESS_FAIL_EXISTS_REFUND);
         }
-        // 2. 更新状态
-        int updateCount = purchaseReturnMapper.updateByIdAndStatus(id, purchaseReturn.getStatus(),
-                new ErpPurchaseReturnDO().setStatus(status));
-        if (updateCount == 0) {
-            throw exception(approve ? PURCHASE_RETURN_APPROVE_FAIL : PURCHASE_RETURN_PROCESS_FAIL);
-        }
-
         // 3. 变更库存
         List<ErpPurchaseReturnItemDO> purchaseReturnItems = purchaseReturnItemMapper.selectListByReturnId(id);
         Integer bizType = approve ? ErpStockRecordBizTypeEnum.PURCHASE_RETURN.getType()
@@ -186,10 +177,24 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
                     purchaseReturnItem.getProductId(), purchaseReturnItem.getWarehouseId(), count,
                     bizType, purchaseReturnItem.getReturnId(), purchaseReturnItem.getId(), purchaseReturn.getNo()));
         });
+        // 2. 更新状态
+        int updateCount = purchaseReturnMapper.updateByIdAndStatus(id, purchaseReturn.getStatus(),
+                new ErpPurchaseReturnDO().setStatus(status));
+        if (updateCount == 0) {
+            throw exception(approve ? PURCHASE_RETURN_APPROVE_FAIL : PURCHASE_RETURN_PROCESS_FAIL);
+        }
     }
 
     private void updatePurchaseOrderBatchCount(Long id) {
         List<ErpPurchaseReturnItemDO> erpPurchaseReturnItemDOS = purchaseReturnItemMapper.selectListByItemId(id);
+        Iterator<ErpPurchaseReturnItemDO> iterator = erpPurchaseReturnItemDOS.iterator();
+        while (iterator.hasNext()) {
+            ErpPurchaseReturnItemDO item = iterator.next();
+            ErpPurchaseReturnDO erpPurchaseInDO = purchaseReturnMapper.selectById(item.getReturnId());
+            if (Objects.equals(erpPurchaseInDO.getStatus(), ErpAuditStatus.APPROVE.getStatus())) {
+                iterator.remove();
+            }
+        }
         if (!erpPurchaseReturnItemDOS.isEmpty()){
             //累加所有
             BigDecimal total = erpPurchaseReturnItemDOS.stream()
@@ -201,8 +206,12 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
                 //更新采购项退货数量
                 ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(o.getOrderItemId());
                 if (erpPurchaseOrderItemDO!=null){
-
-                    purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setReturnCount(total));
+                    BigDecimal subtract = erpPurchaseOrderItemDO.getInCount().subtract(total);
+                    if (subtract.compareTo(BigDecimal.ZERO) < 0) {
+                        // 如果 subtract 小于 0 的处理逻辑
+                        throw exception(PURCHASE_RETURN_ITEM_IS_GREATER_THAN_ORDER_IN_ITEM);
+                    }
+                    purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setReturnCount(total).setInCount(subtract));
                     //更新批次数量
                     purchaseInService.updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),total, 20);
                 }

@@ -108,7 +108,10 @@ public class ErpPurchaseReturnRespVO {
 
         @Schema(description = "产品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         private Long productId;
-
+        @Schema(description = "关联批次信息id", example = "随便")
+        private Long associatedBatchId;
+        @Schema(description = "关联批次信息名称", example = "随便")
+        private String associatedBatchName;
         @Schema(description = "产品单位单位", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         private Long productUnitId;
 

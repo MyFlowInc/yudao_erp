@@ -58,9 +58,14 @@ public class ErpPurchaseReturnSaveReqVO {
         @Schema(description = "产品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         @NotNull(message = "产品编号不能为空")
         private Long productId;
+
         @Schema(description = "产品单位单位", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         @NotNull(message = "产品单位单位不能为空")
         private Long productUnitId;
+
+        @Schema(description = "关联批次信息id", example = "随便")
+        @NotNull(message = "批次不能为空")
+        private Long associatedBatchId;
 
         @Schema(description = "产品单价", example = "100.00")
         private BigDecimal productPrice;

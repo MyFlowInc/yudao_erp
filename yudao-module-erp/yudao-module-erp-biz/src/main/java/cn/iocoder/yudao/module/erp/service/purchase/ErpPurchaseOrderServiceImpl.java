@@ -320,21 +320,38 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
     @Override
     public void updatePurchaseOrderInCount(Long id, Map<Long, BigDecimal> inCountMap) {
         List<ErpPurchaseOrderItemDO> orderItems = purchaseOrderItemMapper.selectListByOrderId(id);
+        orderItems = orderItems.stream().filter(o -> {
+                    ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(o.getOrderId());
+                    return erpPurchaseOrderDO != null && Objects.equals(erpPurchaseOrderDO.getStatus(), ErpAuditStatus.APPROVE.getStatus());
+                })
+                .collect(Collectors.toList());
         // 1. 更新每个采购订单项
         orderItems.forEach(item -> {
             BigDecimal inCount = inCountMap.getOrDefault(item.getId(), BigDecimal.ZERO);
-            if (item.getInCount().equals(inCount)) {
-                return;
-            }
             if (inCount.compareTo(item.getCount()) > 0) {
                 throw exception(PURCHASE_ORDER_ITEM_IN_FAIL_PRODUCT_EXCEED,
                         productService.getProduct(item.getProductId()).getName(), item.getCount());
             }
-            purchaseOrderItemMapper.updateById(new ErpPurchaseOrderItemDO().setId(item.getId()).setInCount(inCount));
+            BigDecimal subtract = inCount.subtract(item.getCount());
+            if (subtract.compareTo(BigDecimal.ZERO) <= 0){
+                subtract = inCount;
+            }
+            BigDecimal nowCount = inCount.subtract(subtract);
+            if (nowCount.compareTo(BigDecimal.ZERO) <= 0){
+                nowCount = inCount;
+            }
+            // 2. 更新采购订单
+            BigDecimal totalInCount = getSumValue(inCountMap.values(), value -> value, BigDecimal::add, BigDecimal.ZERO);
+            BigDecimal subtract1 = totalInCount.subtract(nowCount);
+            if (subtract1.compareTo(BigDecimal.ZERO) <= 0) {
+            purchaseOrderItemMapper.updateById(new ErpPurchaseOrderItemDO().setId(item.getId()).setInCount(totalInCount));
+            purchaseOrderMapper.updateById(new ErpPurchaseOrderDO().setId(id).setInCount(totalInCount));
+            }else {
+            purchaseOrderItemMapper.updateById(new ErpPurchaseOrderItemDO().setId(item.getId()).setInCount(subtract1));
+            purchaseOrderMapper.updateById(new ErpPurchaseOrderDO().setId(id).setInCount(subtract1));
+            }
         });
-        // 2. 更新采购订单
-        BigDecimal totalInCount = getSumValue(inCountMap.values(), value -> value, BigDecimal::add, BigDecimal.ZERO);
-        purchaseOrderMapper.updateById(new ErpPurchaseOrderDO().setId(id).setInCount(totalInCount));
+
     }
 
     @Override

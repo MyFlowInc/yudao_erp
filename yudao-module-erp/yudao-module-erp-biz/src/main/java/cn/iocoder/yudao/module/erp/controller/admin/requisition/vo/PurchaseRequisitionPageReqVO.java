@@ -24,6 +24,12 @@ public class PurchaseRequisitionPageReqVO extends PageParam {
     @Schema(description = "请购类型", example = "2")
     private Integer requisitionType;
 
+    @Schema(description = "关联项目", example = "2")
+    private Integer associationProject;
+
+    @Schema(description = "关联产品id", example = "2")
+    private Integer productId;
+
     @Schema(description = "请购单时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private String[] requisitionTime;

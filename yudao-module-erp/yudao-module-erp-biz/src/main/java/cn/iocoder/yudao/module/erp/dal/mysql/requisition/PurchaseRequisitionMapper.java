@@ -5,7 +5,11 @@ import java.util.*;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.framework.mybatis.core.query.MPJLambdaWrapperX;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import com.alibaba.excel.util.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -22,15 +26,25 @@ import reactor.core.publisher.Sinks;
 public interface PurchaseRequisitionMapper extends BaseMapperX<PurchaseRequisitionDO> {
 
     default PageResult<PurchaseRequisitionDO> selectPage(PurchaseRequisitionPageReqVO reqVO) {
-        return selectPage(reqVO, new LambdaQueryWrapperX<PurchaseRequisitionDO>()
+        MPJLambdaWrapperX<PurchaseRequisitionDO> query = new MPJLambdaWrapperX<PurchaseRequisitionDO>()
                 .eqIfPresent(PurchaseRequisitionDO::getId, reqVO.getId())
                 .eqIfPresent(PurchaseRequisitionDO::getRequisitionCode, reqVO.getRequisitionCode())
                 .eqIfPresent(PurchaseRequisitionDO::getRequisitionType, reqVO.getRequisitionType())
+                .eqIfPresent(PurchaseRequisitionDO::getAssociationProject,reqVO.getAssociationProject())
                 .betweenIfPresent(PurchaseRequisitionDO::getRequisitionTime, reqVO.getRequisitionTime())
                 .betweenIfPresent(PurchaseRequisitionDO::getEstimatedTime, reqVO.getEstimatedTime())
                 .eqIfPresent(PurchaseRequisitionDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(PurchaseRequisitionDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(PurchaseRequisitionDO::getId));
+                .orderByDesc(PurchaseRequisitionDO::getId);
+        if (reqVO.getProductId() != null) {
+            query.leftJoin(RequisitionProductDO.class, RequisitionProductDO::getAssociationRequisition, PurchaseRequisitionDO::getId)
+                    .eq(reqVO.getProductId() != null, RequisitionProductDO::getProductId, reqVO.getProductId())
+                    // 避免 1 对多查询，产生相同的 1
+                    .groupBy(PurchaseRequisitionDO::getId);
+        }
+        return selectPage(reqVO,query);
+
+
     }
 
     default List<PurchaseRequisitionDO> selectStatusIsNotEndList(PurchaseRequisitionPageReqVO reqVO) {

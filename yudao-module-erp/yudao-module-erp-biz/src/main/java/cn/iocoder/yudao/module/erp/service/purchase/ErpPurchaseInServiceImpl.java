@@ -251,14 +251,9 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                         //更新采购项已采购数量
                         purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setInCount(totalCount));
                         ErpPurchaseOrderDO erpPurchaseOrderDO1 = purchaseOrderMapper.selectById(erpPurchaseOrderItemDO.getOrderId());
-//                        List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectListByOrderId(erpPurchaseOrderDO1.getId());
-//                        // 使用流操作求和
-//                        BigDecimal total = erpPurchaseOrderItemDOS.stream()
-//                                .map(ErpPurchaseOrderItemDO::getCount) // 提取每个对象的 count 属性
-//                                .reduce(BigDecimal.ZERO, BigDecimal::add);
                         purchaseOrderMapper.updateById(erpPurchaseOrderDO1.setInCount(erpPurchaseOrderDO1.getInCount().add(item.getCount())));
                         //更新批次数量
-                        updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),totalCount,10);
+                        updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),item.getCount(),10);
 //                        }
                     });
                 }

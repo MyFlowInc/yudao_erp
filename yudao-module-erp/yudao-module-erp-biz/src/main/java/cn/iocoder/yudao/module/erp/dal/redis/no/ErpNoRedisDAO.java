@@ -84,6 +84,10 @@ public class ErpNoRedisDAO {
     public static final String PRODUCT_BATCH_NO_PREFIX = "PBN";
 
 
+    public static final String PICKING_IN_NO_PREFIX = "EPI";
+
+    public static final String RETURN_MATERIALS_NO_PREFIX = "ERM";
+
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 

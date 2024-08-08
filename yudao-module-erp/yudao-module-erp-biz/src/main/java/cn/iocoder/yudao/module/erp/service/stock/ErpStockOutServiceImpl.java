@@ -97,7 +97,6 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
         customerService.validateCustomer(updateReqVO.getCustomerId());
         // 1.3 校验出库项的有效性
         List<ErpStockOutItemDO> stockOutItems = validateStockOutItems(updateReqVO.getItems());
-
         // 2.1 更新出库单
         ErpStockOutDO updateObj = BeanUtils.toBean(updateReqVO, ErpStockOutDO.class, in -> in
                 .setTotalCount(getSumValue(stockOutItems, ErpStockOutItemDO::getCount, BigDecimal::add))
@@ -117,14 +116,12 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
         if (stockOut.getStatus().equals(status)) {
             throw exception(approve ? STOCK_OUT_APPROVE_FAIL : STOCK_OUT_PROCESS_FAIL);
         }
-
         // 2. 更新状态
         int updateCount = stockOutMapper.updateByIdAndStatus(id, stockOut.getStatus(),
                 new ErpStockOutDO().setStatus(status));
         if (updateCount == 0) {
             throw exception(approve ? STOCK_OUT_APPROVE_FAIL : STOCK_OUT_PROCESS_FAIL);
         }
-
         // 3. 变更库存
         List<ErpStockOutItemDO> stockOutItems = stockOutItemMapper.selectListByOutId(id);
         Integer bizType = approve ? ErpStockRecordBizTypeEnum.OTHER_OUT.getType()
@@ -146,14 +143,15 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
         warehouseService.validWarehouseList(convertSet(list, ErpStockOutSaveReqVO.Item::getWarehouseId));
         // 2. 转化为 ErpStockOutItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockOutItemDO.class, item -> item
-                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
+                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 
     private void updateStockOutItemList(Long id, List<ErpStockOutItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpStockOutItemDO> oldList = stockOutItemMapper.selectListByOutId(id);
-        List<List<ErpStockOutItemDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<ErpStockOutItemDO>> diffList = diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
 
         // 第二步，批量添加、修改、删除

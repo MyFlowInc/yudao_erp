@@ -38,6 +38,11 @@ public class RequisitionProductDO extends BaseDO {
      */
     private BigDecimal count;
     /**
+     * 已领料数量
+     */
+    private BigDecimal outCount;
+
+    /**
      * 状态
      */
     private Integer status;

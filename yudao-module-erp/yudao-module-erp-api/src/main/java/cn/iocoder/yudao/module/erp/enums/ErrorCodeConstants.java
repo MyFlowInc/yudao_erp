@@ -182,5 +182,22 @@ public interface ErrorCodeConstants {
     ErrorCode SUPPLIER_CLASSIFICATION_PARENT_IS_CHILD = new ErrorCode(1_030_700_014, "不能设置自己的子ErpSupplierClassification为父ErpSupplierClassification");
     //产品批次信息
     ErrorCode PRODUCT_BATCH_NOT_EXISTS = new ErrorCode(1_030_700_015, "ERP产品批次信息为空");
+    // ========== ERP 领料出库单 TODO 补充编号 ==========
+    ErrorCode PICKING_IN_NOT_EXISTS = new ErrorCode(1_030_800_001, "ERP 领料出库单不存在");
+    ErrorCode PICKING_IN_ITEM_NOT_EXISTS = new ErrorCode(1_030_800_002, "ERP 领料出库单项不存在");
+    ErrorCode PICKING_IN_NOT_NO_EXISTS = new ErrorCode(1_030_800_002, "生成领料出库单编号失败");
+    ErrorCode PICKING_IN_NOT_COUNT_EXISTS = new ErrorCode(1_030_800_002, "领料出库项单数量大于批次总数量");
+    ErrorCode PICKING_IN_NOT_NO_EXISTS_APPROVE = new ErrorCode(1_030_402_001, "领料出库单({})已审核，无法删除");
+    ErrorCode PICKING_IN_PROCESS_FAIL = new ErrorCode(1_030_402_002, "反审核失败，只有已审核的领料出库单才能反审核");
+    ErrorCode PICKING_IN_APPROVE_FAIL = new ErrorCode(1_030_402_003, "审核失败，只有未审核的领料出库单才能审核");
 
+
+    // ========== ERP 还料入库单 TODO 补充编号 ==========
+    ErrorCode RETURN_MATERIALS_NOT_EXISTS = new ErrorCode(1_030_900_001, "ERP 还料入库单不存在");
+    ErrorCode RETURN_MATERIALS_ITEM_NOT_EXISTS = new ErrorCode(1_030_900_002, "ERP 还料入库单项不存在");
+    ErrorCode RETURN_MATERIALS_NO_EXISTS = new ErrorCode(1_030_800_002, "生成还料出库单编号失败");
+    ErrorCode RETURN_MATERIALSNOTCOUNT_EXISTS = new ErrorCode(1_030_800_002, "还料出库项单数量大于批次总数量");
+    ErrorCode RETURN_MATERIALS_NOT_NO_EXISTS_APPROVE = new ErrorCode(1_030_402_001, "还料出库单({})已审核，无法删除");
+    ErrorCode RETURN_MATERIALS_PROCESS_FAIL = new ErrorCode(1_030_402_002, "反审核失败，只有已审核的还料出库单才能反审核");
+    ErrorCode RETURN_MATERIALS_APPROVE_FAIL = new ErrorCode(1_030_402_003, "审核失败，只有未审核的还料出库单才能审核");
 }

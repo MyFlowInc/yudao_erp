@@ -89,13 +89,18 @@ public class PurchaseRequisitionRespVO {
         @Schema(description = "产品数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
         @NotNull(message = "产品数量不能为空")
         private BigDecimal count;
+
+        @Schema(description = "已领料数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
+        private BigDecimal outCount;
+
         @Schema(description = "状态", example = "随便")
         private Integer status;
+
         @Schema(description = "是否已被选中", example = "随便")
         private String selected;
+
         @Schema(description = "备注", example = "随便")
         private String remark;
-
         // ========== 关联字段 ==========
 
         @Schema(description = "产品名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "巧克力")

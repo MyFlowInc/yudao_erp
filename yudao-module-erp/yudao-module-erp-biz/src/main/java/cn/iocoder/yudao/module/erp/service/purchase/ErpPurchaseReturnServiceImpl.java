@@ -166,9 +166,6 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
                 : ErpStockRecordBizTypeEnum.PURCHASE_RETURN_CANCEL.getType();
         //变更批次数量
         purchaseReturnItems.forEach(purchaseReturnItem -> {
-            ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(purchaseReturnItem.getOrderItemId());
-//            //更新采购订单的出库数量
-//            updatePurchaseOrderReturnCount(erpPurchaseOrderItemDO.getOrderId());
             //更新批次数量
             updatePurchaseOrderBatchCount(purchaseReturnItem.getOrderItemId());
             //通过approve判断还是入库
@@ -216,21 +213,12 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
                     purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setReturnCount(erpPurchaseOrderItemDO.getReturnCount().add(total)).setInCount(subtract));
                     ErpPurchaseOrderDO purchaseOrder = purchaseOrderService.getPurchaseOrder(erpPurchaseOrderItemDO.getOrderId());
                     List<ErpPurchaseOrderItemDO> erpPurchaseOrderItemDOS = purchaseOrderItemMapper.selectListByOrderId(purchaseOrder.getId());
-                    Iterator<ErpPurchaseOrderItemDO> iterators = erpPurchaseOrderItemDOS.iterator();
-//                    while (iterators.hasNext()) {
-//                        // 使用迭代器的去除为审核的数据
-//                        ErpPurchaseReturnItemDO items = iterator.next();
-//                        ErpPurchaseOrderDO erpPurchaseInDO = purchaseOrderMapper.selectById(items.getOrderItemId());
-//                        if (!Objects.equals(erpPurchaseInDO.getStatus(), ErpAuditStatus.APPROVE.getStatus())) {
-//                            iterator.remove();
-//                        }
-//                    }
                     // 使用流操作求和
                     BigDecimal nowTotal = erpPurchaseOrderItemDOS.stream()
                             .map(ErpPurchaseOrderItemDO::getCount) // 提取每个对象的 count 属性
                             .reduce(BigDecimal.ZERO, BigDecimal::add); // 初始值为 0，进行累加操作
 //                    if (purchaseOrder.getReturnCount().compareTo(BigDecimal.ZERO) <= 0) {
-                        purchaseOrderMapper.updateById(purchaseOrder.setInCount(purchaseOrder.getInCount().subtract(o.getCount())).setTotalCount(nowTotal).setReturnCount(purchaseOrder.getReturnCount().add(o.getCount())));
+                    purchaseOrderMapper.updateById(purchaseOrder.setInCount(purchaseOrder.getInCount().subtract(o.getCount())).setTotalCount(nowTotal).setReturnCount(purchaseOrder.getReturnCount().add(o.getCount())));
 //                    }
                     //更新批次数量
                     purchaseInService.updateBatchQuantity(erpPurchaseOrderItemDO.getAssociatedBatchId(),total, 20);

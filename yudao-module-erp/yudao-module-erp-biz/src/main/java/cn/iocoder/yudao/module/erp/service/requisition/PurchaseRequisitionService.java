@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitio
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
+
 /**
  * 新增请购 Service 接口
  *
@@ -85,5 +87,9 @@ public interface PurchaseRequisitionService {
      */
     RequisitionProductDO getPurchaseRequisitionProduct(Long id);
 
+    List<PurchaseRequisitionDO> getPurchaseRequisitionList(Collection<Long> ids);
 
+    default Map<Long, PurchaseRequisitionDO> getPurchaseRequisitionMap(Collection<Long> ids) {
+        return convertMap(getPurchaseRequisitionList(ids), PurchaseRequisitionDO::getId);
+    }
 }

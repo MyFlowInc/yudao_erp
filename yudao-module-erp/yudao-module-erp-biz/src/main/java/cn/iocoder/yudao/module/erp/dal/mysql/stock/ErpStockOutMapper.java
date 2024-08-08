@@ -30,7 +30,8 @@ public interface ErpStockOutMapper extends BaseMapperX<ErpStockOutDO> {
             query.leftJoin(ErpStockOutItemDO.class, ErpStockOutItemDO::getOutId, ErpStockOutDO::getId)
                     .eq(reqVO.getWarehouseId() != null, ErpStockOutItemDO::getWarehouseId, reqVO.getWarehouseId())
                     .eq(reqVO.getProductId() != null, ErpStockOutItemDO::getProductId, reqVO.getProductId())
-                    .groupBy(ErpStockOutDO::getId); // 避免 1 对多查询，产生相同的 1
+                    // 避免 1 对多查询，产生相同的 1
+                    .groupBy(ErpStockOutDO::getId);
         }
         return selectJoinPage(reqVO, ErpStockOutDO.class, query);
     }

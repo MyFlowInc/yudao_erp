@@ -195,6 +195,16 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     public RequisitionProductDO getPurchaseRequisitionProduct(Long id) {
         return requisitionProductMapper.selectById(id);
     }
+
+    @Override
+    public List<PurchaseRequisitionDO> getPurchaseRequisitionList(Collection<Long> ids) {
+        return purchaseRequisitionMapper.selectBatchIds(ids);
+    }
+    @Override
+    public Map<Long, PurchaseRequisitionDO> getPurchaseRequisitionMap(Collection<Long> ids) {
+        return PurchaseRequisitionService.super.getPurchaseRequisitionMap(ids);
+    }
+
     public void updateRequisitionProduct(RequisitionProductDO requisitionProduct) {
         // 校验存在
         validateRequisitionProductExists(requisitionProduct.getId());

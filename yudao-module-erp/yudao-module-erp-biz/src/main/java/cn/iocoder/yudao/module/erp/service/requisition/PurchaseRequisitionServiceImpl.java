@@ -198,6 +198,9 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
 
     @Override
     public List<PurchaseRequisitionDO> getPurchaseRequisitionList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
         return purchaseRequisitionMapper.selectBatchIds(ids);
     }
     @Override

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.project;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.project.ErpAiluoProjectsMapper;
 import com.baomidou.dynamic.datasource.annotation.DS;
@@ -9,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,9 @@ public class ErpAiluoProjectsServiceImpl implements ErpAiluoProjectsService{
 
     @Override
     public List<ErpAiluoProjectDO> getProjectList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
         return erpAiluoProjectsMapper.selectBatchIds(ids);
     }
     @Override

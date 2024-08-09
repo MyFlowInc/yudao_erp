@@ -24,6 +24,7 @@ import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseInService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpWarehouseService;
+import cn.iocoder.yudao.module.erp.service.stock.bo.ErpStockRecordCreateReqBO;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
@@ -194,7 +195,14 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
 
                 });
             }
-
+            if(erpReturnMaterialsItemDOS != null) {
+            erpReturnMaterialsItemDOS.forEach(erpReturnMaterialsItemDO -> {
+                BigDecimal count = approve ? erpReturnMaterialsItemDO.getCount() : erpReturnMaterialsItemDO.getCount().negate();
+                stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
+                        erpReturnMaterialsItemDO.getProductId(), erpReturnMaterialsItemDO.getWarehouseId(), count,
+                        bizType, erpReturnMaterialsItemDO.getReturnId(), erpReturnMaterialsItemDO.getId(), erpReturnMaterialsDO.getNo()));
+            });
+        }
 
     }
 

@@ -30,6 +30,9 @@ public class PurchaseRequisitionPageReqVO extends PageParam {
     @Schema(description = "关联产品id", example = "2")
     private Integer productId;
 
+    @Schema(description = "请购状态")
+    private  Integer open;
+
     @Schema(description = "请购单时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private String[] requisitionTime;
@@ -44,5 +47,4 @@ public class PurchaseRequisitionPageReqVO extends PageParam {
     @Schema(description = "创建时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] createTime;
-
 }

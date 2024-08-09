@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.material.vo.in;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -29,7 +30,8 @@ public class ErpPickingInSaveReqVO {
 
     @Schema(description = "关联请购单", example = "16463")
     private Long associationRequisitionId;
-
+    @Schema(description = "关联项目", example = "16463")
+    private Long associationProjectId;
     @Schema(description = "入库时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "入库时间不能为空")
     private LocalDateTime inTime;
@@ -72,8 +74,8 @@ public class ErpPickingInSaveReqVO {
         /**
          * 关联批次id
          */
-        @Schema(description = "批次ID")
-        @NotNull(message = "批次ID不能为空")
+        @Schema(description = "项目ID")
+        @NotNull(message = "项目不能为空")
         private Long associatedBatchId;
         /**
          * 关联请购项

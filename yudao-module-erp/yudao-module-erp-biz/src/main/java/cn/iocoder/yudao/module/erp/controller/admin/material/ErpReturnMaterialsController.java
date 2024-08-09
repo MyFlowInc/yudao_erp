@@ -40,7 +40,7 @@ import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.returnmaterialsitem.ErpReturnMaterialsItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsItemDO;
 import cn.iocoder.yudao.module.erp.service.material.ErpReturnMaterialsService;
 
 import javax.annotation.Resource;

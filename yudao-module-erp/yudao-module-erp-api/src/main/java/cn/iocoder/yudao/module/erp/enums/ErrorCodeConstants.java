@@ -196,7 +196,7 @@ public interface ErrorCodeConstants {
     ErrorCode RETURN_MATERIALS_NOT_EXISTS = new ErrorCode(1_030_900_001, "ERP 还料入库单不存在");
     ErrorCode RETURN_MATERIALS_ITEM_NOT_EXISTS = new ErrorCode(1_030_900_002, "ERP 还料入库单项不存在");
     ErrorCode RETURN_MATERIALS_NO_EXISTS = new ErrorCode(1_030_800_002, "生成还料出库单编号失败");
-    ErrorCode RETURN_MATERIALSNOTCOUNT_EXISTS = new ErrorCode(1_030_800_002, "还料出库项单数量大于批次总数量");
+    ErrorCode RETURN_MATERIALSNOTCOUNT_EXISTS = new ErrorCode(1_030_800_002, "还料出库项单数量大于领料项总数量");
     ErrorCode RETURN_MATERIALS_NOT_NO_EXISTS_APPROVE = new ErrorCode(1_030_402_001, "还料出库单({})已审核，无法删除");
     ErrorCode RETURN_MATERIALS_PROCESS_FAIL = new ErrorCode(1_030_402_002, "反审核失败，只有已审核的还料出库单才能反审核");
     ErrorCode RETURN_MATERIALS_APPROVE_FAIL = new ErrorCode(1_030_402_003, "审核失败，只有未审核的还料出库单才能审核");

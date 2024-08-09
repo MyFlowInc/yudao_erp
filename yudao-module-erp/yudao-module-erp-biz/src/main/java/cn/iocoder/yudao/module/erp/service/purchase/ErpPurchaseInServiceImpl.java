@@ -139,13 +139,6 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         purchaseInMapper.updateById(updateObj);
         // 2.2 更新入库项
         updatePurchaseInItemList(updateReqVO.getId(), purchaseInItems);
-
-//        // 3.1 更新采购订单的入库数量
-//        updatePurchaseOrderInCount(updateObj.getOrderId());
-        // 3.2 注意：如果采购订单编号变更了，需要更新“老”采购订单的入库数量
-//        if (ObjectUtil.notEqual(purchaseIn.getOrderId(), updateObj.getOrderId())) {
-//            updatePurchaseOrderInCount(purchaseIn.getOrderId());
-//        }
     }
 
     private void calculateTotalPrice(ErpPurchaseInDO purchaseIn, List<ErpPurchaseInItemDO> purchaseInItems) {
@@ -161,23 +154,6 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         purchaseIn.setTotalPrice(purchaseIn.getTotalPrice().subtract(purchaseIn.getDiscountPrice()).add(purchaseIn.getOtherPrice()));
     }
 
-    private void updatePurchaseOrderInCount(Long orderId) {
-        // 1.1 查询采购订单对应的采购入库单列表
-        List<ErpPurchaseInDO> purchaseIns = purchaseInMapper.selectListByOrderId(orderId);
-        purchaseIns = purchaseIns.stream().filter(o->{
-            ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(o.getOrderId());
-            return erpPurchaseOrderDO != null && Objects.equals(erpPurchaseOrderDO.getStatus(), ErpAuditStatus.APPROVE.getStatus());
-        }).collect(Collectors.toList());
-        // 1.2 查询对应的采购订单项的入库数量
-        Map<Long, BigDecimal> returnCountMap = purchaseInItemMapper.selectOrderItemCountSumMapByInIds(
-                convertList(purchaseIns, ErpPurchaseInDO::getId));
-        // 2. 更新采购订单的入库数量
-        purchaseOrderService.updatePurchaseOrderInCount(orderId, returnCountMap);
-    }
-    //校验此采购项是否已结束流程
-    public void verifyIfselected(){
-        throw exception(PURCHASE_RETURN_IS_END);
-    }
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updatePurchaseInStatus(Long id, Integer status) {
@@ -248,6 +224,7 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                         if (compareBigDecimal(totalCount, erpPurchaseOrderItemDO.getCount()) > ZERO) {
                             throw exception(PURCHASE_IN_PROCESS_FAIL_MAX_STOCK);
                         }
+
                         //更新采购项已采购数量
                         purchaseOrderItemMapper.updateById(erpPurchaseOrderItemDO.setInCount(totalCount));
                         ErpPurchaseOrderDO erpPurchaseOrderDO1 = purchaseOrderMapper.selectById(erpPurchaseOrderItemDO.getOrderId());

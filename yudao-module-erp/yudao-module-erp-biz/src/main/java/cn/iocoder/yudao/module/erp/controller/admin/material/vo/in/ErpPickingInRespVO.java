@@ -123,6 +123,12 @@ public class ErpPickingInRespVO {
         @Schema(description = "产品数量")
         private BigDecimal count;
         /**
+         * 还料数量
+         */
+        @Schema(description = "还料数量")
+        private BigDecimal returnMaterialsCount;
+
+        /**
          * 库存数量
          */
         @Schema(description = "库存数量")

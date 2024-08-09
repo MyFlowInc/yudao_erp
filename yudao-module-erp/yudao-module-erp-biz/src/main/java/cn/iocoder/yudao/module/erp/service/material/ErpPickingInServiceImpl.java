@@ -129,7 +129,6 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
         // 1.2 校验状态
         Integer bizType = approve ? ErpStockRecordBizTypeEnum.MATERIAL_REQUISITION_OUTBOUND.getType()
                 : ErpStockRecordBizTypeEnum.MATERIAL_REQUISITION_OUTBOUND_CANCEL.getType();
-        if (stockOut != null){
             if (stockOut.getStatus().equals(status)) {
                 throw exception(approve ? PICKING_IN_APPROVE_FAIL : PICKING_IN_PROCESS_FAIL);
             }
@@ -139,8 +138,6 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
             if (updateCount == 0) {
                 throw exception(approve ? PICKING_IN_APPROVE_FAIL : PICKING_IN_PROCESS_FAIL);
             }
-        }
-        if (approve){
             // 3. 变更库存
             List<ErpPickingInItemDO> pickingInItemDOList = pickingInItemMapper.selectListByInId(id);
             pickingInItemDOList.forEach(item -> {
@@ -151,15 +148,12 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
                 //扣除对应批次库存数量
                 ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(item.getAssociatedBatchId());
                 productBatchMapper.updateById(new ErpProductBatchDO().setInventoryQuantity(erpProductBatchDO.getInventoryQuantity().subtract(item.getCount())));
-                BigDecimal count = approve ? item.getCount().negate() : item.getCount();
-                if (stockOut != null) {
+                BigDecimal count = approve ? item.getCount().negate() : item.getCount().abs();
                     //生成出入库明细且扣除库存
                     stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                             item.getProductId(), item.getWarehouseId(), count,
                             bizType, item.getInId(), item.getId(), stockOut.getNo()));
-                }
             });
-        }
     }
 
     @Override
@@ -188,7 +182,7 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
         if (pickingInMapper.selectById(id) == null) {
             throw exception(PICKING_IN_NOT_EXISTS);
         }
-        return null;
+        return pickingInMapper.selectById(id);
     }
 
     @Override

@@ -1,5 +1,6 @@
-package cn.iocoder.yudao.module.erp.dal.dataobject.returnmaterialsitem;
+package cn.iocoder.yudao.module.erp.dal.dataobject.material;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
 import java.math.BigDecimal;
@@ -9,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import com.baomidou.mybatisplus.annotation.*;
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * ERP 还料入库单项 DO
@@ -42,6 +45,11 @@ public class ErpReturnMaterialsItemDO extends BaseDO {
      * 请购项id
      */
     private Long associationRequisitionProductId;
+
+    /**
+     * 领料项id
+     */
+    private Long associatedPickingItemId;
     /**
      * 关联批次id
      */

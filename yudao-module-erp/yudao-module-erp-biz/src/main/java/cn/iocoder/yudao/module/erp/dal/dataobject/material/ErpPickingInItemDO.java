@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.material;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
 import java.math.BigDecimal;
@@ -63,6 +64,11 @@ public class ErpPickingInItemDO extends BaseDO {
      * 产品数量
      */
     private BigDecimal count;
+
+    /**
+     * 还料数量
+     */
+    private BigDecimal returnMaterialsCount;
     /**
      * 合计金额，单位：元
      */

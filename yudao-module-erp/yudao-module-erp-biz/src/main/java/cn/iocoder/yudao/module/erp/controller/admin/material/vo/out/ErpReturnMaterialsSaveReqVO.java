@@ -1,12 +1,13 @@
 package cn.iocoder.yudao.module.erp.controller.admin.material.vo.out;
 
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import cn.iocoder.yudao.module.erp.dal.dataobject.returnmaterialsitem.ErpReturnMaterialsItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsDO;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -79,6 +80,10 @@ public class ErpReturnMaterialsSaveReqVO {
          */
         @Schema(description = "请购项ID")
         private Long associationRequisitionProductId;
+
+        @Schema(description = "关联领料项id", requiredMode = Schema.RequiredMode.REQUIRED, example = "17900")
+        @NotNull(message = "领料项不能为空")
+        private Long associatedPickingItemId;
         /**
          * 产品编号
          */

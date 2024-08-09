@@ -40,6 +40,10 @@ public class ErpReturnMaterialsRespVO {
     @ExcelProperty("关联项目id")
     private Long associationProjectId;
 
+    @Schema(description = "关联领料项id", requiredMode = Schema.RequiredMode.REQUIRED, example = "17900")
+    @ExcelProperty("关联领料项id")
+    private Long associatedPickingItemId;
+
     @Schema(description = "关联项目名称", example = "16463")
     @ExcelProperty("关联项目名称")
     private String associationProjectName;

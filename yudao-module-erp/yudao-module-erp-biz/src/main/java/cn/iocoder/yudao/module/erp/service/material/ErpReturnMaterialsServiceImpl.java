@@ -9,12 +9,19 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.material.ErpPickingInItemMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.material.ErpPickingInMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.product.ErpProductMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.requisition.RequisitionProductMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
+import cn.iocoder.yudao.module.erp.enums.stock.ErpStockRecordBizTypeEnum;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseInService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpWarehouseService;
 import org.springframework.stereotype.Service;
@@ -23,9 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.returnmaterialsitem.ErpReturnMaterialsItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsItemDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
@@ -52,6 +60,10 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
     @Resource
     private ErpReturnMaterialsItemMapper returnMaterialsItemMapper;
     @Resource
+    private ErpPickingInItemMapper pickingInItemMapper;
+    @Resource
+    private ErpPurchaseInService purchaseInService;
+    @Resource
     private ErpNoRedisDAO noRedisDAO;
     @Resource
     private ErpProductMapper productMapper;
@@ -77,13 +89,8 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
         if (returnMaterialsMapper.selectByNo(no) != null) {
             throw exception(RETURN_MATERIALS_NOT_EXISTS);
         }
-//        //1.4 校验领料是否大于批次数量
-//        erpReturnMaterialsItemDOS.forEach( o->{
-//            ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(o.getAssociatedBatchId());
-//            if (o.getCount().compareTo(erpProductBatchDO.getInventoryQuantity()) >0){
-//                throw exception(PICKING_IN_NOT_COUNT_EXISTS);
-//            }
-//        });
+        //还料数量是否>领料数量-还料数量
+        validateReturnMaterialsList(erpReturnMaterialsItemDOS);
         // 2.1 插入出库单
         ErpReturnMaterialsDO erpPickingInDO = BeanUtils.toBean(createReqVO, ErpReturnMaterialsDO.class, in -> in
                 .setNo(no).setStatus(ErpAuditStatus.PROCESS.getStatus())
@@ -117,25 +124,76 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
         // 校验存在
         validateReturnMaterialsExists(updateReqVO.getId());
 
-        List<ErpReturnMaterialsItemDO> erpPickingInItemDOS = validateErpReturnMaterialsItems(updateReqVO.getItems());
-        //1.4 校验还料是否大于批次数量
-//        erpPickingInItemDOS.forEach( o->{
-//            ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(o.getAssociatedBatchId());
-//            if (o.getCount().compareTo(erpProductBatchDO.getInventoryQuantity()) >0){
-//                throw exception(PICKING_IN_NOT_COUNT_EXISTS);
-//            }
-//        });
+        List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS = validateErpReturnMaterialsItems(updateReqVO.getItems());
+        //1.4 还料数量是否>领料数量-还料数量
+        validateReturnMaterialsList(erpReturnMaterialsItemDOS);
         // 更新
         ErpReturnMaterialsDO updateObj = BeanUtils.toBean(updateReqVO, ErpReturnMaterialsDO.class);
         returnMaterialsMapper.updateById(updateObj);
-
         // 更新子表
-        updateReturnMaterialsItemList(updateReqVO.getId(), erpPickingInItemDOS);
+        updateReturnMaterialsItemList(updateReqVO.getId(), erpReturnMaterialsItemDOS);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateReturnMaterialsStatus(Long id, Integer status) {
+
+        boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
+        // 1.1 校验存在
+        ErpReturnMaterialsDO erpReturnMaterialsDO = validateReturnMaterialsExists(id);
+        // 1.2 校验状态
+        Integer bizType = approve ? ErpStockRecordBizTypeEnum.RETURN_MATERIALS_TO_WAREHOUSE.getType()
+                : ErpStockRecordBizTypeEnum.RETURN_MATERIALS_TO_WAREHOUSE_CANCEL.getType();
+            if (erpReturnMaterialsDO.getStatus().equals(status)) {
+                throw exception(approve ? RETURN_MATERIALS_APPROVE_FAIL : RETURN_MATERIALS_PROCESS_FAIL);
+            }
+            // 2. 更新状态
+            int updateCount = returnMaterialsMapper.updateReturnMaterialsStatus(id, erpReturnMaterialsDO.getStatus(),
+                    new ErpReturnMaterialsDO().setStatus(status));
+            if (updateCount == 0) {
+                throw exception(approve ? RETURN_MATERIALS_APPROVE_FAIL : RETURN_MATERIALS_PROCESS_FAIL);
+            }
+            //处理还料子项
+        List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS = returnMaterialsItemMapper.selectListByReturnId(id);
+            if (erpReturnMaterialsItemDOS != null) {
+                erpReturnMaterialsItemDOS.forEach(o->{
+                    //关联领料项
+                    ErpPickingInItemDO erpPickingInItemDO = pickingInItemMapper.selectById(o.getAssociatedPickingItemId());
+                    //所有关联这一领料项的还料项集合
+                    List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS1 = returnMaterialsItemMapper.selectListByPickingItemId(o.getAssociatedPickingItemId());
+                    erpReturnMaterialsItemDOS1 = erpReturnMaterialsItemDOS1.stream()
+                            .filter(item -> !item.getDeleted())
+                            .collect(Collectors.toList());
+                    Iterator<ErpReturnMaterialsItemDO> iterator = erpReturnMaterialsItemDOS1.iterator();
+                    while (iterator.hasNext()) {
+                        // 使用迭代器的去除为审核的数据
+                        ErpReturnMaterialsItemDO items = iterator.next();
+                        ErpReturnMaterialsDO returnMaterialsDO = returnMaterialsMapper.selectById(items.getReturnId());
+                        if (!Objects.equals(returnMaterialsDO.getStatus(), ErpAuditStatus.APPROVE.getStatus())) {
+                            iterator.remove();
+                        }
+                    }
+                    //集合总数量
+                    BigDecimal totalCount = erpReturnMaterialsItemDOS1.stream()
+                            .map(ErpReturnMaterialsItemDO::getCount)
+                            .filter(Objects::nonNull)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    totalCount = totalCount.subtract(erpPickingInItemDO.getReturnMaterialsCount());
+                    if (totalCount.compareTo(erpPickingInItemDO.getCount())>0) {
+                        throw exception(RETURN_MATERIALSNOTCOUNT_EXISTS);
+                    }
+                    if (o.getAssociationRequisitionProductId()!=null){
+                        //变更请购项已领料数量
+                        RequisitionProductDO requisitionProductDO = requisitionProductMapper.selectById(o.getAssociationRequisitionProductId());
+                        requisitionProductMapper.updateById(requisitionProductDO.setOutCount(requisitionProductDO.getOutCount().subtract(o.getCount())));
+                    }
+                    //变更领料单还料数量
+                    pickingInItemMapper.updateById(erpPickingInItemDO.setReturnMaterialsCount(erpPickingInItemDO.getReturnMaterialsCount().add(o.getCount())));
+                    //变更批次库存
+                    purchaseInService.updateBatchQuantity(o.getAssociatedBatchId(),o.getCount(),10);
+
+                });
+            }
 
 
     }
@@ -162,10 +220,11 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
         });
     }
 
-    private void validateReturnMaterialsExists(Long id) {
+    private ErpReturnMaterialsDO validateReturnMaterialsExists(Long id) {
         if (returnMaterialsMapper.selectById(id) == null) {
             throw exception(RETURN_MATERIALS_NOT_EXISTS);
         }
+        return returnMaterialsMapper.selectById(id);
     }
 
     @Override
@@ -183,6 +242,11 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
     @Override
     public List<ErpReturnMaterialsItemDO> getReturnMaterialsItemListByReturnId(Long returnId) {
         return returnMaterialsItemMapper.selectListByReturnId(returnId);
+    }
+
+    @Override
+    public List<ErpReturnMaterialsItemDO> selectListByPickingItemId(Long id) {
+        return returnMaterialsItemMapper.selectListByPickingItemId(id);
     }
 
     private void updateReturnMaterialsItemList(Long returnId, List<ErpReturnMaterialsItemDO> list) {
@@ -204,9 +268,25 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
             returnMaterialsItemMapper.deleteBatchIds(convertList(diffList.get(2), ErpReturnMaterialsItemDO::getId));
         }
     }
-
-    private void deleteReturnMaterialsItemByReturnId(Long returnId) {
-        returnMaterialsItemMapper.deleteByReturnId(returnId);
+    public void validateReturnMaterialsList (List<ErpReturnMaterialsItemDO> list){
+        //1.4 还料数量是否>领料数量-还料数量
+        list.forEach( o->{
+            //关联领料项
+            ErpPickingInItemDO erpPickingInItemDO = pickingInItemMapper.selectById(o.getAssociatedPickingItemId());
+            //所有关联这一领料项的还料项集合
+            List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS1 = returnMaterialsItemMapper.selectListByPickingItemId(o.getAssociatedPickingItemId());
+            erpReturnMaterialsItemDOS1 = erpReturnMaterialsItemDOS1.stream()
+                    .filter(item -> !item.getDeleted())
+                    .collect(Collectors.toList());
+            //集合总数量
+            BigDecimal totalCount = erpReturnMaterialsItemDOS1.stream()
+                    .map(ErpReturnMaterialsItemDO::getCount)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            //对比换领料单数量
+            if (totalCount.compareTo(erpPickingInItemDO.getCount().subtract(erpPickingInItemDO.getReturnMaterialsCount())) >0){
+                throw exception(RETURN_MATERIALSNOTCOUNT_EXISTS);
+            }
+        });
     }
-
 }

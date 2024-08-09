@@ -22,7 +22,6 @@ public class ErpPickingInSaveReqVO {
     private Long id;
 
     @Schema(description = "领料号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "领料号不能为空")
     private String no;
 
     @Schema(description = "供应商编号", example = "7291")
@@ -45,7 +44,6 @@ public class ErpPickingInSaveReqVO {
     private BigDecimal totalPrice;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "状态不能为空")
     private Integer status;
 
     @Schema(description = "备注", example = "你猜")
@@ -65,7 +63,7 @@ public class ErpPickingInSaveReqVO {
         @Schema(description = "id")
         private Long id;
 
-        @NotNull(message = "领料单id不可为空")
+
         private Long inId;
 
         @Schema(description = "仓库id")

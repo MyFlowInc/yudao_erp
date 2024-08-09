@@ -20,7 +20,6 @@ public class ErpReturnMaterialsSaveReqVO {
     private Long id;
 
     @Schema(description = "还料单号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "还料单号不能为空")
     private String no;
 
     @Schema(description = "供应商编号", example = "14163")
@@ -46,7 +45,6 @@ public class ErpReturnMaterialsSaveReqVO {
     private BigDecimal totalPrice;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "状态不能为空")
     private Integer status;
 
     @Schema(description = "备注", example = "随便")
@@ -63,7 +61,6 @@ public class ErpReturnMaterialsSaveReqVO {
         @Schema(description = "id")
         private Long id;
 
-        @NotNull(message = "还料单不可为空")
         private Long returnId;
 
         @Schema(description = "仓库id")

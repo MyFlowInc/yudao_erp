@@ -37,6 +37,7 @@ public interface PurchaseRequisitionMapper extends BaseMapperX<PurchaseRequisiti
                 .betweenIfPresent(PurchaseRequisitionDO::getRequisitionTime, reqVO.getRequisitionTime())
                 .betweenIfPresent(PurchaseRequisitionDO::getEstimatedTime, reqVO.getEstimatedTime())
                 .eqIfPresent(PurchaseRequisitionDO::getStatus, reqVO.getStatus())
+                .eqIfPresent(PurchaseRequisitionDO::getOpen, reqVO.getOpen())
                 .betweenIfPresent(PurchaseRequisitionDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(PurchaseRequisitionDO::getId);
         if (reqVO.getProductId() != null) {

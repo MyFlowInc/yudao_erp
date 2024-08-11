@@ -37,11 +37,9 @@ public class ErpReturnMaterialsSaveReqVO {
     private LocalDateTime inTime;
 
     @Schema(description = "合计数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "9208")
-    @NotNull(message = "合计数量不能为空")
     private BigDecimal totalCount;
 
     @Schema(description = "合计金额，单位：元", requiredMode = Schema.RequiredMode.REQUIRED, example = "1443")
-    @NotNull(message = "合计金额，单位：元不能为空")
     private BigDecimal totalPrice;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")

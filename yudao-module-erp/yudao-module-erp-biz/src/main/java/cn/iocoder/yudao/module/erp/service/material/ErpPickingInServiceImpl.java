@@ -88,13 +88,13 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
                 .setTotalCount(getSumValue(erpPickingInItemDOS, ErpPickingInItemDO::getCount, BigDecimal::add))
                 .setTotalPrice(getSumValue(erpPickingInItemDOS, ErpPickingInItemDO::getTotalPrice, BigDecimal::add, BigDecimal.ZERO)));
         // 插入
-        ErpPickingInDO pickingIn = BeanUtils.toBean(createReqVO, ErpPickingInDO.class);
+//        ErpPickingInDO pickingIn = BeanUtils.toBean(createReqVO, ErpPickingInDO.class);
         pickingInMapper.insert(erpPickingInDO);
         // 插入子表
-        erpPickingInItemDOS.forEach(o -> o.setInId(pickingIn.getId()));
+        erpPickingInItemDOS.forEach(o -> o.setInId(erpPickingInDO.getId()));
         pickingInItemMapper.insertBatch(erpPickingInItemDOS);
         // 返回
-        return pickingIn.getId();
+        return erpPickingInDO.getId();
     }
 
     @Override

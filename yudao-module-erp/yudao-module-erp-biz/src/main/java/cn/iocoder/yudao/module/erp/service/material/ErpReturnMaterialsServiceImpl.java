@@ -93,17 +93,17 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
         //还料数量是否>领料数量-还料数量
         validateReturnMaterialsList(erpReturnMaterialsItemDOS);
         // 2.1 插入出库单
-        ErpReturnMaterialsDO erpPickingInDO = BeanUtils.toBean(createReqVO, ErpReturnMaterialsDO.class, in -> in
+        ErpReturnMaterialsDO erpReturnMaterialsDO = BeanUtils.toBean(createReqVO, ErpReturnMaterialsDO.class, in -> in
                 .setNo(no).setStatus(ErpAuditStatus.PROCESS.getStatus())
                 .setTotalCount(getSumValue(erpReturnMaterialsItemDOS, ErpReturnMaterialsItemDO::getCount, BigDecimal::add))
                 .setTotalPrice(getSumValue(erpReturnMaterialsItemDOS, ErpReturnMaterialsItemDO::getTotalPrice, BigDecimal::add, BigDecimal.ZERO)));
         // 插入
-        returnMaterialsMapper.insert(erpPickingInDO);
+        returnMaterialsMapper.insert(erpReturnMaterialsDO);
         // 插入子表
-        erpReturnMaterialsItemDOS.forEach(o -> o.setReturnId(erpPickingInDO.getId()));
+        erpReturnMaterialsItemDOS.forEach(o -> o.setReturnId(erpReturnMaterialsDO.getId()));
         returnMaterialsItemMapper.insertBatch(erpReturnMaterialsItemDOS);
         // 返回
-        return erpPickingInDO.getId();
+        return erpReturnMaterialsDO.getId();
     }
 
     private List<ErpReturnMaterialsItemDO> validateErpReturnMaterialsItems(List<ErpReturnMaterialsSaveReqVO.Item> list) {

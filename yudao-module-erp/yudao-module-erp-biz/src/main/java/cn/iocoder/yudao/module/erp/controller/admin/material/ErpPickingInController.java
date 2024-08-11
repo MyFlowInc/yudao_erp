@@ -117,7 +117,7 @@ public class ErpPickingInController {
         return success(BeanUtils.toBean(pickingIn, ErpPickingInRespVO.class,item ->{
             if (item.getAssociationRequisitionId()!=null){
                 PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(item.getAssociationRequisitionId());
-                item.setAssociationRequisitionNo(purchaseRequisition.getRequisitionCode());
+                item.setRequisitionCode(purchaseRequisition.getRequisitionCode());
             }
             item.setItems(BeanUtils.toBean(pickingInItemDOList, ErpPickingInRespVO.Item.class, items -> {
                 ErpStockDO stock = stockService.getStock(items.getProductId(), items.getWarehouseId());
@@ -146,7 +146,7 @@ public class ErpPickingInController {
                         (convertSet(pageResult.getList(), ErpPickingInDO::getAssociationRequisitionId));
 
         return success(BeanUtils.toBean(pageResult, ErpPickingInRespVO.class,item ->{
-            MapUtils.findAndThen(purchaseRequisitionMap, item.getAssociationRequisitionId(), requisitionDO -> item.setAssociationRequisitionNo(requisitionDO.getRequisitionCode()));
+            MapUtils.findAndThen(purchaseRequisitionMap, item.getAssociationRequisitionId(), requisitionDO -> item.setRequisitionCode(requisitionDO.getRequisitionCode()));
             MapUtils.findAndThen(projectMap, item.getAssociationProjectId(), project -> item.setAssociationProjectName(project.getName()));
         }));
     }

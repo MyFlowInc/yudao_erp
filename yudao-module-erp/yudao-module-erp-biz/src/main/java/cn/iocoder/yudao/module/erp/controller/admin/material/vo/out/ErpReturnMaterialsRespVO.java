@@ -40,9 +40,11 @@ public class ErpReturnMaterialsRespVO {
     @ExcelProperty("关联项目id")
     private Long associationProjectId;
 
-    @Schema(description = "关联领料项id", requiredMode = Schema.RequiredMode.REQUIRED, example = "17900")
-    @ExcelProperty("关联领料项id")
-    private Long associatedPickingItemId;
+    @Schema(description = "关联领料单", example = "11852")
+    private Long associationPickingId;
+
+    @Schema(description = "关联领料单编号", example = "11852")
+    private String associationPickingNo;
 
     @Schema(description = "关联项目名称", example = "16463")
     @ExcelProperty("关联项目名称")
@@ -67,6 +69,16 @@ public class ErpReturnMaterialsRespVO {
     @Schema(description = "备注", example = "随便")
     @ExcelProperty("备注")
     private String remark;
+
+    @Schema(description = "产品名", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("产品名")
+    private String productNames;
+
+    @Schema(description = "创建人", example = "芋道")
+    private String creator;
+
+    @Schema(description = "创建人名称", example = "芋道")
+    private String creatorName;
 
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     @ExcelProperty("附件 URL")
@@ -103,6 +115,9 @@ public class ErpReturnMaterialsRespVO {
          */
         @Schema(description = "请购项ID")
         private Long associationRequisitionProductId;
+
+        @Schema(description = "关联领料项id", requiredMode = Schema.RequiredMode.REQUIRED, example = "17900")
+        private Long associatedPickingItemId;
         /**
          * 产品编号
          */

@@ -164,8 +164,14 @@ public class PurchaseRequisitionController {
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
     public CommonResult<PageResult<PurchaseRequisitionRespVO>> getPurchaseRequisitionPage(@Valid PurchaseRequisitionPageReqVO pageReqVO) {
         PageResult<PurchaseRequisitionDO> pageResult = purchaseRequisitionService.getPurchaseRequisitionPage(pageReqVO);
-        return success(buildPurchaseRequisitionVOPageResult(pageResult));
+        PageResult<PurchaseRequisitionRespVO> purchaseRequisitionRespVOPageResult = buildPurchaseRequisitionVOPageResult(pageResult);
+        // 更新每个 PurchaseRequisitionRespVO 对象的 items
+        List<PurchaseRequisitionRespVO> purchaseRequisitionRespVOS = buildPurchaseRequisitionVOItemPageResult(purchaseRequisitionRespVOPageResult);
+        // 更新分页结果并返回
+        purchaseRequisitionRespVOPageResult.setList(purchaseRequisitionRespVOS);
+        return success(purchaseRequisitionRespVOPageResult);
     }
+
     @GetMapping("/list")
     @Operation(summary = "获得新增请购分页")
     @PreAuthorize("@ss.hasPermission('erp:purchase-requisition:query')")
@@ -229,6 +235,45 @@ public class PurchaseRequisitionController {
             MapUtils.findAndThen(projectMap, purchaseRequisition.getAssociationProject(), project -> purchaseRequisition.setProjectName(project.getName()));
             MapUtils.findAndThen(userMap, Long.parseLong(purchaseRequisition.getCreator()), user -> purchaseRequisition.setCreatorName(user.getNickname()));
         });
+    }
+
+    private List<PurchaseRequisitionRespVO> buildPurchaseRequisitionVOItemPageResult(PageResult<PurchaseRequisitionRespVO> pageResult) {
+        List<PurchaseRequisitionRespVO> updatedList = pageResult.getList().stream()
+                .peek(o -> {
+                    // 获取与当前 PurchaseRequisitionRespVO 对象相关的 RequisitionProductDO 列表
+                    List<RequisitionProductDO> requisitionProductItemList = purchaseRequisitionService.getRequisitionProductListByOrderId(o.getId());
+
+                    // 对 RequisitionProductDO 列表进行排序
+                    List<RequisitionProductDO> filteredList = requisitionProductItemList.stream()
+                            .sorted(
+                                    Comparator.comparingInt((RequisitionProductDO item) -> item.getStatus() == 0 ? 0 : 1)
+                                            .thenComparing(Comparator.comparing(RequisitionProductDO::getCreateTime).reversed())
+                            )
+                            .collect(Collectors.toList());
+                    // 获取产品信息映射
+                    Set<Long> productIds = filteredList.stream()
+                            .map(RequisitionProductDO::getProductId)
+                            .collect(Collectors.toSet());
+                    Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(productIds);
+
+                    // 更新 PurchaseRequisitionRespVO 对象的 items 属性
+                    List<PurchaseRequisitionRespVO.Item> items = filteredList.stream()
+                            .map(item -> {
+                                ErpProductRespVO product = productMap.get(item.getProductId());
+                                PurchaseRequisitionRespVO.Item responseItem = BeanUtils.toBean(item, PurchaseRequisitionRespVO.Item.class);
+                                if (product != null) {
+                                    responseItem.setProductName(product.getName())
+                                            .setProductBarCode(product.getBarCode())
+                                            .setProductUnitName(product.getUnitName());
+                                }
+                                return responseItem;
+                            })
+                            .collect(Collectors.toList());
+
+                    o.setItems(items);
+                })
+                .collect(Collectors.toList());
+        return updatedList;
     }
 
 //    // ==================== 子表（请购产品） ====================

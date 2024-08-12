@@ -4,6 +4,7 @@ import java.util.*;
 
 import cn.iocoder.yudao.module.erp.controller.admin.material.vo.out.ErpReturnMaterialsPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.material.vo.out.ErpReturnMaterialsSaveReqVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsItemDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -79,4 +80,7 @@ public interface ErpReturnMaterialsService {
      * @return ERP 还料入库单项列表
      */
     List<ErpReturnMaterialsItemDO> selectListByPickingItemId(Long id);
+
+
+    List<ErpReturnMaterialsItemDO> selectListByReturnIds(Collection<Long> inIds);
 }

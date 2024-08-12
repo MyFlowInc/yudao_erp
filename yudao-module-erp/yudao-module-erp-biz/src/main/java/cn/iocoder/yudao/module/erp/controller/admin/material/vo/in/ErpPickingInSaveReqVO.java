@@ -29,8 +29,10 @@ public class ErpPickingInSaveReqVO {
 
     @Schema(description = "关联请购单", example = "16463")
     private Long associationRequisitionId;
+
     @Schema(description = "关联项目", example = "16463")
     private Long associationProjectId;
+
     @Schema(description = "入库时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "入库时间不能为空")
     private LocalDateTime inTime;

@@ -257,6 +257,11 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
         return returnMaterialsItemMapper.selectListByPickingItemId(id);
     }
 
+    @Override
+    public List<ErpReturnMaterialsItemDO> selectListByReturnIds(Collection<Long> inIds) {
+        return returnMaterialsItemMapper.selectListByReturnIds(inIds);
+    }
+
     private void updateReturnMaterialsItemList(Long returnId, List<ErpReturnMaterialsItemDO> list) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpReturnMaterialsItemDO> oldList = returnMaterialsItemMapper.selectListByReturnId(returnId);

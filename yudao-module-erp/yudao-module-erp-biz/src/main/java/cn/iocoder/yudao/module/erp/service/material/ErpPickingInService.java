@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.erp.controller.admin.material.vo.in.ErpPickingInS
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInItemDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 
 import javax.validation.Valid;
 
@@ -71,4 +72,5 @@ public interface ErpPickingInService {
      */
     List<ErpPickingInItemDO> getPickingInItemListByInId(Long inId);
 
+    List<ErpPickingInItemDO> selectListByInIds(Collection<Long> inIds);
 }

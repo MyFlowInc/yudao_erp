@@ -147,7 +147,8 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
                 }
                 //扣除对应批次库存数量
                 ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(item.getAssociatedBatchId());
-                productBatchMapper.updateById(new ErpProductBatchDO().setInventoryQuantity(erpProductBatchDO.getInventoryQuantity().subtract(item.getCount())));
+                BigDecimal subtract = erpProductBatchDO.getInventoryQuantity().subtract(item.getCount());
+                productBatchMapper.updateById(erpProductBatchDO.setInventoryQuantity(subtract));
                 BigDecimal count = approve ? item.getCount().negate() : item.getCount().abs();
                     //生成出入库明细且扣除库存
                     stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
@@ -200,6 +201,11 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
     @Override
     public List<ErpPickingInItemDO> getPickingInItemListByInId(Long inId) {
         return pickingInItemMapper.selectListByInId(inId);
+    }
+
+    @Override
+    public List<ErpPickingInItemDO> selectListByInIds(Collection<Long> inIds) {
+        return pickingInItemMapper.selectListByInIds(inIds);
     }
 
     private void updatePickingInItemList(Long inId, List<ErpPickingInItemDO> list) {

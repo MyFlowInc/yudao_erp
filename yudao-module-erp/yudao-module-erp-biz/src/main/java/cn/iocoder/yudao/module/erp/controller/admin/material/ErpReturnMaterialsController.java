@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.erp.controller.admin.material;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
+import cn.iocoder.yudao.module.erp.controller.admin.material.vo.in.ErpPickingInRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.material.vo.out.ErpReturnMaterialsPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.material.vo.out.ErpReturnMaterialsRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.material.vo.out.ErpReturnMaterialsSaveReqVO;
@@ -11,11 +13,14 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
+import cn.iocoder.yudao.module.erp.service.material.ErpPickingInService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
 import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
+import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
+import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,6 +42,7 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.*;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMultiMap;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpReturnMaterialsDO;
@@ -65,6 +71,10 @@ public class ErpReturnMaterialsController {
     private ErpAiluoProjectsService ailuoProjectsService;
     @Resource
     private ErpStockService stockService;
+    @Resource
+    private AdminUserApi adminUserApi;
+    @Resource
+    private ErpPickingInService pickingInService;
     @PostMapping("/create")
     @Operation(summary = "创建ERP 还料入库单")
     @PreAuthorize("@ss.hasPermission('erp:return-materials:create')")
@@ -134,7 +144,27 @@ public class ErpReturnMaterialsController {
         Map<Long, PurchaseRequisitionDO> purchaseRequisitionMap =
                 purchaseRequisitionService.getPurchaseRequisitionMap
                         (convertSet(pageResult.getList(), ErpReturnMaterialsDO::getAssociationRequisitionId));
+        //查询产品列表
+        List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS = returnMaterialsService.selectListByReturnIds(
+                convertSet(pageResult.getList(), ErpReturnMaterialsDO::getId));
+        // 1.2 产品信息
+        Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
+                convertSet(erpReturnMaterialsItemDOS, ErpReturnMaterialsItemDO::getProductId));
+        Map<Long, List<ErpReturnMaterialsItemDO>> longListMap = convertMultiMap(erpReturnMaterialsItemDOS, ErpReturnMaterialsItemDO::getReturnId);
+        // 1.4 管理员信息
+        Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
+                convertSet(pageResult.getList(), purchaseIn -> Long.parseLong(purchaseIn.getCreator())));
         return success(BeanUtils.toBean(pageResult, ErpReturnMaterialsRespVO.class,item->{
+            item.setItems(BeanUtils.toBean(longListMap.get(item.getId()), ErpReturnMaterialsRespVO.Item.class,
+                    items -> MapUtils.findAndThen(productMap, items.getProductId(), product -> items.setProductName(product.getName())
+                            .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()))));
+            if (item.getAssociationPickingId() != null){
+                ErpPickingInDO pickingIn = pickingInService.getPickingIn(item.getAssociationPickingId());
+                item.setAssociationPickingNo(pickingIn.getNo());
+            }
+            item.setProductNames(CollUtil.join(item.getItems(), "，", ErpReturnMaterialsRespVO.Item::getProductName));
+            MapUtils.findAndThen(userMap, Long.parseLong(item.getCreator()), user -> item.setCreatorName(user.getNickname()));
+            MapUtils.findAndThen(purchaseRequisitionMap, item.getAssociationRequisitionId(), requisitionDO -> item.setAssociationRequisitionNo(requisitionDO.getRequisitionCode()));
             MapUtils.findAndThen(purchaseRequisitionMap, item.getAssociationRequisitionId(), requisitionDO -> item.setAssociationRequisitionNo(requisitionDO.getRequisitionCode()));
             MapUtils.findAndThen(projectMap, item.getAssociationProjectId(), project -> item.setAssociationProjectName(project.getName()));
         }));

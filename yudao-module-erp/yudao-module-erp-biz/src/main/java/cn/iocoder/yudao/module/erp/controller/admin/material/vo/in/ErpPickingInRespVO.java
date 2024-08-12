@@ -22,6 +22,10 @@ public class ErpPickingInRespVO {
     @ExcelProperty("领料号")
     private String no;
 
+    @Schema(description = "产品名", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("产品名")
+    private String productNames;
+
     @Schema(description = "供应商编号", example = "7291")
     @ExcelProperty("供应商编号")
     private Long supplierId;
@@ -65,6 +69,10 @@ public class ErpPickingInRespVO {
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     @ExcelProperty("附件 URL")
     private String fileUrl;
+    @Schema(description = "创建人", example = "芋道")
+    private String creator;
+    @Schema(description = "创建人名称", example = "芋道")
+    private String creatorName;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")

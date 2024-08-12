@@ -7,6 +7,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockOutItemDO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -23,5 +24,8 @@ public interface ErpPickingInItemMapper extends BaseMapperX<ErpPickingInItemDO> 
     }
     default int deleteByInId(Long inId) {
         return delete(ErpPickingInItemDO::getInId, inId);
+    }
+    default List<ErpPickingInItemDO> selectListByInIds(Collection<Long> inIds) {
+        return selectList(ErpPickingInItemDO::getInId, inIds);
     }
 }

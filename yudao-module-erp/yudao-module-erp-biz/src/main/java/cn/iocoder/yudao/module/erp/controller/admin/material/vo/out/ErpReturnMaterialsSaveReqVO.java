@@ -28,6 +28,11 @@ public class ErpReturnMaterialsSaveReqVO {
     @Schema(description = "关联请购单", example = "11852")
     private Long associationRequisitionId;
 
+
+    @Schema(description = "关联领料单", example = "11852")
+    @NotNull(message = "关联领料单不能为空")
+    private Long associationPickingId;
+
     @Schema(description = "关联项目id", requiredMode = Schema.RequiredMode.REQUIRED, example = "17900")
     @NotNull(message = "关联项目id不能为空")
     private Long associationProjectId;

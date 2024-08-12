@@ -47,6 +47,10 @@ public class ErpReturnMaterialsDO extends BaseDO {
      */
     private Long associationProjectId;
     /**
+     * 关联领料单
+     */
+    private Long associationPickingId;
+    /**
      * 入库时间
      */
     private LocalDateTime inTime;

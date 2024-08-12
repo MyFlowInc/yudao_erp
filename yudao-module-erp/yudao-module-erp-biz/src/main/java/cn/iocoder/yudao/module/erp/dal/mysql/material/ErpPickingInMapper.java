@@ -23,6 +23,7 @@ public interface ErpPickingInMapper extends BaseMapperX<ErpPickingInDO> {
                 .eqIfPresent(ErpPickingInDO::getNo, reqVO.getNo())
                 .eqIfPresent(ErpPickingInDO::getSupplierId, reqVO.getSupplierId())
                 .eqIfPresent(ErpPickingInDO::getAssociationRequisitionId, reqVO.getAssociationRequisitionId())
+                .eqIfPresent(ErpPickingInDO::getAssociationProjectId, reqVO.getAssociationProjectId())
                 .betweenIfPresent(ErpPickingInDO::getInTime, reqVO.getInTime())
                 .eqIfPresent(ErpPickingInDO::getStatus, reqVO.getStatus())
                 .betweenIfPresent(ErpPickingInDO::getCreateTime, reqVO.getCreateTime())

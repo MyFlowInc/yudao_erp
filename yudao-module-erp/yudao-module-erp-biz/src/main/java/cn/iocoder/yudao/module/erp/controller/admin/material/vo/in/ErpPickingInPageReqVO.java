@@ -26,6 +26,9 @@ public class ErpPickingInPageReqVO extends PageParam {
     @Schema(description = "关联请购单", example = "16463")
     private Long associationRequisitionId;
 
+    @Schema(description = "关联项目", example = "16463")
+    private Long associationProjectId;
+
     @Schema(description = "入库时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime[] inTime;

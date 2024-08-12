@@ -101,8 +101,8 @@ public class ErpReturnMaterialsController {
     @Operation(summary = "删除ERP 还料入库单")
     @Parameter(name = "id", description = "编号", required = true)
     @PreAuthorize("@ss.hasPermission('erp:return-materials:delete')")
-    public CommonResult<Boolean> deleteReturnMaterials(@RequestParam("id") List<Long> id) {
-        returnMaterialsService.deleteReturnMaterials(id);
+    public CommonResult<Boolean> deleteReturnMaterials(@RequestParam("ids") List<Long> ids) {
+        returnMaterialsService.deleteReturnMaterials(ids);
         return success(true);
     }
 

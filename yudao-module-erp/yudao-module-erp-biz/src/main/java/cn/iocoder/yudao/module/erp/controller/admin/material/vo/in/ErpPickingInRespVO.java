@@ -36,7 +36,7 @@ public class ErpPickingInRespVO {
 
     @Schema(description = "关联请购单编号", example = "16463")
     @ExcelProperty("关联请购单编号")
-    private String associationRequisitionNo;
+    private String requisitionCode;
 
     @Schema(description = "关联项目", example = "16463")
     @ExcelProperty("关联项目")

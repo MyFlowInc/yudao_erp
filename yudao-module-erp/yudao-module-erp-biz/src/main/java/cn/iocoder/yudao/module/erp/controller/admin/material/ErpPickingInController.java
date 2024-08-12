@@ -20,8 +20,6 @@ import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
 import cn.iocoder.yudao.module.erp.service.requisition.PurchaseRequisitionService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
-import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
-import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -127,7 +125,7 @@ public class ErpPickingInController {
         return success(BeanUtils.toBean(pickingIn, ErpPickingInRespVO.class,item ->{
             if (item.getAssociationRequisitionId()!=null){
                 PurchaseRequisitionDO purchaseRequisition = purchaseRequisitionService.getPurchaseRequisition(item.getAssociationRequisitionId());
-                item.setAssociationRequisitionNo(purchaseRequisition.getRequisitionCode());
+                item.setRequisitionCode(purchaseRequisition.getRequisitionCode());
             }
             item.setItems(BeanUtils.toBean(pickingInItemDOList, ErpPickingInRespVO.Item.class, items -> {
                 ErpStockDO stock = stockService.getStock(items.getProductId(), items.getWarehouseId());

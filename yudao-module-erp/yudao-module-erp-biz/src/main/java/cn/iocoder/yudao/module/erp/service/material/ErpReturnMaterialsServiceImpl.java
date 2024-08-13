@@ -286,18 +286,8 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
         list.forEach( o->{
             //关联领料项
             ErpPickingInItemDO erpPickingInItemDO = pickingInItemMapper.selectById(o.getAssociatedPickingItemId());
-            //所有关联这一领料项的还料项集合
-            List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS1 = returnMaterialsItemMapper.selectListByPickingItemId(o.getAssociatedPickingItemId());
-            erpReturnMaterialsItemDOS1 = erpReturnMaterialsItemDOS1.stream()
-                    .filter(item -> !item.getDeleted())
-                    .collect(Collectors.toList());
-            //集合总数量
-            BigDecimal totalCount = erpReturnMaterialsItemDOS1.stream()
-                    .map(ErpReturnMaterialsItemDO::getCount)
-                    .filter(Objects::nonNull)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             //对比换领料单数量
-            if (totalCount.compareTo(erpPickingInItemDO.getCount().subtract(erpPickingInItemDO.getReturnMaterialsCount())) >0){
+            if (o.getCount().compareTo(erpPickingInItemDO.getCount().subtract(erpPickingInItemDO.getReturnMaterialsCount())) >0){
                 throw exception(RETURN_MATERIALSNOTCOUNT_EXISTS);
             }
         });

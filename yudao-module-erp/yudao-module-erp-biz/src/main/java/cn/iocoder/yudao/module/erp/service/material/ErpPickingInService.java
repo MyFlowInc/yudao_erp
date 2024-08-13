@@ -71,6 +71,6 @@ public interface ErpPickingInService {
      * @return ERP 领料出库单项列表
      */
     List<ErpPickingInItemDO> getPickingInItemListByInId(Long inId);
-
+    ErpPickingInDO selectByNo(String no);
     List<ErpPickingInItemDO> selectListByInIds(Collection<Long> inIds);
 }

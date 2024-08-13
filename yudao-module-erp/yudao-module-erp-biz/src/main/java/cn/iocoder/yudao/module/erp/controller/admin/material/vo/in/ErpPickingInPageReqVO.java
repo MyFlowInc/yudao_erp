@@ -20,14 +20,20 @@ public class ErpPickingInPageReqVO extends PageParam {
     @Schema(description = "领料号")
     private String no;
 
-    @Schema(description = "供应商编号", example = "7291")
-    private Long supplierId;
+    @Schema(description = "创建人", example = "7291")
+    private Long creatorName;
 
     @Schema(description = "关联请购单", example = "16463")
     private Long associationRequisitionId;
 
     @Schema(description = "关联项目", example = "16463")
     private Long associationProjectId;
+
+    @Schema(description = "关联请购单No", example = "17900")
+    private String requisitionCode;
+
+    @Schema(description = "关联产品id", example = "2")
+    private Integer productId;
 
     @Schema(description = "入库时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

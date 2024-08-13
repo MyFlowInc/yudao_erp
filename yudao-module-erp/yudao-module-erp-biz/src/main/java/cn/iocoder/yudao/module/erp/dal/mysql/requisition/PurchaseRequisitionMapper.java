@@ -47,8 +47,6 @@ public interface PurchaseRequisitionMapper extends BaseMapperX<PurchaseRequisiti
                     .groupBy(PurchaseRequisitionDO::getId);
         }
         return selectPage(reqVO,query);
-
-
     }
 
     default List<PurchaseRequisitionDO> selectStatusIsNotEndList(PurchaseRequisitionPageReqVO reqVO) {

@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -77,7 +78,6 @@ public class ErpPickingInController {
     private ErpStockService stockService;
     @Resource
     private AdminUserApi adminUserApi;
-
 
     @PostMapping("/create")
     @Operation(summary = "创建ERP 领料出库单")
@@ -147,24 +147,35 @@ public class ErpPickingInController {
     @Operation(summary = "获得ERP 领料出库单分页")
     @PreAuthorize("@ss.hasPermission('erp:picking-in:query')")
     public CommonResult<PageResult<ErpPickingInRespVO>> getPickingInPage(@Valid ErpPickingInPageReqVO pageReqVO) {
-
         PageResult<ErpPickingInDO> pageResult = pickingInService.getPickingInPage(pageReqVO);
+        List<ErpPickingInDO> list = pageResult.getList();
+        if (pageReqVO.getRequisitionCode() != null && list !=null) {
+            PurchaseRequisitionDO purchaseRequisitionDO = purchaseRequisitionService.selectByNo(pageReqVO.getRequisitionCode());
+            if (purchaseRequisitionDO != null) {
+                // 更新 list 为过滤后的结果
+                list = list.stream()
+                        .filter(p -> (p.getAssociationRequisitionId() != null))
+                        .filter(p -> Objects.equals(p.getAssociationRequisitionId(), purchaseRequisitionDO.getId()))
+                        .collect(Collectors.toList());
+                pageResult.setList(list);
+            }
+        }
         // 1.1 项目列表
         Map<Long, ErpAiluoProjectDO> projectMap = ailuoProjectsService.getProjectMap(
-                convertSet(pageResult.getList(), ErpPickingInDO::getAssociationProjectId));
+                convertSet(list, ErpPickingInDO::getAssociationProjectId));
         Map<Long, PurchaseRequisitionDO> purchaseRequisitionMap =
                 purchaseRequisitionService.getPurchaseRequisitionMap
-                        (convertSet(pageResult.getList(), ErpPickingInDO::getAssociationRequisitionId));
+                        (convertSet(list, ErpPickingInDO::getAssociationRequisitionId));
         //查询产品列表
         List<ErpPickingInItemDO> erpPickingInItemDOS = pickingInService.selectListByInIds(
-                convertSet(pageResult.getList(), ErpPickingInDO::getId));
+                convertSet(list, ErpPickingInDO::getId));
         // 1.2 产品信息
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(erpPickingInItemDOS, ErpPickingInItemDO::getProductId));
         Map<Long, List<ErpPickingInItemDO>> longListMap = convertMultiMap(erpPickingInItemDOS, ErpPickingInItemDO::getInId);
         // 1.4 管理员信息
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
-                convertSet(pageResult.getList(), purchaseIn -> Long.parseLong(purchaseIn.getCreator())));
+                convertSet(list, purchaseIn -> Long.parseLong(purchaseIn.getCreator())));
 
         return success(BeanUtils.toBean(pageResult, ErpPickingInRespVO.class,item ->{
             item.setItems(BeanUtils.toBean(longListMap.get(item.getId()), ErpPickingInRespVO.Item.class,

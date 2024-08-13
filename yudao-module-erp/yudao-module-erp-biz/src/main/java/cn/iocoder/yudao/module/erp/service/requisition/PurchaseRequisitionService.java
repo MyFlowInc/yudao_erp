@@ -87,6 +87,8 @@ public interface PurchaseRequisitionService {
      */
     RequisitionProductDO getPurchaseRequisitionProduct(Long id);
 
+    PurchaseRequisitionDO selectByNo(String no);
+
     List<PurchaseRequisitionDO> getPurchaseRequisitionList(Collection<Long> ids);
 
     default Map<Long, PurchaseRequisitionDO> getPurchaseRequisitionMap(Collection<Long> ids) {

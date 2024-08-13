@@ -197,6 +197,11 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     }
 
     @Override
+    public PurchaseRequisitionDO selectByNo(String no) {
+        return purchaseRequisitionMapper.selectByNo(no);
+    }
+
+    @Override
     public List<PurchaseRequisitionDO> getPurchaseRequisitionList(Collection<Long> ids) {
         if (CollUtil.isEmpty(ids)) {
             return Collections.emptyList();

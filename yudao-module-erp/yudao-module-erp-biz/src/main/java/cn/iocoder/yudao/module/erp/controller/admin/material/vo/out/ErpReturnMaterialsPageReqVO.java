@@ -20,14 +20,20 @@ public class ErpReturnMaterialsPageReqVO extends PageParam {
     @Schema(description = "还料单号")
     private String no;
 
-    @Schema(description = "供应商编号", example = "14163")
-    private Long supplierId;
+    @Schema(description = "创建人", example = "7291")
+    private Long creatorName;
 
     @Schema(description = "关联请购单", example = "11852")
     private Long associationRequisitionId;
 
     @Schema(description = "关联项目id", example = "17900")
     private Long associationProjectId;
+
+    @Schema(description = "关联还料单No", example = "17900")
+    private String associationPickingNo;
+
+    @Schema(description = "关联产品id", example = "2")
+    private Integer productId;
 
     @Schema(description = "入库时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

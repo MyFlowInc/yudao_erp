@@ -204,6 +204,11 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
     }
 
     @Override
+    public ErpPickingInDO selectByNo(String no) {
+        return pickingInMapper.selectByNo(no);
+    }
+
+    @Override
     public List<ErpPickingInItemDO> selectListByInIds(Collection<Long> inIds) {
         return pickingInItemMapper.selectListByInIds(inIds);
     }

@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.math.BigDecimal;
 import java.util.*;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -143,22 +144,33 @@ public class ErpReturnMaterialsController {
     @PreAuthorize("@ss.hasPermission('erp:return-materials:query')")
     public CommonResult<PageResult<ErpReturnMaterialsRespVO>> getReturnMaterialsPage(@Valid ErpReturnMaterialsPageReqVO pageReqVO) {
         PageResult<ErpReturnMaterialsDO> pageResult = returnMaterialsService.getReturnMaterialsPage(pageReqVO);
+        List<ErpReturnMaterialsDO> list = pageResult.getList();
+        if (pageReqVO.getAssociationPickingNo() != null && pageResult.getList() !=null) {
+            ErpPickingInDO erpPickingInDO = pickingInService.selectByNo(pageReqVO.getAssociationPickingNo());
+            if (erpPickingInDO != null) {
+                // 更新 list 为过滤后的结果
+                list=list.stream()
+                        .filter(p -> Objects.equals(p.getAssociationPickingId(), erpPickingInDO.getId()))
+                        .collect(Collectors.toList());
+                pageResult.setList(list);
+            }
+        }
         // 1.1 项目列表
         Map<Long, ErpAiluoProjectDO> projectMap = ailuoProjectsService.getProjectMap(
-                convertSet(pageResult.getList(), ErpReturnMaterialsDO::getAssociationProjectId));
+                convertSet(list, ErpReturnMaterialsDO::getAssociationProjectId));
         Map<Long, PurchaseRequisitionDO> purchaseRequisitionMap =
                 purchaseRequisitionService.getPurchaseRequisitionMap
-                        (convertSet(pageResult.getList(), ErpReturnMaterialsDO::getAssociationRequisitionId));
+                        (convertSet(list, ErpReturnMaterialsDO::getAssociationRequisitionId));
         //查询产品列表
         List<ErpReturnMaterialsItemDO> erpReturnMaterialsItemDOS = returnMaterialsService.selectListByReturnIds(
-                convertSet(pageResult.getList(), ErpReturnMaterialsDO::getId));
+                convertSet(list, ErpReturnMaterialsDO::getId));
         // 1.2 产品信息
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(erpReturnMaterialsItemDOS, ErpReturnMaterialsItemDO::getProductId));
         Map<Long, List<ErpReturnMaterialsItemDO>> longListMap = convertMultiMap(erpReturnMaterialsItemDOS, ErpReturnMaterialsItemDO::getReturnId);
         // 1.4 管理员信息
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
-                convertSet(pageResult.getList(), purchaseIn -> Long.parseLong(purchaseIn.getCreator())));
+                convertSet(list, purchaseIn -> Long.parseLong(purchaseIn.getCreator())));
         return success(BeanUtils.toBean(pageResult, ErpReturnMaterialsRespVO.class,item->{
             item.setItems(BeanUtils.toBean(longListMap.get(item.getId()), ErpReturnMaterialsRespVO.Item.class,
                     items -> MapUtils.findAndThen(productMap, items.getProductId(), product -> items.setProductName(product.getName())

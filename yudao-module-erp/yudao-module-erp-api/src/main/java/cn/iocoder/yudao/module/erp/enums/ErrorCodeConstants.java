@@ -200,4 +200,10 @@ public interface ErrorCodeConstants {
     ErrorCode RETURN_MATERIALS_NOT_NO_EXISTS_APPROVE = new ErrorCode(1_030_402_001, "还料出库单({})已审核，无法删除");
     ErrorCode RETURN_MATERIALS_PROCESS_FAIL = new ErrorCode(1_030_402_002, "反审核失败，只有已审核的还料出库单才能反审核");
     ErrorCode RETURN_MATERIALS_APPROVE_FAIL = new ErrorCode(1_030_402_003, "审核失败，只有未审核的还料出库单才能审核");
+
+    // ========== 成本核算 TODO 补充编号 ==========
+    ErrorCode COSTING_NOT_EXISTS = new ErrorCode(1_030_901_001, "成本核算不存在");
+    ErrorCode COSTING_PROJECT_NOT_EXISTS = new ErrorCode(1_030_901_002, "所选项目不存在");
+    ErrorCode COSTING_UPDATE_FAIL_APPROVE = new ErrorCode(1_030_700_003, "核算单({})已审核，无法修改");
+    ErrorCode COSTING_NO_EXISTS = new ErrorCode(1_030_700_004, "生成核算单号失败，请重新提交");
 }

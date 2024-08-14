@@ -67,8 +67,6 @@ public class ErpPickingInController {
     @Resource
     private ErpPickingInService pickingInService;
     @Resource
-    private ErpProductService productService;
-    @Resource
     private PurchaseRequisitionService purchaseRequisitionService;
     @Resource
     private ErpAiluoProjectsService ailuoProjectsService;
@@ -76,6 +74,8 @@ public class ErpPickingInController {
     private ErpProductBatchService productBatchService;
     @Resource
     private ErpStockService stockService;
+    @Resource
+    private ErpProductService productService;
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -182,8 +182,8 @@ public class ErpPickingInController {
                     items -> MapUtils.findAndThen(productMap, items.getProductId(), product -> items.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()))));
             item.setProductNames(CollUtil.join(item.getItems(), "，", ErpPickingInRespVO.Item::getProductName));
-            MapUtils.findAndThen(userMap, Long.parseLong(item.getCreator()), user -> item.setCreatorName(user.getNickname()));
             MapUtils.findAndThen(purchaseRequisitionMap, item.getAssociationRequisitionId(), requisitionDO -> item.setAssociationRequisitionNo(requisitionDO.getRequisitionCode()));
+            MapUtils.findAndThen(userMap, Long.parseLong(item.getCreator()), user -> item.setCreatorName(user.getNickname()));
             MapUtils.findAndThen(projectMap, item.getAssociationProjectId(), project -> item.setAssociationProjectName(project.getName()));
         }));
     }

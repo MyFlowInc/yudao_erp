@@ -121,7 +121,10 @@ public class ErpReturnMaterialsController {
                 convertSet(returnMaterialsItemListByReturnId, ErpReturnMaterialsItemDO::getProductId));
         return success(BeanUtils.toBean(returnMaterials, ErpReturnMaterialsRespVO.class,item->{
              item.setAssociationPickingNo(pickingInService.getPickingIn(returnMaterials.getAssociationPickingId()).getNo());
-             item.setAssociationRequisitionNo(purchaseRequisitionService.getPurchaseRequisition(returnMaterials.getAssociationRequisitionId()).getRequisitionCode());
+             Long requisitionId = returnMaterials.getAssociationRequisitionId();
+             if (requisitionId != null) {
+                 item.setAssociationRequisitionNo(purchaseRequisitionService.getPurchaseRequisition(returnMaterials.getAssociationRequisitionId()).getRequisitionCode());
+             }
              item.setItems(BeanUtils.toBean(returnMaterialsItemListByReturnId,ErpReturnMaterialsRespVO.Item.class,items->{
                  ErpStockDO stock = stockService.getStock(items.getProductId(), items.getWarehouseId());
                  items.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);

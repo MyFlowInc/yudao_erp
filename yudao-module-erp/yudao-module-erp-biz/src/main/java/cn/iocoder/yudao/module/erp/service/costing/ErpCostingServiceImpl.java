@@ -6,6 +6,8 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
+import com.baomidou.dynamic.datasource.annotation.DS;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
     @Resource
     private ErpAiluoProjectsService projectsService;
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public Long createCosting(ErpCostingSaveReqVO createReqVO) {
         // 插入
         ErpCostingDO costing = BeanUtils.toBean(createReqVO, ErpCostingDO.class);
@@ -59,6 +61,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
         if (costingMapper.selectByNo(no) != null) {
             throw exception(COSTING_NO_EXISTS);
         }
+        costing.setNo(no);
         costingMapper.insert(costing);
         // 插入子表
         if (createReqVO.getItems() != null) {

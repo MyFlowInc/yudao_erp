@@ -19,14 +19,13 @@ public class ErpCostingSaveReqVO {
     private Long id;
 
     @Schema(description = "核算编号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "核算编号不能为空")
     private String no;
 
     @Schema(description = "状态", example = "2")
     private Integer status;
 
     @Schema(description = "关联项目id", requiredMode = Schema.RequiredMode.REQUIRED, example = "15076")
-    @NotEmpty(message = "关联项目id不能为空")
+    @NotNull(message = "关联项目id不能为空")
     private Long associationProjectId;
 
     @Schema(description = "核算时间", requiredMode = Schema.RequiredMode.REQUIRED)

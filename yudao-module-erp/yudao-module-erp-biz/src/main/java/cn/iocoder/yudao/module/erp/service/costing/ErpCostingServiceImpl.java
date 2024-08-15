@@ -53,6 +53,7 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 import static cn.iocoder.yudao.module.erp.enums.common.ErpBizTypeEnum.*;
+import static sun.print.ServiceDialog.APPROVE;
 
 /**
  * 成本核算 Service 实现类
@@ -130,7 +131,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
     public void updateByIdAndStatus(Long id, Integer status,LocalDateTime startTime, LocalDateTime endTime) {
         ErpCostingDO erpCostingDO = validateCostingExists(id);
         boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
-
         //总领料数
         BigDecimal pickingTotalCount = BigDecimal.ZERO;
         //总领料成本
@@ -139,13 +139,12 @@ public class ErpCostingServiceImpl implements ErpCostingService {
         BigDecimal erpReturnMaterialsTotalCount = BigDecimal.ZERO;
         //总领料数
         BigDecimal erpReturnMaterialsMoneyCount = BigDecimal.ZERO;
-
         //领料项集合
         AtomicReference<List<ErpPickingInItemDO>> erpPickingInItemDOS = new AtomicReference<>(new ArrayList<>());
         //还料项
         AtomicReference<List<ErpReturnMaterialsItemDO>> erpReturnMaterialsDOs = new AtomicReference<>(new ArrayList<>());
         // 获取领料单并拼接领料项
-            PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()));
+            PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(APPROVE));
             List<ErpPickingInDO> list = erpPickingInDOPageResult.getList();
         // 开始时间结束时间不为空，否则过滤列表
         if (startTime != null && endTime != null){
@@ -173,7 +172,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                 });
             }
             // 获取还料单并拼接还料项
-            PageResult<ErpReturnMaterialsDO> erpReturnMaterialsDOPageResult = returnMaterialsMapper.selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()));
+            PageResult<ErpReturnMaterialsDO> erpReturnMaterialsDOPageResult = returnMaterialsMapper.selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(APPROVE));
             List<ErpReturnMaterialsDO> returnMaterialsList = erpReturnMaterialsDOPageResult.getList();
         // 过滤列表
             if (startTime != null && endTime != null){

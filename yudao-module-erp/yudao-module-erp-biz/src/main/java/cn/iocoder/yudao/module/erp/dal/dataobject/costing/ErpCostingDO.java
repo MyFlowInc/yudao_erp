@@ -72,9 +72,14 @@ public class ErpCostingDO extends BaseDO {
      */
     private BigDecimal materialCost;
     /**
-     * 其他成本
+     * 其他收入成本
      */
     private BigDecimal otherCost;
+    /**
+     * 其他支出成本
+     */
+    private BigDecimal otherExpensesCost;
+
     /**
      * 总成本
      */

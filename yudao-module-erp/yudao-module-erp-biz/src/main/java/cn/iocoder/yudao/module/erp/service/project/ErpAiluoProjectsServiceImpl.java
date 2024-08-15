@@ -21,7 +21,6 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 @DS("ailuo")
 public class ErpAiluoProjectsServiceImpl implements ErpAiluoProjectsService{
     @Resource
-    @Lazy // 延迟加载，避免循环依赖
     private ErpAiluoProjectsMapper erpAiluoProjectsMapper;
 
     @Override

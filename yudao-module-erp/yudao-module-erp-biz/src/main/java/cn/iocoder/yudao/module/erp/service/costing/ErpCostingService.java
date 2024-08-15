@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.costing;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import cn.iocoder.yudao.module.erp.controller.admin.costing.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.costing.ErpCostingDO;
@@ -31,7 +32,7 @@ public interface ErpCostingService {
      */
     void updateCosting(@Valid ErpCostingSaveReqVO updateReqVO);
 
-    void updateByIdAndStatus(Long id, Integer status);
+    void updateByIdAndStatus(Long id, Integer status,LocalDateTime startTime, LocalDateTime endTime);
 
     /**
      * 删除成本核算

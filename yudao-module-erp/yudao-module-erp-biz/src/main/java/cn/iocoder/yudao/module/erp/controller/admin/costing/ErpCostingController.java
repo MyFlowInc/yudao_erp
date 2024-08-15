@@ -4,6 +4,7 @@ import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
 import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
@@ -14,8 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -50,6 +53,8 @@ public class ErpCostingController {
     private AdminUserApi adminUserApi;
     @Resource
     private ErpAiluoProjectsService ailuoProjectsService;
+    @Resource
+    private ErpProductBatchService productBatchService;
     @PostMapping("/create")
     @Operation(summary = "创建成本核算")
     @PreAuthorize("@ss.hasPermission('erp:costing:create')")
@@ -68,8 +73,10 @@ public class ErpCostingController {
     @Operation(summary = "更新成本核算单的状态")
     @PreAuthorize("@ss.hasPermission('erp:costing:update-status')")
     public CommonResult<Boolean> updatePurchaseRequisitionStatus(@RequestParam("id") Long id,
-                                                                 @RequestParam("status") Integer status) {
-        costingService.updateByIdAndStatus(id, status);
+                                                                 @RequestParam("status") Integer status,
+                                                                 @RequestParam("startTime")LocalDateTime startTime,
+                                                                 @RequestParam("endTime") LocalDateTime endTime) {
+        costingService.updateByIdAndStatus(id, status,startTime,endTime);
         return success(true);
     }
     @DeleteMapping("/delete")
@@ -85,9 +92,23 @@ public class ErpCostingController {
     @Operation(summary = "获得成本核算")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('erp:costing:query')")
-    public CommonResult<ErpCostingRespVO> getCosting(@RequestParam("id") Long id) {
+    public CommonResult<ErpCostingRespVO> getCosting(@RequestParam("id") Long id,Integer type) {
         ErpCostingDO costing = costingService.getCosting(id);
-        return success(BeanUtils.toBean(costing, ErpCostingRespVO.class));
+        List<ErpCostItemDO> costItemListByCostId = costingService.getCostItemListByCostId(id);
+        // 如果类型不为空，则进行过滤
+        if (type != null) {
+            // 过滤出类型匹配的元素
+            costItemListByCostId = costItemListByCostId.stream()
+                    .filter(p -> p.getType().equals(type))
+                    .collect(Collectors.toList());
+            // 你可以在这里使用 filteredList 进行后续操作
+        }
+        List<ErpCostItemDO> finalCostItemListByCostId = costItemListByCostId;
+        return success(BeanUtils.toBean(costing, ErpCostingRespVO.class, item ->{
+            item.setItems(BeanUtils.toBean(finalCostItemListByCostId,ErpCostingRespVO.Item.class, item1 -> {
+                item1.setAssociatedBatchName(productBatchService.getProductBatch(item1.getAssociatedBatchId()).getName());
+            }));
+        }));
     }
 
     @GetMapping("/page")

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.costing;
 
+import cn.iocoder.yudao.module.erp.enums.common.ErpBizTypeEnum;
 import lombok.*;
 import java.util.*;
 import java.math.BigDecimal;
@@ -41,7 +42,7 @@ public class ErpCostItemDO extends BaseDO {
     /**
      * 类型
      */
-    private String type;
+    private Integer type;
     /**
      * 数量
      */

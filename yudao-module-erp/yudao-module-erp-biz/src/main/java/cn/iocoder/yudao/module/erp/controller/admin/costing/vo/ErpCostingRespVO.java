@@ -55,9 +55,15 @@ public class ErpCostingRespVO {
     @ExcelProperty("物料成本")
     private BigDecimal materialCost;
 
-    @Schema(description = "其他成本")
-    @ExcelProperty("其他成本")
+    @Schema(description = "其他收入成本")
+    @ExcelProperty("其他收入成本")
     private BigDecimal otherCost;
+    /**
+     * 其他支出成本
+     */
+    @Schema(description = "其他支出成本")
+    @ExcelProperty("其他支出成本")
+    private BigDecimal otherExpensesCost;
 
     @Schema(description = "总成本")
     @ExcelProperty("总成本")
@@ -100,7 +106,7 @@ public class ErpCostingRespVO {
          * 类型
          */
         @Schema(description = "类型")
-        private String type;
+        private Integer type;
         /**
          * 数量
          */
@@ -121,6 +127,12 @@ public class ErpCostingRespVO {
          */
         @Schema(description = "关联批次id")
         private Long associatedBatchId;
+
+        /**
+         * 关联批次名称
+         */
+        @Schema(description = "关联批次名称")
+        private String associatedBatchName;
         /**
          * 关联项目id
          */

@@ -75,7 +75,7 @@ public class ErpCostingSaveReqVO {
          * 类型
          */
         @Schema(description = "类型")
-        private String type;
+        private Integer type;
         /**
          * 数量
          */

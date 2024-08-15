@@ -53,7 +53,6 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 import static cn.iocoder.yudao.module.erp.enums.common.ErpBizTypeEnum.*;
-import static sun.print.ServiceDialog.APPROVE;
 
 /**
  * 成本核算 Service 实现类
@@ -144,7 +143,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
         //还料项
         AtomicReference<List<ErpReturnMaterialsItemDO>> erpReturnMaterialsDOs = new AtomicReference<>(new ArrayList<>());
         // 获取领料单并拼接领料项
-            PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(APPROVE));
+            PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
             List<ErpPickingInDO> list = erpPickingInDOPageResult.getList();
         // 开始时间结束时间不为空，否则过滤列表
         if (startTime != null && endTime != null){
@@ -172,7 +171,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                 });
             }
             // 获取还料单并拼接还料项
-            PageResult<ErpReturnMaterialsDO> erpReturnMaterialsDOPageResult = returnMaterialsMapper.selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(APPROVE));
+            PageResult<ErpReturnMaterialsDO> erpReturnMaterialsDOPageResult = returnMaterialsMapper.selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
             List<ErpReturnMaterialsDO> returnMaterialsList = erpReturnMaterialsDOPageResult.getList();
         // 过滤列表
             if (startTime != null && endTime != null){

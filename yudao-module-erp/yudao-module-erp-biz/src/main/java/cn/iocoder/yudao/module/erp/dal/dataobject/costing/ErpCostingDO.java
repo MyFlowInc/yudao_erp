@@ -52,6 +52,14 @@ public class ErpCostingDO extends BaseDO {
      */
     private LocalDateTime costingTime;
     /**
+     * 核算开始时间
+     */
+    private LocalDateTime startTime;
+    /**
+     * 核算结束时间
+     */
+    private LocalDateTime endTime;
+    /**
      * 领料量
      */
     private BigDecimal pickingCount;

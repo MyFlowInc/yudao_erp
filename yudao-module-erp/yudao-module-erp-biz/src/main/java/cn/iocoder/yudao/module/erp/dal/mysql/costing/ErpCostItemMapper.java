@@ -6,7 +6,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.erp.controller.admin.costing.vo.ErpCostingPageReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.costing.ErpCostItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.costing.ErpCostingDO;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -16,6 +18,12 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface ErpCostItemMapper extends BaseMapperX<ErpCostItemDO> {
+    default PageResult<ErpCostItemDO> selectPage(ErpCostingPageReqVO reqVO) {
+        return selectPage(reqVO, new LambdaQueryWrapperX<ErpCostItemDO>()
+                .eqIfPresent(ErpCostItemDO::getType, reqVO.getType())
+                .eqIfPresent(ErpCostItemDO::getCostId, reqVO.getCostId())
+                .orderByDesc(ErpCostItemDO::getId));
+    }
 
     default List<ErpCostItemDO> selectListByCostId(Long costId) {
         return selectList(ErpCostItemDO::getCostId, costId);

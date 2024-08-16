@@ -32,7 +32,7 @@ public interface ErpCostingService {
      */
     void updateCosting(@Valid ErpCostingSaveReqVO updateReqVO);
 
-    void updateByIdAndStatus(Long id, Integer status,LocalDateTime startTime, LocalDateTime endTime);
+    void updateByIdAndStatus(Long id, Integer status);
 
     /**
      * 删除成本核算
@@ -67,4 +67,11 @@ public interface ErpCostingService {
      */
     List<ErpCostItemDO> getCostItemListByCostId(Long costId);
 
+    /**
+     * 获得成本核算项列表
+     *
+     * @param reqVO 核算单id及类型
+     * @return 成本核算项列表
+     */
+    PageResult<ErpCostItemDO> selectPage(ErpCostingPageReqVO reqVO);
 }

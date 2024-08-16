@@ -22,6 +22,12 @@ public class ErpCostingPageReqVO extends PageParam {
     @Schema(description = "状态", example = "2")
     private Integer status;
 
+    @Schema(description = "")
+    private Long costId;
+
+    @Schema(description = "类型", example = "2")
+    private Integer type;
+
     @Schema(description = "关联项目id", example = "15076")
     private String associationProjectId;
 

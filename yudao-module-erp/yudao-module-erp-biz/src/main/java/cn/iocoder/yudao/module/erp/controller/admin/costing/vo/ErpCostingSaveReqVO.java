@@ -28,9 +28,19 @@ public class ErpCostingSaveReqVO {
     @NotNull(message = "关联项目id不能为空")
     private Long associationProjectId;
 
-    @Schema(description = "核算时间", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "核算开始时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "核算时间不能为空")
     private LocalDateTime costingTime;
+    /**
+     * 核算开始时间
+     */
+    @Schema(description = "核算开始时间", requiredMode = Schema.RequiredMode.REQUIRED)
+    private LocalDateTime startTime;
+    /**
+     * 核算结束时间
+     */
+    @Schema(description = "核算结束时间", requiredMode = Schema.RequiredMode.REQUIRED)
+    private LocalDateTime endTime;
 
     @Schema(description = "领料量", example = "17193")
     private BigDecimal pickingCount;

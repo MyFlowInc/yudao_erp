@@ -3,6 +3,8 @@ package cn.iocoder.yudao.module.erp.controller.admin.costing;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
+import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
+import cn.iocoder.yudao.module.erp.enums.common.ErpBizTypeEnum;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.project.ErpAiluoProjectsService;
@@ -73,10 +75,8 @@ public class ErpCostingController {
     @Operation(summary = "更新成本核算单的状态")
     @PreAuthorize("@ss.hasPermission('erp:costing:update-status')")
     public CommonResult<Boolean> updatePurchaseRequisitionStatus(@RequestParam("id") Long id,
-                                                                 @RequestParam("status") Integer status,
-                                                                 @RequestParam("startTime")LocalDateTime startTime,
-                                                                 @RequestParam("endTime") LocalDateTime endTime) {
-        costingService.updateByIdAndStatus(id, status,startTime,endTime);
+                                                                 @RequestParam("status") Integer status) {
+        costingService.updateByIdAndStatus(id, status);
         return success(true);
     }
     @DeleteMapping("/delete")
@@ -94,21 +94,27 @@ public class ErpCostingController {
     @PreAuthorize("@ss.hasPermission('erp:costing:query')")
     public CommonResult<ErpCostingRespVO> getCosting(@RequestParam("id") Long id,Integer type) {
         ErpCostingDO costing = costingService.getCosting(id);
-        List<ErpCostItemDO> costItemListByCostId = costingService.getCostItemListByCostId(id);
-        // 如果类型不为空，则进行过滤
-        if (type != null) {
-            // 过滤出类型匹配的元素
-            costItemListByCostId = costItemListByCostId.stream()
-                    .filter(p -> p.getType().equals(type))
-                    .collect(Collectors.toList());
-            // 你可以在这里使用 filteredList 进行后续操作
-        }
-        List<ErpCostItemDO> finalCostItemListByCostId = costItemListByCostId;
-        return success(BeanUtils.toBean(costing, ErpCostingRespVO.class, item ->{
-            item.setItems(BeanUtils.toBean(finalCostItemListByCostId,ErpCostingRespVO.Item.class, item1 -> {
-                item1.setAssociatedBatchName(productBatchService.getProductBatch(item1.getAssociatedBatchId()).getName());
+            List<ErpCostItemDO> costItemListByCostId = costingService.getCostItemListByCostId(id);
+                if (Objects.equals(costing.getStatus(), ErpAuditStatus.APPROVE.getStatus())){
+                    return success(BeanUtils.toBean(costing, ErpCostingRespVO.class));
+                }
+
+            // 如果类型不为空，则进行过滤
+            if (type != null) {
+                // 过滤出类型匹配的元素
+                costItemListByCostId = costItemListByCostId.stream()
+                        .filter(p -> p.getType().equals(type))
+                        .collect(Collectors.toList());
+                // 你可以在这里使用 filteredList 进行后续操作
+            }
+            List<ErpCostItemDO> finalCostItemListByCostId = costItemListByCostId;
+            return success(BeanUtils.toBean(costing, ErpCostingRespVO.class, item ->{
+                item.setItems(BeanUtils.toBean(finalCostItemListByCostId,ErpCostingRespVO.Item.class, item1 -> {
+                    if (item1.getAssociatedBatchId() != null){
+                        item1.setAssociatedBatchName(productBatchService.getProductBatch(item1.getAssociatedBatchId()).getName());
+                    }
+                }));
             }));
-        }));
     }
 
     @GetMapping("/page")
@@ -127,6 +133,14 @@ public class ErpCostingController {
             MapUtils.findAndThen(userMap, Long.parseLong(erpCostingRespVO.getCreator()), user -> erpCostingRespVO.setCreatorName(user.getNickname()));
             MapUtils.findAndThen(projectMap, erpCostingRespVO.getAssociationProjectId(), project -> erpCostingRespVO.setAssociationProjectName(project.getName()));
         }));
+    }
+
+    @GetMapping("/costItemPage")
+    @Operation(summary = "获得成本核算分页")
+    @PreAuthorize("@ss.hasPermission('erp:costing:query')")
+    public CommonResult<PageResult<ErpCostingRespVO.Item>> getCostingItemPage(@Valid ErpCostingPageReqVO pageReqVO) {
+        PageResult<ErpCostItemDO> erpCostItemDOPageResult = costingService.selectPage(pageReqVO);
+        return success(BeanUtils.toBean(erpCostItemDOPageResult, ErpCostingRespVO.Item.class));
     }
 
     @GetMapping("/export-excel")

@@ -127,7 +127,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
     }
 
     @Override
-    public void updateByIdAndStatus(Long id, Integer status,LocalDateTime startTime, LocalDateTime endTime) {
+    public void updateByIdAndStatus(Long id, Integer status) {
         ErpCostingDO erpCostingDO = validateCostingExists(id);
         boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
         //总领料数
@@ -146,6 +146,8 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
             List<ErpPickingInDO> list = erpPickingInDOPageResult.getList();
         // 开始时间结束时间不为空，否则过滤列表
+        LocalDateTime startTime = erpCostingDO.getStartTime();
+        LocalDateTime endTime = erpCostingDO.getEndTime();
         if (startTime != null && endTime != null){
             list = list.stream()
                     .filter(item -> {
@@ -171,7 +173,9 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                 });
             }
             // 获取还料单并拼接还料项
-            PageResult<ErpReturnMaterialsDO> erpReturnMaterialsDOPageResult = returnMaterialsMapper.selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
+            PageResult<ErpReturnMaterialsDO> erpReturnMaterialsDOPageResult = returnMaterialsMapper
+                    .selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO
+                    .getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
             List<ErpReturnMaterialsDO> returnMaterialsList = erpReturnMaterialsDOPageResult.getList();
         // 过滤列表
             if (startTime != null && endTime != null){
@@ -298,6 +302,11 @@ public class ErpCostingServiceImpl implements ErpCostingService {
     @Override
     public List<ErpCostItemDO> getCostItemListByCostId(Long costId) {
         return costItemMapper.selectListByCostId(costId);
+    }
+
+    @Override
+    public PageResult<ErpCostItemDO> selectPage(ErpCostingPageReqVO reqVO) {
+        return costItemMapper.selectPage(reqVO);
     }
 
 

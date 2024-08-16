@@ -106,7 +106,9 @@ public class ErpCostingController {
         List<ErpCostItemDO> finalCostItemListByCostId = costItemListByCostId;
         return success(BeanUtils.toBean(costing, ErpCostingRespVO.class, item ->{
             item.setItems(BeanUtils.toBean(finalCostItemListByCostId,ErpCostingRespVO.Item.class, item1 -> {
-                item1.setAssociatedBatchName(productBatchService.getProductBatch(item1.getAssociatedBatchId()).getName());
+                if (item1.getAssociatedBatchId() != null) {
+                    item1.setAssociatedBatchName(productBatchService.getProductBatch(item1.getAssociatedBatchId()).getName());
+                }
             }));
         }));
     }

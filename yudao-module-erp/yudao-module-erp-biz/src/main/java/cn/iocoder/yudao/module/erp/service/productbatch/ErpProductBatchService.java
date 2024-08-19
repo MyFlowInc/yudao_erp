@@ -2,10 +2,13 @@ package cn.iocoder.yudao.module.erp.service.productbatch;
 
 import java.util.*;
 import javax.validation.*;
+
+import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.productbatch.vo.*;
 import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
 
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
 
@@ -61,4 +64,13 @@ public interface ErpProductBatchService {
      * @return ERP产品批次信息分页
      */
     PageResult<ErpProductBatchDO> getProductBatchPage(ErpProductBatchPageReqVO pageReqVO);
+
+
+
+    List<ErpProductBatchDO> getProductBatchList(Collection<Long> ids);
+
+    default Map<Long, ErpProductBatchDO> getProductBatchMap(Collection<Long> ids) {
+        List<ErpProductBatchDO> users = getProductBatchList(ids);
+        return CollectionUtils.convertMap(users, ErpProductBatchDO::getId);
+    }
 }

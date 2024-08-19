@@ -34,6 +34,18 @@ public class ErpCostingRespVO {
     @Schema(description = "核算时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("核算时间")
     private LocalDateTime costingTime;
+    /**
+     * 核算开始时间
+     */
+    @ExcelProperty("核算开始时间")
+    @Schema(description = "核算开始时间", requiredMode = Schema.RequiredMode.REQUIRED)
+    private LocalDateTime startTime;
+    /**
+     * 核算结束时间
+     */
+    @ExcelProperty("核算结束时间")
+    @Schema(description = "核算结束时间", requiredMode = Schema.RequiredMode.REQUIRED)
+    private LocalDateTime endTime;
 
     @Schema(description = "领料量", example = "17193")
     @ExcelProperty("领料量")
@@ -85,7 +97,8 @@ public class ErpCostingRespVO {
 
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<ErpCostingRespVO.Item> items;
-    
+
+
     @Data
     public static class Item {
         /**
@@ -100,26 +113,31 @@ public class ErpCostingRespVO {
         /**
          * 核算项名称
          */
+        @ExcelProperty("核算项名称")
         @Schema(description = "核算项名称")
         private String name;
         /**
          * 类型
          */
+        @ExcelProperty("核算项类型")
         @Schema(description = "类型")
         private Integer type;
         /**
          * 数量
          */
+        @ExcelProperty("数量")
         @Schema(description = "数量")
         private BigDecimal count;
         /**
          * 单价
          */
+        @ExcelProperty("单价")
         @Schema(description = "单价")
         private BigDecimal unitPrice;
         /**
          * 金额
          */
+        @ExcelProperty("总金额")
         @Schema(description = "金额")
         private BigDecimal money;
         /**
@@ -131,12 +149,13 @@ public class ErpCostingRespVO {
         /**
          * 关联批次名称
          */
+        @ExcelProperty("批次名称")
         @Schema(description = "关联批次名称")
         private String associatedBatchName;
         /**
          * 关联项目id
          */
         @Schema(description = "关联项目id")
-        private Long associatedProdectId;
+        private Long associatedProjectId;
     }
 }

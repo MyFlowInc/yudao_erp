@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.erp.controller.admin.costing;
 
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.module.erp.dal.dataobject.material.ErpPickingInDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.enums.common.ErpBizTypeEnum;
@@ -129,7 +130,13 @@ public class ErpCostingController {
         // 1.4 管理员信息
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
                 convertSet(list, purchaseIn -> Long.parseLong(purchaseIn.getCreator())));
+
         return success(BeanUtils.toBean(pageResult, ErpCostingRespVO.class,erpCostingRespVO -> {
+            erpCostingRespVO.setItems(BeanUtils.toBean(erpCostingRespVO.getItems(),ErpCostingRespVO.Item.class, item1 -> {
+                if (item1.getAssociatedBatchId() != null){
+                    item1.setAssociatedBatchName(productBatchService.getProductBatch(item1.getAssociatedBatchId()).getName());
+                }
+            }) );
             MapUtils.findAndThen(userMap, Long.parseLong(erpCostingRespVO.getCreator()), user -> erpCostingRespVO.setCreatorName(user.getNickname()));
             MapUtils.findAndThen(projectMap, erpCostingRespVO.getAssociationProjectId(), project -> erpCostingRespVO.setAssociationProjectName(project.getName()));
         }));
@@ -140,20 +147,39 @@ public class ErpCostingController {
     @PreAuthorize("@ss.hasPermission('erp:costing:query')")
     public CommonResult<PageResult<ErpCostingRespVO.Item>> getCostingItemPage(@Valid ErpCostingPageReqVO pageReqVO) {
         PageResult<ErpCostItemDO> erpCostItemDOPageResult = costingService.selectPage(pageReqVO);
-        return success(BeanUtils.toBean(erpCostItemDOPageResult, ErpCostingRespVO.Item.class));
-    }
-
+        return success(BeanUtils.toBean(erpCostItemDOPageResult, ErpCostingRespVO.Item.class,o->{
+                    if (o.getAssociatedBatchId() != null) {
+                        o.setAssociatedBatchName(productBatchService.getProductBatch(o.getAssociatedBatchId()).getName());
+                    }
+            }));
+        }
     @GetMapping("/export-excel")
-    @Operation(summary = "导出成本核算 Excel")
+    @Operation(summary = "导出成本核算单 Excel")
     @PreAuthorize("@ss.hasPermission('erp:costing:export')")
     @ApiAccessLog(operateType = EXPORT)
     public void exportCostingExcel(@Valid ErpCostingPageReqVO pageReqVO,
-              HttpServletResponse response) throws IOException {
+                                   HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
         List<ErpCostingDO> list = costingService.getCostingPage(pageReqVO).getList();
         // 导出 Excel
-        ExcelUtils.write(response, "成本核算.xls", "数据", ErpCostingRespVO.class,
-                        BeanUtils.toBean(list, ErpCostingRespVO.class));
+        ExcelUtils.write(response, "成本核算单.xls", "数据", ErpCostingRespVO.class,
+                BeanUtils.toBean(list, ErpCostingRespVO.class));
+    }
+
+    @GetMapping("/export-excel-item")
+    @Operation(summary = "导出成本核算单 Excel")
+    @PreAuthorize("@ss.hasPermission('erp:costing:export')")
+    @ApiAccessLog(operateType = EXPORT)
+    public void exportCostingItemExcel(@Valid ErpCostingPageReqVO pageReqVO,
+                                   HttpServletResponse response) throws IOException {
+        PageResult<ErpCostItemDO> erpCostItemDOPageResult = costingService.selectPage(pageReqVO);
+        List<ErpCostItemDO> list = erpCostItemDOPageResult.getList();
+        List<ErpCostingRespVO.Item> bean = BeanUtils.toBean(list, ErpCostingRespVO.Item.class);
+        // 使用流进行分类
+        Map<Integer, List<ErpCostingRespVO.Item>> dataMap = bean.stream()
+                .collect(Collectors.groupingBy(ErpCostingRespVO.Item::getType));
+        // 导出 Excel
+        ExcelUtils.writeCostItemMap(response, "成本核算项.xls",dataMap,ErpCostingRespVO.Item.class);
     }
 
     // ==================== 子表（成本核算项） ====================
@@ -167,3 +193,4 @@ public class ErpCostingController {
     }
 
 }
+

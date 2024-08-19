@@ -61,7 +61,8 @@ public class AdminUserApiImpl implements AdminUserApi {
 
         // 2. 获取部门对应的用户信息
         List<AdminUserDO> users = userService.getUserListByDeptIds(deptIds);
-        users.removeIf(item -> ObjUtil.equal(item.getId(), id)); // 排除自己
+        // 排除自己
+        users.removeIf(item -> ObjUtil.equal(item.getId(), id));
         return BeanUtils.toBean(users, AdminUserRespDTO.class);
     }
 

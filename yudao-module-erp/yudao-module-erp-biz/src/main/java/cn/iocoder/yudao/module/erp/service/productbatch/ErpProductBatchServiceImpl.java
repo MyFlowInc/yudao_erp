@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.productbatch;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.product.ErpProductMapper;
@@ -152,6 +153,19 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
     @Override
     public PageResult<ErpProductBatchDO> getProductBatchPage(ErpProductBatchPageReqVO pageReqVO) {
         return productBatchMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public List<ErpProductBatchDO> getProductBatchList(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
+        return productBatchMapper.selectBatchIds(ids);
+    }
+
+    @Override
+    public Map<Long, ErpProductBatchDO> getProductBatchMap(Collection<Long> ids) {
+        return ErpProductBatchService.super.getProductBatchMap(ids);
     }
 
 

@@ -105,7 +105,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             BeanUtils.toBean(createReqVO.getItems(),ErpCostItemDO.class,erpCostItemDO -> {
                 //领料则为相反数，还料不进行处理
                 if (erpCostItemDO.getType().equals(PICKING.getType())){
-                    erpCostItemDO.setMoney(erpCostItemDO.getMoney().negate()).setUnitPrice(erpCostItemDO.getUnitPrice().negate());
+                    erpCostItemDO.setMoney(erpCostItemDO.getMoney().negate()).setUnitPrice(erpCostItemDO.getUnitPrice());
                 }
                 erpCostItemDO.setCostId(costing.getId());
                 costItemMapper.insert(erpCostItemDO);
@@ -168,7 +168,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                         ErpProductDO erpProductDO = productMapper.selectById(i.getProductId());
                         ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(i.getAssociatedBatchId());
                         costItemMapper.insert(new ErpCostItemDO().setCostId(id).setName(erpProductDO.getName()).setAssociatedBatchId(erpProductBatchDO.getId())
-                                .setCount(i.getCount()).setUnitPrice(i.getProductPrice().negate()).setMoney(i.getTotalPrice().negate()).setType(PICKING.getType()));
+                                .setCount(i.getCount()).setUnitPrice(i.getProductPrice()).setMoney(i.getTotalPrice().negate()).setType(PICKING.getType()));
                     });
                 });
             }

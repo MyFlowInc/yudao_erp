@@ -5,6 +5,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.converters.longconverter.LongStringConverter;
 import com.alibaba.excel.exception.ExcelGenerateException;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -59,50 +60,82 @@ public class ExcelUtils {
         response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8));
         response.setContentType("application/vnd.ms-excel;charset=UTF-8");
     }
-//public static <T> void write(HttpServletResponse response, String filename, String sheetName,
-//                             Class<T> head, List<T> data) throws IOException {
-//    // Step 1: Generate Excel file with EasyExcel
-//    ByteArrayOutputStream easyExcelData = new ByteArrayOutputStream();
-//    EasyExcel.write(easyExcelData, head)
-//            .autoCloseStream(false)
-//            .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
-//            .registerWriteHandler(new SelectSheetWriteHandler(head))
-//            .registerConverter(new LongStringConverter())
-//            .sheet(sheetName)
-//            .doWrite(data);
+
+//    public static <T> void write(HttpServletResponse response, String filename, String sheetName,
+//                                            Class<T> head, List<T> data) throws IOException {
+//        // 先输出 Excel
+//        File tempFile = File.createTempFile("temp", ".xlsx");
+//        EasyExcel.write(tempFile, head)
+//                .autoCloseStream(false)
+//                .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
+//                .sheet(sheetName).doWrite(data);
 //
-//    // Make sure data is correctly written to the output stream
-//    easyExcelData.flush();
-//    byte[] excelBytes = easyExcelData.toByteArray();
-//    easyExcelData.close();
+//        // 然后使用 Apache POI 添加公式
+//        try (FileInputStream fis = new FileInputStream(tempFile);
+//             Workbook workbook = new XSSFWorkbook(fis)) {
+//            // 获取第一个工作表
+//            Sheet sheet = workbook.getSheetAt(0);
+//            // 设置新列标题（假设是第4列）
+//            Row headerRow = sheet.getRow(0);
+//            if (headerRow == null) {
+//                // 如果标题行不存在则创建
+//                headerRow = sheet.createRow(0);
+//            }
+//            // 新列的列号
+//            Cell headerCell = headerRow.createCell(15);
+//            // 设置新列的名称
+//            headerCell.setCellValue("计算结果");
+//            int lastRowNum = sheet.getLastRowNum();
+//            // 添加公式到新列 (假设公式在第4列，从第2行开始)
+//            for (int i = 1; i <= lastRowNum; i++) {
+//                Row row = sheet.getRow(i);
+//                if (row == null) continue;
+//                // 新列的列号
+//                Cell cell = row.createCell(15);
+//            }
+//// 合并单元格，只在第一行添加值
+//            if (lastRowNum > 1) {
+//                // 合并范围：从第2行到最后一行，第16列
+//                sheet.addMergedRegion(new CellRangeAddress(1, lastRowNum, 15, 15));
+//                Row firstRow = sheet.getRow(1);
+//                Cell mergedCell = null;
+//                if (firstRow != null) {
+//                    mergedCell = firstRow.getCell(15);
+//                    // 在合并后的单元格中设置值
+//                    mergedCell.setCellValue("计算结果");
+//                }
+//                // 在最后一行之后添加一个单元格来显示 A2 到 A 的总和
+//                Row sumRow = sheet.createRow(lastRowNum + 1);
+//                // 第16列
+//                Cell sumCell = sumRow.createCell(15);
+//                String sumFormula = "SUM(A2:A" + lastRowNum + ")";
+//                sumCell.setCellFormula(sumFormula);
 //
-//    // Step 2: Add formulas using Apache POI
-//    ByteArrayInputStream bais = new ByteArrayInputStream(excelBytes);
-//    Workbook workbook = new XSSFWorkbook(bais);
-//    Sheet sheet = workbook.getSheetAt(0);
+//                // 确保单元格中的公式被计算
+//                CellStyle style = workbook.createCellStyle();
+//                // 设置格式为数字
+//                style.setDataFormat(workbook.createDataFormat().getFormat("0.00"));
+//                sumCell.setCellStyle(style);
+//                // 计算公式的值并将其写入合并的单元格
+//                FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+//                evaluator.evaluateFormulaCell(sumCell);
+//                double sumValue = sumCell.getNumericCellValue();
 //
-//    // Add formulas to the sheet
-//    int lastRowIndex = sheet.getLastRowNum();
-//    Row formulaRow = sheet.createRow(lastRowIndex + 1);
+//                // 在合并的单元格中设置计算结果
+//                mergedCell.setCellValue(sumValue);
 //
-//    // Example: Add a SUM formula in the first cell of the new row
-//    Cell formulaCell = formulaRow.createCell(0);
-//    formulaCell.setCellFormula("SUM(A2:A" + (lastRowIndex + 1) + ")");
-//
-//    // Write the updated workbook to ByteArrayOutputStream
-//    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//    workbook.write(baos);
-//    workbook.close();
-//    try (ServletOutputStream sos = response.getOutputStream()) {
-//        baos.writeTo(sos);
-//        sos.flush();
+//                // 设置响应头
+//                response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, StandardCharsets.UTF_8));
+//                response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+//                // 将修改后的文件写入响应输出流
+//                try (OutputStream os = response.getOutputStream()) {
+//                    workbook.write(os);
+//                }
+//            }
+//            // 删除临时文件
+//            tempFile.deleteOnExit();
+//        }
 //    }
-//    // Step 3: Send the Excel file as a response
-//    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
-//    response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\""+ URLEncoder.encode(filename, StandardCharsets.UTF_8));
-//
-//
-//}
     public static <T> List<T> read(MultipartFile file, Class<T> head) throws IOException {
         return EasyExcel.read(file.getInputStream(), head, null)
                 // 不要自动关闭，交给 Servlet 自己处理

@@ -32,7 +32,8 @@ public interface ErpCostingMapper extends BaseMapperX<ErpCostingDO> {
 
     default int updateByIdAndStatus(Long id, Integer status, ErpCostingDO updateObj) {
         return update(updateObj, new LambdaUpdateWrapper<ErpCostingDO>()
-                .eq(ErpCostingDO::getId, id).eq(ErpCostingDO::getStatus, status));
+                .eq(ErpCostingDO::getId, id)
+                .eq(ErpCostingDO::getStatus, status));
     }
 
     default ErpCostingDO selectByNo(String no) {

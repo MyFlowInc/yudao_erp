@@ -109,6 +109,7 @@ public class ErpCostingRespVO {
          * 核算单id
          */
         @Schema(description = "核算单id")
+        @ExcelProperty("核算单id")
         private Long costId;
         /**
          * 核算项名称
@@ -143,6 +144,7 @@ public class ErpCostingRespVO {
         /**
          * 关联批次id
          */
+        @ExcelProperty("关联批次id")
         @Schema(description = "关联批次id")
         private Long associatedBatchId;
 
@@ -155,6 +157,7 @@ public class ErpCostingRespVO {
         /**
          * 关联项目id
          */
+        @ExcelProperty("关联项目id")
         @Schema(description = "关联项目id")
         private Long associatedProjectId;
     }

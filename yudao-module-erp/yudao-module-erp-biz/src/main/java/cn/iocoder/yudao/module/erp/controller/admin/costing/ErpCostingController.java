@@ -172,6 +172,7 @@ public class ErpCostingController {
     @ApiAccessLog(operateType = EXPORT)
     public void exportCostingItemExcel(@Valid ErpCostingPageReqVO pageReqVO,
                                    HttpServletResponse response) throws IOException {
+        pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
         PageResult<ErpCostItemDO> erpCostItemDOPageResult = costingService.selectPage(pageReqVO);
         List<ErpCostItemDO> list = erpCostItemDOPageResult.getList();
         List<ErpCostingRespVO.Item> bean = BeanUtils.toBean(list, ErpCostingRespVO.Item.class);

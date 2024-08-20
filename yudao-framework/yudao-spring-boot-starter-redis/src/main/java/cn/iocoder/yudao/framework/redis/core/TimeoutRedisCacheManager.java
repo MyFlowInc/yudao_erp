@@ -40,8 +40,10 @@ public class TimeoutRedisCacheManager extends RedisCacheManager {
         // 核心：通过修改 cacheConfig 的过期时间，实现自定义过期时间
         if (cacheConfig != null) {
             // 移除 # 后面的 : 以及后面的内容，避免影响解析
-            String ttlStr = StrUtil.subBefore(names[1], StrUtil.COLON, false); // 获得 ttlStr 时间部分
-            names[1] = StrUtil.subAfter(names[1], ttlStr, false); // 移除掉 ttlStr 时间部分
+            // 获得 ttlStr 时间部分
+            String ttlStr = StrUtil.subBefore(names[1], StrUtil.COLON, false);
+            // 移除掉 ttlStr 时间部分
+            names[1] = StrUtil.subAfter(names[1], ttlStr, false);
             // 解析时间
             Duration duration = parseDuration(ttlStr);
             cacheConfig = cacheConfig.entryTtl(duration);

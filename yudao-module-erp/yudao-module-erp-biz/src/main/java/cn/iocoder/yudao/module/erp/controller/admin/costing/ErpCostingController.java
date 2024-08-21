@@ -175,14 +175,52 @@ public class ErpCostingController {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
         PageResult<ErpCostItemDO> erpCostItemDOPageResult = costingService.selectPage(pageReqVO);
         List<ErpCostItemDO> list = erpCostItemDOPageResult.getList();
+
+        PageResult<ErpCostingDO> erpCostItemDOPageResult1 = costingService.getCostingPage
+                (new ErpCostingPageReqVO().setAssociationProjectId(list.get(0).getAssociatedProjectId()));
+        List<ErpCostingDO> list1 = erpCostItemDOPageResult1.getList();
+        // 1.1 项目列表
+        Map<Long, ErpAiluoProjectDO> projectMap = ailuoProjectsService.getProjectMap(
+                convertSet(list1, ErpCostingDO::getAssociationProjectId));
+        ErpCostingDO erpCostingDO = list1.get(0);
         List<ErpCostingRespVO.Item> bean = BeanUtils.toBean(list, ErpCostingRespVO.Item.class);
+        //拼接数据
+        bean.forEach(o->{
+            if (o.getAssociatedBatchId() != null) {
+                o.setAssociatedBatchName(productBatchService.getProductBatch(o.getAssociatedBatchId()).getName());
+            }
+            o.setTypeName(getTypeName(o.getType()));
+            o.setAssociatedProjectName(projectMap.get(erpCostingDO.getAssociationProjectId()).getName());
+        });
         // 使用流进行分类
-        Map<Integer, List<ErpCostingRespVO.Item>> dataMap = bean.stream()
+        Map<Integer, List<ErpCostingRespVO.Item>> classifiedDataMap = bean.stream()
                 .collect(Collectors.groupingBy(ErpCostingRespVO.Item::getType));
+
+        // 创建一个 LinkedHashMap 来保持插入顺序
+        Map<Integer, List<ErpCostingRespVO.Item>> orderedDataMap = new LinkedHashMap<>();
+
+        // 根据条件将键 34 的值放在第一位
+        if (pageReqVO.getType() == null) {
+            orderedDataMap.put(34, classifiedDataMap.getOrDefault(34, bean));
+        }
+        // 将分类后的其他条目添加到 orderedDataMap
+        classifiedDataMap.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals(34))
+                .forEach(entry -> orderedDataMap.put(entry.getKey(), entry.getValue()));
+        // 现在 orderedDataMap 中的键 34 将位于其他键之前
+        Map<Integer, List<ErpCostingRespVO.Item>> dataMap = orderedDataMap;
         // 导出 Excel
         ExcelUtils.writeCostItemMap(response, "成本核算项.xls",dataMap,ErpCostingRespVO.Item.class);
     }
 
+    public static String getTypeName(Integer type) {
+        Map<Integer,String> map = new HashMap<Integer,String>();
+        map.put(30,"其他支出");
+        map.put(31,"其他收入");
+        map.put(32,"领料");
+        map.put(33,"还料");
+        return map.get(type);
+    }
     // ==================== 子表（成本核算项） ====================
 
     @GetMapping("/cost-item/list-by-cost-id")

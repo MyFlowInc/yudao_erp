@@ -104,12 +104,12 @@ public class ErpCostingRespVO {
         /**
          * id
          */
+        @ExcelIgnore
         private Long id;
         /**
          * 核算单id
          */
-        @Schema(description = "核算单id")
-        @ExcelProperty("核算单id")
+        @ExcelIgnore
         private Long costId;
         /**
          * 核算项名称
@@ -118,11 +118,16 @@ public class ErpCostingRespVO {
         @Schema(description = "核算项名称")
         private String name;
         /**
-         * 类型
+         * 核算项类型
          */
-        @ExcelProperty("核算项类型")
-        @Schema(description = "类型")
+        @ExcelIgnore
         private Integer type;
+        /**
+         * 类型名称
+         */
+        @ExcelProperty("类型名称")
+        @Schema(description = "类型名称")
+        private String typeName;
         /**
          * 数量
          */
@@ -144,21 +149,25 @@ public class ErpCostingRespVO {
         /**
          * 关联批次id
          */
-        @ExcelProperty("关联批次id")
-        @Schema(description = "关联批次id")
+        @ExcelIgnore
         private Long associatedBatchId;
-
+        /**
+         * 项目名称
+         */
+        @ExcelProperty("项目名称")
+        @Schema(description = "项目名称")
+        private String associatedProjectName;
         /**
          * 关联批次名称
          */
         @ExcelProperty("批次名称")
-        @Schema(description = "关联批次名称")
+        @Schema(description = "批次名称")
         private String associatedBatchName;
+
         /**
          * 关联项目id
          */
-        @ExcelProperty("关联项目id")
-        @Schema(description = "关联项目id")
+        @ExcelIgnore
         private Long associatedProjectId;
     }
 }

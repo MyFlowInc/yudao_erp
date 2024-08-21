@@ -84,15 +84,10 @@ public class ExcelUtils {
             }
             // 完成写入后关闭 writer
             writer.finish();
-
             // 在这里开始使用 Apache POI 对临时文件进行后处理
             try (InputStream tempFileIn = new FileInputStream(tempFile);
                  XSSFWorkbook workbook = new XSSFWorkbook(tempFileIn)) {
                 for (Map.Entry<Integer, List<T>> entry : dataMap.entrySet()) {
-                    Integer type = entry.getKey();
-
-                    String sheetName = getTypeName(type);
-                    Sheet sheet = workbook.getSheet(sheetName);
                     // 创建样式
                     CellStyle headerCellStyle = workbook.createCellStyle();
 
@@ -106,15 +101,12 @@ public class ExcelUtils {
 // 设置对齐方式（可选）
                     headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
                     headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-
                     for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
                         Sheet currentSheet = workbook.getSheetAt(i);
-
                         // 移除所有现有的合并区域
                         for (int j = currentSheet.getNumMergedRegions() - 1; j >= 0; j--) {
                             currentSheet.removeMergedRegion(j);
                         }
-
                         // 获取当前行数
                         int lastRowNum = currentSheet.getLastRowNum();
 
@@ -124,9 +116,9 @@ public class ExcelUtils {
                             headerRow = currentSheet.createRow(0);
                         }
 
-                        Cell headerCell = headerRow.getCell(10);
+                        Cell headerCell = headerRow.getCell(7);
                         if (headerCell == null) {
-                            headerCell = headerRow.createCell(10);
+                            headerCell = headerRow.createCell(7);
                         }
                         headerCell.setCellValue("金额合计");
                         // 应用样式到列名单元格
@@ -134,19 +126,19 @@ public class ExcelUtils {
 
                         if (lastRowNum > 1) {
                             // 多于一行数据时，设置合并区域和公式
-                            currentSheet.addMergedRegion(new CellRangeAddress(1, lastRowNum, 10, 10));
+                            currentSheet.addMergedRegion(new CellRangeAddress(1, lastRowNum, 7, 7));
 
                             Row firstRow = currentSheet.getRow(1);
                             if (firstRow == null) {
                                 firstRow = currentSheet.createRow(1);
                             }
 
-                            Cell mergedCell = firstRow.getCell(10);
+                            Cell mergedCell = firstRow.getCell(7);
                             if (mergedCell == null) {
-                                mergedCell = firstRow.createCell(10);
+                                mergedCell = firstRow.createCell(7);
                             }
 
-                            mergedCell.setCellFormula("SUM(G2:G" + (lastRowNum + 1) + ")");
+                            mergedCell.setCellFormula("SUM(E2:E" + (lastRowNum + 1) + ")");
                             mergedCell.setCellStyle(createCellStyle(workbook));
                         } else if (lastRowNum == 1) {
                             // 仅一行数据时，直接设置 G2 的值到 K2
@@ -155,12 +147,11 @@ public class ExcelUtils {
                                 firstRow = currentSheet.createRow(1);
                             }
 
-                            Cell targetCell = firstRow.getCell(10);
+                            Cell targetCell = firstRow.getCell(7);
                             if (targetCell == null) {
-                                targetCell = firstRow.createCell(10);
+                                targetCell = firstRow.createCell(7);
                             }
-
-                            Cell sourceCell = firstRow.getCell(6);
+                            Cell sourceCell = firstRow.getCell(4);
                             if (sourceCell != null && sourceCell.getCellType() == CellType.NUMERIC) {
                                 targetCell.setCellValue(sourceCell.getNumericCellValue());
                             } else {
@@ -187,6 +178,7 @@ public class ExcelUtils {
         map.put(31,"其他收入");
         map.put(32,"领料");
         map.put(33,"还料");
+        map.put(34,"ALL");
         return map.get(type);
     }
     // 方法：创建单元格样式

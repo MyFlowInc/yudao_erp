@@ -67,6 +67,7 @@ public class ErpCostingDO extends BaseDO {
      * 领料成本
      */
     private BigDecimal pickingCost;
+
     /**
      * 退料量
      */

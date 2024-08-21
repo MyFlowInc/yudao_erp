@@ -29,7 +29,7 @@ public class ErpCostingPageReqVO extends PageParam {
     private Integer type;
 
     @Schema(description = "关联项目id", example = "15076")
-    private String associationProjectId;
+    private Long associationProjectId;
 
     @Schema(description = "核算时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)

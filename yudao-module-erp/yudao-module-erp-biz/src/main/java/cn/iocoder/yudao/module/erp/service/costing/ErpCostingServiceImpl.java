@@ -215,12 +215,13 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             erpReturnMaterialsTotalCount = erpReturnMaterialsDOs.get().stream()
                     .map(ErpReturnMaterialsItemDO::getCount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+
             erpReturnMaterialsMoneyCount = erpReturnMaterialsDOs.get().stream()
                     .map(ErpReturnMaterialsItemDO::getTotalPrice)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
         //总物料成本
-        BigDecimal materialCost = pickingMoneyCount.subtract(erpReturnMaterialsMoneyCount);
+        BigDecimal materialCost = pickingMoneyCount.add(erpReturnMaterialsMoneyCount);
 
         List<ErpCostItemDO> erpCostItemDOS = costItemMapper.selectListByCostId(id);
         //其他收入列表

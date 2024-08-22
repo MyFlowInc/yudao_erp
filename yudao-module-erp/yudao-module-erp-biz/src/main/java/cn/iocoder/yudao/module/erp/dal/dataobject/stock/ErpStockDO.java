@@ -46,4 +46,6 @@ public class ErpStockDO extends BaseDO {
      */
     private BigDecimal count;
 
+
+    private Long associatedBatchId;
 }

@@ -5,6 +5,7 @@ import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Schema(description = "管理后台 - ERP 库存 Response VO")
@@ -46,4 +47,16 @@ public class ErpStockRespVO {
     @ExcelProperty("仓库名称")
     private String warehouseName;
 
+    // ========== 批次信息 ==========
+    /**
+     * 关联批次id
+     */
+    @Schema(description = "批次ID")
+    private Long associatedBatchId;
+
+    @Schema(description = "关联批次信息名称", example = "随便")
+    private String associatedBatchName;
+
+    @Schema(description = "关联批次库存数量")
+    private BigDecimal associationBatchNum;
 }

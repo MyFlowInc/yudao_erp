@@ -36,6 +36,9 @@ public class ErpStockRecordDO extends BaseDO {
      * 关联 {@link ErpProductDO#getId()}
      */
     private Long productId;
+
+    private Long associatedBatchId;
+
     /**
      * 仓库编号
      *

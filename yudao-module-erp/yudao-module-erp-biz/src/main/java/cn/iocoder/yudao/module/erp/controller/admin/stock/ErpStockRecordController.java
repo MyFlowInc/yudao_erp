@@ -11,9 +11,12 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.record.ErpStockRecordPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.record.ErpStockRecordRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockRecordDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpWarehouseDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpWarehouseService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
@@ -51,7 +54,8 @@ public class ErpStockRecordController {
     private ErpProductService productService;
     @Resource
     private ErpWarehouseService warehouseService;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -94,11 +98,16 @@ public class ErpStockRecordController {
                 convertSet(pageResult.getList(), ErpStockRecordDO::getWarehouseId));
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
                 convertSet(pageResult.getList(), record -> Long.parseLong(record.getCreator())));
+
+        Map<Long, ErpProductBatchDO> productBatchMap = productBatchService.getProductBatchMap(
+                convertSet(pageResult.getList(),ErpStockRecordDO::getAssociatedBatchId));
         return BeanUtils.toBean(pageResult, ErpStockRecordRespVO.class, stock -> {
             MapUtils.findAndThen(productMap, stock.getProductId(), product -> stock.setProductName(product.getName())
                     .setCategoryName(product.getCategoryName()).setUnitName(product.getUnitName()));
             MapUtils.findAndThen(warehouseMap, stock.getWarehouseId(), warehouse -> stock.setWarehouseName(warehouse.getName()));
             MapUtils.findAndThen(userMap, Long.parseLong(stock.getCreator()), user -> stock.setCreatorName(user.getNickname()));
+            MapUtils.findAndThen(productBatchMap, stock.getAssociatedBatchId(), batchDO ->
+                    stock.setAssociatedBatchName(batchDO.getName()).setAssociationBatchNum(batchDO.getInventoryQuantity()));
         });
     }
 

@@ -11,9 +11,11 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.stock.ErpStockPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.stock.ErpStockRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpWarehouseDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpWarehouseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,6 +53,9 @@ public class ErpStockController {
     private ErpProductService productService;
     @Resource
     private ErpWarehouseService warehouseService;
+
+    @Resource
+    private ErpProductBatchService productBatchService;
 
     @GetMapping("/get")
     @Operation(summary = "获得产品库存")
@@ -102,10 +107,14 @@ public class ErpStockController {
                 convertSet(pageResult.getList(), ErpStockDO::getProductId));
         Map<Long, ErpWarehouseDO> warehouseMap = warehouseService.getWarehouseMap(
                 convertSet(pageResult.getList(), ErpStockDO::getWarehouseId));
+        Map<Long, ErpProductBatchDO> productBatchMap = productBatchService.getProductBatchMap(
+                convertSet(pageResult.getList(), ErpStockDO::getAssociatedBatchId));
         return BeanUtils.toBean(pageResult, ErpStockRespVO.class, stock -> {
             MapUtils.findAndThen(productMap, stock.getProductId(), product -> stock.setProductName(product.getName())
                     .setCategoryName(product.getCategoryName()).setUnitName(product.getUnitName()));
             MapUtils.findAndThen(warehouseMap, stock.getWarehouseId(), warehouse -> stock.setWarehouseName(warehouse.getName()));
+            MapUtils.findAndThen(productBatchMap, stock.getAssociatedBatchId(), batchDO ->
+                    stock.setAssociatedBatchName(batchDO.getName()).setAssociationBatchNum(batchDO.getInventoryQuantity()));
         });
     }
 

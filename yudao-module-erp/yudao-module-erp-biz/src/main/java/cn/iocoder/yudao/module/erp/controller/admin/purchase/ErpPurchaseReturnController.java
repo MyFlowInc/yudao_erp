@@ -114,7 +114,7 @@ public class ErpPurchaseReturnController {
                 convertSet(purchaseReturnItemList, ErpPurchaseReturnItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseReturn, ErpPurchaseReturnRespVO.class, purchaseReturnVO ->
                 purchaseReturnVO.setItems(BeanUtils.toBean(purchaseReturnItemList, ErpPurchaseReturnRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),item.getAssociatedBatchId());
                     ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(item.getOrderItemId());
                     if (erpPurchaseOrderItemDO != null) {
                         ErpProductBatchDO productBatch = productBatchService.getProductBatch(erpPurchaseOrderItemDO.getAssociatedBatchId());

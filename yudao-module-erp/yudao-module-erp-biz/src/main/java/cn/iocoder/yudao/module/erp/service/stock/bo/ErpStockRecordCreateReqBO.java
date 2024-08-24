@@ -56,4 +56,7 @@ public class ErpStockRecordCreateReqBO {
     @NotNull(message = "业务单号不能为空")
     private String bizNo;
 
+
+    private Long associatedBatchId;
+
 }

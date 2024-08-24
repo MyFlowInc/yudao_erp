@@ -30,9 +30,11 @@ public interface ErpStockMapper extends BaseMapperX<ErpStockDO> {
                 .orderByDesc(ErpStockDO::getId));
     }
 
-    default ErpStockDO selectByProductIdAndWarehouseId(Long productId, Long warehouseId) {
+    default ErpStockDO selectByProductIdAndWarehouseId(Long productId, Long warehouseId,Long batchId) {
         return selectOne(ErpStockDO::getProductId, productId,
-                ErpStockDO::getWarehouseId, warehouseId);
+                ErpStockDO::getWarehouseId, warehouseId,
+                ErpStockDO::getAssociatedBatchId,batchId
+        );
     }
 
     default int updateCountIncrement(Long id, BigDecimal count, boolean negativeEnable) {

@@ -7,8 +7,10 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.in.ErpStockInPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.in.ErpStockInSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockInItemDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockInItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockInMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
@@ -58,7 +60,8 @@ public class ErpStockInServiceImpl implements ErpStockInService {
     private ErpSupplierService supplierService;
     @Resource
     private ErpStockRecordService stockRecordService;
-
+    @Resource
+    private ErpProductBatchMapper productBatchMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createStockIn(ErpStockInSaveReqVO createReqVO) {
@@ -132,7 +135,10 @@ public class ErpStockInServiceImpl implements ErpStockInService {
             BigDecimal count = approve ? stockInItem.getCount() : stockInItem.getCount().negate();
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     stockInItem.getProductId(), stockInItem.getWarehouseId(), count,
-                    bizType, stockInItem.getInId(), stockInItem.getId(), stockIn.getNo()));
+                    bizType, stockInItem.getInId(), stockInItem.getId(), stockIn.getNo(),stockInItem.getAssociatedBatchId()));
+            //变更批次库存
+            ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(stockInItem.getAssociatedBatchId());
+            productBatchMapper.updateById(erpProductBatchDO.setInventoryQuantity(erpProductBatchDO.getInventoryQuantity().add(count)));
         });
     }
 
@@ -146,7 +152,7 @@ public class ErpStockInServiceImpl implements ErpStockInService {
                 list, ErpStockInSaveReqVO.Item::getWarehouseId));
         // 2. 转化为 ErpStockInItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockInItemDO.class, item -> item
-                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
+                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 

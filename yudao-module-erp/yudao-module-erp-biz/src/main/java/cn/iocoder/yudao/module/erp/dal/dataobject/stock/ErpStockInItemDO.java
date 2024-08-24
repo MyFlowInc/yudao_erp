@@ -41,6 +41,13 @@ public class ErpStockInItemDO extends BaseDO {
      * 关联 {@link ErpWarehouseDO#getId()}
      */
     private Long warehouseId;
+
+    /**
+     * 批次编号
+     *
+     * 关联 {@link cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO#getId()}
+     */
+    private Long associatedBatchId;
     /**
      * 产品编号
      *

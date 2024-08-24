@@ -137,10 +137,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
         BigDecimal erpReturnMaterialsTotalCount = BigDecimal.ZERO;
         //总领料数
         BigDecimal erpReturnMaterialsMoneyCount = BigDecimal.ZERO;
-        //领料项集合
-        AtomicReference<List<ErpPickingInItemDO>> erpPickingInItemDOS = new AtomicReference<>(new ArrayList<>());
-        //还料项
-        AtomicReference<List<ErpReturnMaterialsItemDO>> erpReturnMaterialsDOs = new AtomicReference<>(new ArrayList<>());
         // 获取领料单并拼接领料项
             PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
             List<ErpPickingInDO> list = erpPickingInDOPageResult.getList();
@@ -159,10 +155,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             if (list != null){
                 list.forEach(o -> {
                     List<ErpPickingInItemDO> items = pickingInItemMapper.selectListByInId(o.getId());
-                    erpPickingInItemDOS.updateAndGet(existingList -> {
-                        existingList.addAll(items);
-                        return existingList;
-                    });
                     items.forEach(i->{
                         ErpProductDO erpProductDO = productMapper.selectById(i.getProductId());
                         ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(i.getAssociatedBatchId());
@@ -176,6 +168,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                     .selectPage(new ErpReturnMaterialsPageReqVO().setAssociationProjectId(erpCostingDO
                     .getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
             List<ErpReturnMaterialsDO> returnMaterialsList = erpReturnMaterialsDOPageResult.getList();
+
         // 过滤列表
             if (startTime != null && endTime != null){
                 returnMaterialsList = returnMaterialsList.stream()
@@ -189,10 +182,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             if (returnMaterialsList!=null){
                 returnMaterialsList.forEach(o -> {
                     List<ErpReturnMaterialsItemDO> items = returnMaterialsItemMapper.selectListByReturnId(o.getId());
-                    erpReturnMaterialsDOs.updateAndGet(existingList -> {
-                        existingList.addAll(items);
-                        return existingList;
-                    });
                 items.forEach(i->{
                     ErpProductDO erpProductDO = productMapper.selectById(i.getProductId());
                     ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(i.getAssociatedBatchId());
@@ -201,33 +190,15 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                 });
                 });
             }
-        //得到总领料量
-        if (erpPickingInItemDOS.get() != null){
-            pickingTotalCount = erpPickingInItemDOS.get().stream()
-                    .map(ErpPickingInItemDO::getCount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-            pickingMoneyCount = erpPickingInItemDOS.get().stream()
-                    .map(ErpPickingInItemDO::getTotalPrice)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
-        //总还料数量及成本
-        if (erpReturnMaterialsDOs.get() !=null){
-            erpReturnMaterialsTotalCount = erpReturnMaterialsDOs.get().stream()
-                    .map(ErpReturnMaterialsItemDO::getCount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            erpReturnMaterialsMoneyCount = erpReturnMaterialsDOs.get().stream()
-                    .map(ErpReturnMaterialsItemDO::getTotalPrice)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
-        //总物料成本
-        BigDecimal materialCost = pickingMoneyCount.add(erpReturnMaterialsMoneyCount);
-
         List<ErpCostItemDO> erpCostItemDOS = costItemMapper.selectListByCostId(id);
         //其他收入列表
         List<ErpCostItemDO> erpOtherIncomeCostItemDOS = new ArrayList<>();
         //其他支出列表
         List<ErpCostItemDO> erpOtherExpensesCostItemDOS = new ArrayList<>();
+        //领料项集合
+        List<ErpCostItemDO> erpPickingInItemDOS = new ArrayList<>();
+        //还料项
+        List<ErpCostItemDO> erpReturnMaterialsDOs = new ArrayList<>();
         erpCostItemDOS.forEach(o -> {
             if (o.getType().equals(OTHER_INCOME.getType())){
                 erpOtherIncomeCostItemDOS.add(o);
@@ -235,7 +206,33 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             if (o.getType().equals(OTHER_EXPENSES.getType())){
                 erpOtherExpensesCostItemDOS.add(o);
             }
+            if (o.getType().equals(PICKING.getType())){
+                erpPickingInItemDOS.add(o);
+            }
+            if (o.getType().equals(RETURN_MATERIALS.getType())){
+                erpReturnMaterialsDOs.add(o);
+            }
         });
+        //得到总领料量
+        pickingTotalCount = erpPickingInItemDOS.stream()
+                .map(ErpCostItemDO::getCount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        pickingMoneyCount = erpPickingInItemDOS.stream()
+                .map(ErpCostItemDO::getMoney)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        //总还料数量及成本
+        erpReturnMaterialsTotalCount = erpReturnMaterialsDOs.stream()
+                .map(ErpCostItemDO::getCount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        erpReturnMaterialsMoneyCount = erpReturnMaterialsDOs.stream()
+                .map(ErpCostItemDO::getMoney)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        //总物料成本
+        BigDecimal materialCost = pickingMoneyCount.add(erpReturnMaterialsMoneyCount);
+
         BigDecimal reduce = BigDecimal.ZERO;
         BigDecimal reduce1 = BigDecimal.ZERO;
         //获取其他收入总收入
@@ -271,9 +268,9 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             return;
         }
         erpCostingDOS.forEach(erpCostingDO -> {
-            if (ErpAuditStatus.APPROVE.getStatus().equals(erpCostingDO.getStatus())) {
-                throw exception(COSTING_UPDATE_FAIL_APPROVE, erpCostingDO.getNo());
-            }
+//            if (ErpAuditStatus.APPROVE.getStatus().equals(erpCostingDO.getStatus())) {
+//                throw exception(COSTING_UPDATE_FAIL_APPROVE, erpCostingDO.getNo());
+//            }
             // 删除
             costingMapper.deleteById(erpCostingDO.getId());
             deleteCostItemByCostId(erpCostingDO.getId());

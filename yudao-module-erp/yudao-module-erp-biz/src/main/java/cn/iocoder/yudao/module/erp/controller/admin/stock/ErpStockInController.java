@@ -12,10 +12,12 @@ import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProduc
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.in.ErpStockInPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.in.ErpStockInRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.in.ErpStockInSaveReqVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockInItemDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpSupplierService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockInService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
@@ -55,7 +57,8 @@ public class ErpStockInController {
     private ErpProductService productService;
     @Resource
     private ErpSupplierService supplierService;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -104,10 +107,15 @@ public class ErpStockInController {
         List<ErpStockInItemDO> stockInItemList = stockInService.getStockInItemListByInId(id);
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(stockInItemList, ErpStockInItemDO::getProductId));
+
+        Map<Long, ErpProductBatchDO> productBatchMap = productBatchService.getProductBatchMap(
+                convertSet(stockInItemList, ErpStockInItemDO::getAssociatedBatchId));
         return success(BeanUtils.toBean(stockIn, ErpStockInRespVO.class, stockInVO ->
                 stockInVO.setItems(BeanUtils.toBean(stockInItemList, ErpStockInRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),item.getAssociatedBatchId());
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
+                    MapUtils.findAndThen(productBatchMap, item.getAssociatedBatchId(), batchDO ->
+                            item.setAssociatedBatchName(batchDO.getName()));
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
                 }))));
@@ -150,6 +158,8 @@ public class ErpStockInController {
         // 1.4 管理员信息
         Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(
                 convertSet(pageResult.getList(), stockIn -> Long.parseLong(stockIn.getCreator())));
+
+
         // 2. 开始拼接
         return BeanUtils.toBean(pageResult, ErpStockInRespVO.class, stockIn -> {
             stockIn.setItems(BeanUtils.toBean(stockInItemMap.get(stockIn.getId()), ErpStockInRespVO.Item.class,

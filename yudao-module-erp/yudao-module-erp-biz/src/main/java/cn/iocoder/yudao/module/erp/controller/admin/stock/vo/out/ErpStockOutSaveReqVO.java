@@ -20,6 +20,9 @@ public class ErpStockOutSaveReqVO {
     @Schema(description = "客户编号", example = "3113")
     private Long customerId;
 
+    @Schema(description = "批次编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
+    private Long associatedBatchId;
+
     @Schema(description = "出库时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "出库时间不能为空")
     private LocalDateTime outTime;

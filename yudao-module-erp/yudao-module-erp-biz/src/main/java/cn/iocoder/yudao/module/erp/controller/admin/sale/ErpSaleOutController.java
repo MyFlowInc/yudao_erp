@@ -107,7 +107,7 @@ public class ErpSaleOutController {
                 convertSet(saleOutItemList, ErpSaleOutItemDO::getProductId));
         return success(BeanUtils.toBean(saleOut, ErpSaleOutRespVO.class, saleOutVO ->
                 saleOutVO.setItems(BeanUtils.toBean(saleOutItemList, ErpSaleOutRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),null);
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));

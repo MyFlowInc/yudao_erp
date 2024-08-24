@@ -78,6 +78,12 @@ public class ErpStockMoveRespVO {
         @Schema(description = "调入仓库编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "888")
         private Long toWarehouseId;
 
+        @Schema(description = "批次编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
+        private Long associatedBatchId;
+
+        @Schema(description = "关联批次信息名称", example = "随便")
+        private String associatedBatchName;
+
         @Schema(description = "产品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         private Long productId;
 

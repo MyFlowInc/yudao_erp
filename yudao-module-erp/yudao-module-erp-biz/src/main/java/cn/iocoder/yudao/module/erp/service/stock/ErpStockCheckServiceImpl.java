@@ -137,7 +137,7 @@ public class ErpStockCheckServiceImpl implements ErpStockCheckService {
             }
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     stockCheckItem.getProductId(), stockCheckItem.getWarehouseId(), count,
-                    bizType, stockCheckItem.getCheckId(), stockCheckItem.getId(), stockCheck.getNo()));
+                    bizType, stockCheckItem.getCheckId(), stockCheckItem.getId(), stockCheck.getNo(),stockCheckItem.getAssociatedBatchId()));
         });
     }
 

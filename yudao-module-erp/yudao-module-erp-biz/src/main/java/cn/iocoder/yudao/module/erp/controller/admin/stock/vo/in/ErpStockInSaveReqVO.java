@@ -45,6 +45,9 @@ public class ErpStockInSaveReqVO {
         @NotNull(message = "仓库编号不能为空")
         private Long warehouseId;
 
+        @Schema(description = "批次编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
+        private Long associatedBatchId;
+
         @Schema(description = "产品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         @NotNull(message = "产品编号不能为空")
         private Long productId;

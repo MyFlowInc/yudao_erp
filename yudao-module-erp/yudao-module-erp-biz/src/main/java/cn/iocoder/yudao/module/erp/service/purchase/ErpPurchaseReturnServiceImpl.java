@@ -170,10 +170,11 @@ public class ErpPurchaseReturnServiceImpl implements ErpPurchaseReturnService {
             updatePurchaseOrderBatchCount(purchaseReturnItem.getOrderItemId());
             //通过approve判断还是入库
             BigDecimal count = approve ? purchaseReturnItem.getCount().negate() : purchaseReturnItem.getCount();
+            ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(purchaseReturnItem.getOrderItemId());
             //创建库存明细信息
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     purchaseReturnItem.getProductId(), purchaseReturnItem.getWarehouseId(), count,
-                    bizType, purchaseReturnItem.getReturnId(), purchaseReturnItem.getId(), purchaseReturn.getNo()));
+                    bizType, purchaseReturnItem.getReturnId(), purchaseReturnItem.getId(), purchaseReturn.getNo(),erpPurchaseOrderItemDO.getAssociatedBatchId()));
         });
         // 2. 更新状态
         int updateCount = purchaseReturnMapper.updateByIdAndStatus(id, purchaseReturn.getStatus(),

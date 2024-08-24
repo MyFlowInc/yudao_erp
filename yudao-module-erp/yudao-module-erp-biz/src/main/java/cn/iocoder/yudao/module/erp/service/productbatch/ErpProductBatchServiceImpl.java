@@ -43,6 +43,8 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
     private ErpProductMapper productMapper;
     @Resource
     private ErpNoRedisDAO noRedisDAO;
+
+
     @Override
     public Long createProductBatch(ErpProductBatchSaveReqVO createReqVO) {
         //检查新增时是否选中关联产品

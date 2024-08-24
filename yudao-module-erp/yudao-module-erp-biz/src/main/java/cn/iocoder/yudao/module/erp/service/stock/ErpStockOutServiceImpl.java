@@ -7,8 +7,10 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.out.ErpStockOutPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.out.ErpStockOutSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockOutDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockOutItemDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockOutItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockOutMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
@@ -59,7 +61,8 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
     private ErpCustomerService customerService;
     @Resource
     private ErpStockRecordService stockRecordService;
-
+    @Resource
+    private ErpProductBatchMapper productBatchMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createStockOut(ErpStockOutSaveReqVO createReqVO) {
@@ -72,7 +75,6 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
         if (stockOutMapper.selectByNo(no) != null) {
             throw exception(STOCK_OUT_NO_EXISTS);
         }
-
         // 2.1 插入出库单
         ErpStockOutDO stockOut = BeanUtils.toBean(createReqVO, ErpStockOutDO.class, in -> in
                 .setNo(no).setStatus(ErpAuditStatus.PROCESS.getStatus())
@@ -130,7 +132,12 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
             BigDecimal count = approve ? stockOutItem.getCount().negate() : stockOutItem.getCount();
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     stockOutItem.getProductId(), stockOutItem.getWarehouseId(), count,
-                    bizType, stockOutItem.getOutId(), stockOutItem.getId(), stockOut.getNo()));
+                    bizType, stockOutItem.getOutId(), stockOutItem.getId(), stockOut.getNo(),stockOutItem.getAssociatedBatchId()));
+            ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(stockOutItem.getAssociatedBatchId());
+            if (erpProductBatchDO != null) {
+                erpProductBatchDO.setInventoryQuantity(erpProductBatchDO.getInventoryQuantity().add(count));
+                productBatchMapper.updateById(erpProductBatchDO);
+            }
         });
     }
 

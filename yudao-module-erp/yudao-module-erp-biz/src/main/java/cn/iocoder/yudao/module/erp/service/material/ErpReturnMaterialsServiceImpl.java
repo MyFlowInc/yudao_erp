@@ -200,8 +200,8 @@ public class ErpReturnMaterialsServiceImpl implements ErpReturnMaterialsService 
                 BigDecimal count = approve ? erpReturnMaterialsItemDO.getCount() : erpReturnMaterialsItemDO.getCount().negate();
                 stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                         erpReturnMaterialsItemDO.getProductId(), erpReturnMaterialsItemDO.getWarehouseId(), count,
-                        bizType, erpReturnMaterialsItemDO.getReturnId(), erpReturnMaterialsItemDO.getId(), erpReturnMaterialsDO.getNo()));
-            });
+                        bizType, erpReturnMaterialsItemDO.getReturnId(), erpReturnMaterialsItemDO.getId(), erpReturnMaterialsDO.getNo(),erpReturnMaterialsItemDO.getAssociatedBatchId()))
+            ;});
         }
 
     }

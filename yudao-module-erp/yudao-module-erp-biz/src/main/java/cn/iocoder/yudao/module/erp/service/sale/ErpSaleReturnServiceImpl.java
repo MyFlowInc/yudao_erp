@@ -191,7 +191,7 @@ public class ErpSaleReturnServiceImpl implements ErpSaleReturnService {
             BigDecimal count = approve ? saleReturnItem.getCount() : saleReturnItem.getCount().negate();
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     saleReturnItem.getProductId(), saleReturnItem.getWarehouseId(), count,
-                    bizType, saleReturnItem.getReturnId(), saleReturnItem.getId(), saleReturn.getNo()));
+                    bizType, saleReturnItem.getReturnId(), saleReturnItem.getId(), saleReturn.getNo(),null));
         });
     }
 

@@ -43,7 +43,7 @@ public class ErpStockRecordServiceImpl implements ErpStockRecordService {
     public void createStockRecord(ErpStockRecordCreateReqBO createReqBO) {
         // 1. 更新库存
         BigDecimal totalCount = stockService.updateStockCountIncrement(
-                createReqBO.getProductId(), createReqBO.getWarehouseId(), createReqBO.getCount());
+                createReqBO.getProductId(), createReqBO.getWarehouseId(), createReqBO.getCount(),createReqBO.getAssociatedBatchId());
         // 2. 创建库存明细
         ErpStockRecordDO stockRecord = BeanUtils.toBean(createReqBO, ErpStockRecordDO.class)
                 .setTotalCount(totalCount);

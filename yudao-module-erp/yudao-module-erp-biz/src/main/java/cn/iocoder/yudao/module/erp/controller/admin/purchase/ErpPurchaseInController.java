@@ -119,7 +119,7 @@ public class ErpPurchaseInController {
                             item.setAssociationBatchNum(productBatch.getInventoryQuantity().intValue());
                         }
                     }
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),item.getAssociatedBatchId());
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));

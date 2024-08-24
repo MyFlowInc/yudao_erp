@@ -191,7 +191,7 @@ public class ErpSaleOutServiceImpl implements ErpSaleOutService {
             BigDecimal count = approve ? saleOutItem.getCount().negate() : saleOutItem.getCount();
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     saleOutItem.getProductId(), saleOutItem.getWarehouseId(), count,
-                    bizType, saleOutItem.getOutId(), saleOutItem.getId(), saleOut.getNo()));
+                    bizType, saleOutItem.getOutId(), saleOutItem.getId(), saleOut.getNo(),null));
         });
     }
 

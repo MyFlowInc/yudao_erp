@@ -107,7 +107,7 @@ public class ErpSaleReturnController {
                 convertSet(saleReturnItemList, ErpSaleReturnItemDO::getProductId));
         return success(BeanUtils.toBean(saleReturn, ErpSaleReturnRespVO.class, saleReturnVO ->
                 saleReturnVO.setItems(BeanUtils.toBean(saleReturnItemList, ErpSaleReturnRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),null);
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));

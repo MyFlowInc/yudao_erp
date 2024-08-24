@@ -153,7 +153,7 @@ public class ErpPickingInServiceImpl implements ErpPickingInService {
                     //生成出入库明细且扣除库存
                     stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                             item.getProductId(), item.getWarehouseId(), count,
-                            bizType, item.getInId(), item.getId(), stockOut.getNo()));
+                            bizType, item.getInId(), item.getId(), stockOut.getNo(),item.getAssociatedBatchId()));
             });
     }
 

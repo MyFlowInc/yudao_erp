@@ -12,11 +12,14 @@ import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProduc
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.out.ErpStockOutPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.out.ErpStockOutRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.out.ErpStockOutSaveReqVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.sale.ErpCustomerDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockOutDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockOutItemDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.sale.ErpCustomerService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockOutService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
@@ -56,7 +59,8 @@ public class ErpStockOutController {
     private ErpProductService productService;
     @Resource
     private ErpCustomerService customerService;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -105,12 +109,16 @@ public class ErpStockOutController {
         List<ErpStockOutItemDO> stockOutItemList = stockOutService.getStockOutItemListByOutId(id);
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(stockOutItemList, ErpStockOutItemDO::getProductId));
+        Map<Long, ErpProductBatchDO> productBatchMap = productBatchService.getProductBatchMap(
+                convertSet(stockOutItemList, ErpStockOutItemDO::getAssociatedBatchId));
         return success(BeanUtils.toBean(stockOut, ErpStockOutRespVO.class, stockOutVO ->
                 stockOutVO.setItems(BeanUtils.toBean(stockOutItemList, ErpStockOutRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),item.getAssociatedBatchId());
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
+                    MapUtils.findAndThen(productBatchMap, item.getAssociatedBatchId(), batchDO ->
+                            item.setAssociatedBatchName(batchDO.getName()));
                 }))));
     }
 

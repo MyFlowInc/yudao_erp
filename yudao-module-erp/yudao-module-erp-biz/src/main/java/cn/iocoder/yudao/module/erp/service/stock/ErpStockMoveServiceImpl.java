@@ -7,8 +7,10 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMovePageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMoveSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveItemDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockMoveItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockMoveMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
@@ -57,7 +59,8 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
     private ErpWarehouseService warehouseService;
     @Resource
     private ErpStockRecordService stockRecordService;
-
+    @Resource
+    private ErpProductBatchMapper productBatchMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createStockMove(ErpStockMoveSaveReqVO createReqVO) {
@@ -123,17 +126,13 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
         List<ErpStockMoveItemDO> stockMoveItems = stockMoveItemMapper.selectListByMoveId(id);
         Integer fromBizType = approve ? ErpStockRecordBizTypeEnum.MOVE_OUT.getType()
                 : ErpStockRecordBizTypeEnum.MOVE_OUT_CANCEL.getType();
-        Integer toBizType = approve ? ErpStockRecordBizTypeEnum.MOVE_IN.getType()
-                : ErpStockRecordBizTypeEnum.MOVE_IN_CANCEL.getType();
         stockMoveItems.forEach(stockMoveItem -> {
             BigDecimal fromCount = approve ? stockMoveItem.getCount().negate() : stockMoveItem.getCount();
-            BigDecimal toCount = approve ? stockMoveItem.getCount() : stockMoveItem.getCount().negate();
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     stockMoveItem.getProductId(), stockMoveItem.getFromWarehouseId(), fromCount,
-                    fromBizType, stockMoveItem.getMoveId(), stockMoveItem.getId(), stockMove.getNo()));
-            stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
-                    stockMoveItem.getProductId(), stockMoveItem.getToWarehouseId(), toCount,
-                    toBizType, stockMoveItem.getMoveId(), stockMoveItem.getId(), stockMove.getNo()));
+                    fromBizType, stockMoveItem.getMoveId(), stockMoveItem.getId(), stockMove.getNo(),stockMoveItem.getAssociatedBatchId()));
+            ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(stockMoveItem.getAssociatedBatchId());
+            productBatchMapper.updateById(new ErpProductBatchDO().setInventoryQuantity(erpProductBatchDO.getInventoryQuantity().add(fromCount)));
         });
     }
 
@@ -147,14 +146,15 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
                 item -> Stream.of(item.getFromWarehouseId(),  item.getToWarehouseId())));
         // 2. 转化为 ErpStockMoveItemDO 列表
         return convertList(list, o -> BeanUtils.toBean(o, ErpStockMoveItemDO.class, item -> item
-                .setProductUnitId(Long.valueOf(productMap.get(item.getProductId()).getUnitId()))
+                .setProductUnitId(productMap.get(item.getProductId()).getUnitId())
                 .setTotalPrice(MoneyUtils.priceMultiply(item.getProductPrice(), item.getCount()))));
     }
 
     private void updateStockMoveItemList(Long id, List<ErpStockMoveItemDO> newList) {
         // 第一步，对比新老数据，获得添加、修改、删除的列表
         List<ErpStockMoveItemDO> oldList = stockMoveItemMapper.selectListByMoveId(id);
-        List<List<ErpStockMoveItemDO>> diffList = diffList(oldList, newList, // id 不同，就认为是不同的记录
+        // id 不同，就认为是不同的记录
+        List<List<ErpStockMoveItemDO>> diffList = diffList(oldList, newList,
                 (oldVal, newVal) -> oldVal.getId().equals(newVal.getId()));
 
         // 第二步，批量添加、修改、删除

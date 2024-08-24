@@ -12,10 +12,13 @@ import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProduc
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMovePageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMoveRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMoveSaveReqVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveItemDO;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
+import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockMoveService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
@@ -52,7 +55,8 @@ public class ErpStockMoveController {
     private ErpStockService stockService;
     @Resource
     private ErpProductService productService;
-
+    @Resource
+    private ErpProductBatchService productBatchService;
     @Resource
     private AdminUserApi adminUserApi;
 
@@ -101,12 +105,16 @@ public class ErpStockMoveController {
         List<ErpStockMoveItemDO> stockMoveItemList = stockMoveService.getStockMoveItemListByMoveId(id);
         Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
                 convertSet(stockMoveItemList, ErpStockMoveItemDO::getProductId));
+        Map<Long, ErpProductBatchDO> productBatchMap = productBatchService.getProductBatchMap(
+                convertSet(stockMoveItemList, ErpStockMoveItemDO::getAssociatedBatchId));
         return success(BeanUtils.toBean(stockMove, ErpStockMoveRespVO.class, stockMoveVO ->
                 stockMoveVO.setItems(BeanUtils.toBean(stockMoveItemList, ErpStockMoveRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getFromWarehouseId());
+                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getFromWarehouseId(),item.getAssociatedBatchId());
                     item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
+                    MapUtils.findAndThen(productBatchMap, item.getAssociatedBatchId(), batchDO ->
+                            item.setAssociatedBatchName(batchDO.getName()));
                 }))));
     }
 

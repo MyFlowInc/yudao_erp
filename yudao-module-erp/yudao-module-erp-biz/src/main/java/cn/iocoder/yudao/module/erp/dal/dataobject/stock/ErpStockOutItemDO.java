@@ -47,6 +47,13 @@ public class ErpStockOutItemDO extends BaseDO {
      * 关联 {@link ErpProductDO#getId()}
      */
     private Long productId;
+
+    /**
+     * 批次编号
+     *
+     * 关联 {@link cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO#getId()}
+     */
+    private Long associatedBatchId;
     /**
      * 产品单位编号
      *

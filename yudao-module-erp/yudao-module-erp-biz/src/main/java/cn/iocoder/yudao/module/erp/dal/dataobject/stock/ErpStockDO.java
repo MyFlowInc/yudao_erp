@@ -48,4 +48,5 @@ public class ErpStockDO extends BaseDO {
 
 
     private Long associatedBatchId;
+
 }

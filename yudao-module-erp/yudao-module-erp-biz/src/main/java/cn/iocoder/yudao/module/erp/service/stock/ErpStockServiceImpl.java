@@ -45,8 +45,8 @@ public class ErpStockServiceImpl implements ErpStockService {
     }
 
     @Override
-    public ErpStockDO getStock(Long productId, Long warehouseId) {
-        return stockMapper.selectByProductIdAndWarehouseId(productId, warehouseId);
+    public ErpStockDO getStock(Long productId, Long warehouseId,Long batchId) {
+        return stockMapper.selectByProductIdAndWarehouseId(productId, warehouseId,batchId);
     }
 
     @Override
@@ -61,11 +61,11 @@ public class ErpStockServiceImpl implements ErpStockService {
     }
 
     @Override
-    public BigDecimal updateStockCountIncrement(Long productId, Long warehouseId, BigDecimal count) {
+    public BigDecimal updateStockCountIncrement(Long productId, Long warehouseId, BigDecimal count,Long batchId) {
         // 1.1 查询当前库存
-        ErpStockDO stock = stockMapper.selectByProductIdAndWarehouseId(productId, warehouseId);
+        ErpStockDO stock = stockMapper.selectByProductIdAndWarehouseId(productId, warehouseId,batchId);
         if (stock == null) {
-            stock = new ErpStockDO().setProductId(productId).setWarehouseId(warehouseId).setCount(BigDecimal.ZERO);
+            stock = new ErpStockDO().setProductId(productId).setWarehouseId(warehouseId).setAssociatedBatchId(batchId).setCount(BigDecimal.ZERO);
             stockMapper.insert(stock);
         }
         // 1.2 校验库存是否充足
@@ -76,12 +76,12 @@ public class ErpStockServiceImpl implements ErpStockService {
 
         // 2. 库存变更
         int updateCount = stockMapper.updateCountIncrement(stock.getId(), count, NEGATIVE_STOCK_COUNT_ENABLE);
+
         if (updateCount == 0) {
             // 此时不好去查询最新库存，所以直接抛出该提示，不提供具体库存数字
             throw exception(STOCK_COUNT_NEGATIVE2, productService.getProduct(productId).getName(),
                     warehouseService.getWarehouse(warehouseId).getName());
         }
-
         // 3. 返回最新库存
         return stock.getCount().add(count);
     }

@@ -35,8 +35,6 @@ public class ErpStockInDO extends BaseDO {
     private String no;
     /**
      * 供应商编号
-     *
-     * 关联 {@link ErpSupplierDO#getId()}
      */
     private Long supplierId;
     /**

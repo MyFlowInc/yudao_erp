@@ -28,7 +28,7 @@ public interface ErpStockService {
      * @param warehouseId 仓库编号
      * @return 产品库存
      */
-    ErpStockDO getStock(Long productId, Long warehouseId);
+    ErpStockDO getStock(Long productId, Long warehouseId,Long batchId);
 
     /**
      * 获得产品库存数量
@@ -56,6 +56,6 @@ public interface ErpStockService {
      * @param count 增量数量：正数，表示增加；负数，表示减少
      * @return 更新后的库存
      */
-    BigDecimal updateStockCountIncrement(Long productId, Long warehouseId, BigDecimal count);
+    BigDecimal updateStockCountIncrement(Long productId, Long warehouseId, BigDecimal count,Long batchId);
 
 }

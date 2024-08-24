@@ -126,7 +126,7 @@ public class ErpReturnMaterialsController {
                  item.setAssociationRequisitionNo(purchaseRequisitionService.getPurchaseRequisition(returnMaterials.getAssociationRequisitionId()).getRequisitionCode());
              }
              item.setItems(BeanUtils.toBean(returnMaterialsItemListByReturnId,ErpReturnMaterialsRespVO.Item.class,items->{
-                 ErpStockDO stock = stockService.getStock(items.getProductId(), items.getWarehouseId());
+                 ErpStockDO stock = stockService.getStock(items.getProductId(), items.getWarehouseId(),items.getAssociatedBatchId());
                  items.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                  MapUtils.findAndThen(productMap, items.getProductId(), product -> items.setProductName(product.getName())
                          .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));

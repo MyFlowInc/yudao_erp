@@ -84,6 +84,10 @@ public class ErpStockInRespVO {
         @Schema(description = "产品编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
         private Long productId;
 
+        @Schema(description = "批次编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "3113")
+        private Long associatedBatchId;
+        @Schema(description = "关联批次信息名称", example = "随便")
+        private String associatedBatchName;
         @Schema(description = "产品单价", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
         private BigDecimal productPrice;
 

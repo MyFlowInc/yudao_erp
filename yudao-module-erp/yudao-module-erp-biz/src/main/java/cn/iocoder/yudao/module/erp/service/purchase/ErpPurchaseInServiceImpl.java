@@ -241,11 +241,12 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         List<ErpPurchaseInItemDO> purchaseInItems = purchaseInItemMapper.selectListByInId(id);
         Integer bizType = approve ? ErpStockRecordBizTypeEnum.PURCHASE_IN.getType()
                 : ErpStockRecordBizTypeEnum.PURCHASE_IN_CANCEL.getType();
+
         purchaseInItems.forEach(purchaseInItem -> {
             BigDecimal count = approve ? purchaseInItem.getCount() : purchaseInItem.getCount().negate();
             stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
                     purchaseInItem.getProductId(), purchaseInItem.getWarehouseId(), count,
-                    bizType, purchaseInItem.getInId(), purchaseInItem.getId(), purchaseIn.getNo()));
+                    bizType, purchaseInItem.getInId(), purchaseInItem.getId(), purchaseIn.getNo(),purchaseInItem.getAssociatedBatchId()));
         });
     }
 

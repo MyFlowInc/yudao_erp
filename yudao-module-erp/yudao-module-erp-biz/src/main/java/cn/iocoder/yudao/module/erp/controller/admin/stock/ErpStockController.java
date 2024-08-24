@@ -64,18 +64,20 @@ public class ErpStockController {
             @Parameter(name = "productId", description = "产品编号", example = "10"), // 方案二：传递 productId + warehouseId
             @Parameter(name = "warehouseId", description = "仓库编号", example = "2")
     })
+
     @PreAuthorize("@ss.hasPermission('erp:stock:query')")
     public CommonResult<ErpStockRespVO> getStock(@RequestParam(value = "id", required = false) Long id,
                                                  @RequestParam(value = "productId", required = false) Long productId,
-                                                 @RequestParam(value = "warehouseId", required = false) Long warehouseId) {
-        ErpStockDO stock = id != null ? stockService.getStock(id) : stockService.getStock(productId, warehouseId);
+                                                 @RequestParam(value = "warehouseId", required = false) Long warehouseId,
+                                                 @RequestParam(value = "batchId", required = false) Long batchId) {
+        ErpStockDO stock = id != null ? stockService.getStock(id) : stockService.getStock(productId, warehouseId,batchId);
         return success(BeanUtils.toBean(stock, ErpStockRespVO.class));
     }
 
     @GetMapping("/get-count")
     @Operation(summary = "获得产品库存数量")
     @Parameter(name = "productId", description = "产品编号", example = "10")
-    public CommonResult<BigDecimal> getStockCount(@RequestParam("productId") Long productId) {
+    public CommonResult<BigDecimal> getStockCount(@RequestParam("productId") Long productId,Long batchId) {
         return success(stockService.getStockCount(productId));
     }
 

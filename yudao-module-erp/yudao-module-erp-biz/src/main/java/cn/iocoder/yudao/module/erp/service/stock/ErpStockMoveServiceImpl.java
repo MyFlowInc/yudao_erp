@@ -8,9 +8,11 @@ import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMovePa
 import cn.iocoder.yudao.module.erp.controller.admin.stock.vo.move.ErpStockMoveSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockMoveItemDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockMoveItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.stock.ErpStockMoveMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
@@ -52,7 +54,8 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
 
     @Resource
     private ErpNoRedisDAO noRedisDAO;
-
+    @Resource
+    private ErpStockMapper stockMapper;
     @Resource
     private ErpProductService productService;
     @Resource
@@ -114,7 +117,6 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
         if (stockMove.getStatus().equals(status)) {
             throw exception(approve ? STOCK_MOVE_APPROVE_FAIL : STOCK_MOVE_PROCESS_FAIL);
         }
-
         // 2. 更新状态
         int updateCount = stockMoveMapper.updateByIdAndStatus(id, stockMove.getStatus(),
                 new ErpStockMoveDO().setStatus(status));
@@ -128,11 +130,28 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
                 : ErpStockRecordBizTypeEnum.MOVE_OUT_CANCEL.getType();
         stockMoveItems.forEach(stockMoveItem -> {
             BigDecimal fromCount = approve ? stockMoveItem.getCount().negate() : stockMoveItem.getCount();
-            stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
+            //库存变更
+            // 1.1 查询当前调出仓库库存
+            ErpStockDO fromStock = stockMapper.selectByProductIdAndWarehouseId(stockMoveItem.getProductId(), stockMoveItem.getFromWarehouseId(),stockMoveItem.getAssociatedBatchId());
+            // 1.2 校验库存是否充足
+            if (fromStock.getCount().add(fromCount).compareTo(BigDecimal.ZERO) < 0) {
+                throw exception(STOCK_COUNT_NEGATIVE, productService.getProduct(stockMoveItem.getProductId()).getName(),
+                        warehouseService.getWarehouse(stockMoveItem.getFromWarehouseId()).getName(), fromStock.getCount());
+            }
+            //判断调入仓库是否存在同批次同类型物品,没有则创建
+            ErpStockDO toStock = stockMapper.selectByProductIdAndWarehouseId(stockMoveItem.getProductId(), stockMoveItem.getToWarehouseId(),stockMoveItem.getAssociatedBatchId());
+            if (toStock == null) {
+                toStock = new ErpStockDO().setProductId(stockMoveItem.getProductId()).setWarehouseId(stockMoveItem.getToWarehouseId()).setAssociatedBatchId(stockMoveItem.getAssociatedBatchId()).setCount(BigDecimal.ZERO);
+                stockMapper.insert(toStock);
+            }
+            //变更调出仓库库存
+            stockMapper.updateById(fromStock.setCount(fromStock.getCount().add(fromCount)));
+            //变更调入仓库库存
+            stockMapper.updateById(toStock.setCount(toStock.getCount().add(fromCount.abs())));
+            //创建库存明细
+            stockRecordService.createStockRecordDo(new ErpStockRecordCreateReqBO(
                     stockMoveItem.getProductId(), stockMoveItem.getFromWarehouseId(), fromCount,
-                    fromBizType, stockMoveItem.getMoveId(), stockMoveItem.getId(), stockMove.getNo(),stockMoveItem.getAssociatedBatchId()));
-            ErpProductBatchDO erpProductBatchDO = productBatchMapper.selectById(stockMoveItem.getAssociatedBatchId());
-            productBatchMapper.updateById(new ErpProductBatchDO().setInventoryQuantity(erpProductBatchDO.getInventoryQuantity().add(fromCount)));
+                    fromBizType, stockMoveItem.getMoveId(), stockMoveItem.getId(), stockMove.getNo(),stockMoveItem.getAssociatedBatchId()),fromStock.getCount());
         });
     }
 

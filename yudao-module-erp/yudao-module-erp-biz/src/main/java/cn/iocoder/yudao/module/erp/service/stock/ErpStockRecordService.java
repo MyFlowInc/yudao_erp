@@ -6,6 +6,7 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockRecordDO;
 import cn.iocoder.yudao.module.erp.service.stock.bo.ErpStockRecordCreateReqBO;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 
 /**
  * ERP 产品库存明细 Service 接口
@@ -37,4 +38,5 @@ public interface ErpStockRecordService {
      */
     void createStockRecord(@Valid ErpStockRecordCreateReqBO createReqBO);
 
+    void createStockRecordDo(ErpStockRecordCreateReqBO createReqBO,BigDecimal totalCount);
 }

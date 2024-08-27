@@ -76,7 +76,6 @@ public class ErpStockServiceImpl implements ErpStockService {
 
         // 2. 库存变更
         int updateCount = stockMapper.updateCountIncrement(stock.getId(), count, NEGATIVE_STOCK_COUNT_ENABLE);
-
         if (updateCount == 0) {
             // 此时不好去查询最新库存，所以直接抛出该提示，不提供具体库存数字
             throw exception(STOCK_COUNT_NEGATIVE2, productService.getProduct(productId).getName(),

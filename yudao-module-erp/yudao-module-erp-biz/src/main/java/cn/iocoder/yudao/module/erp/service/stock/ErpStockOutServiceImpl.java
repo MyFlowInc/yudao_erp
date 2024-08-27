@@ -69,7 +69,7 @@ public class ErpStockOutServiceImpl implements ErpStockOutService {
         // 1.1 校验出库项的有效性
         List<ErpStockOutItemDO> stockOutItems = validateStockOutItems(createReqVO.getItems());
         // 1.2 校验客户
-        customerService.validateCustomer(createReqVO.getCustomerId());
+//        customerService.validateCustomer(createReqVO.getCustomerId());
         // 1.3 生成出库单号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.STOCK_OUT_NO_PREFIX);
         if (stockOutMapper.selectByNo(no) != null) {

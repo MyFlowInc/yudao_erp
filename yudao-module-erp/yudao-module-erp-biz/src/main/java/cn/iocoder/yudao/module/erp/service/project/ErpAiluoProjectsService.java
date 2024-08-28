@@ -1,8 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.project;
 
 import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpSupplierDO;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

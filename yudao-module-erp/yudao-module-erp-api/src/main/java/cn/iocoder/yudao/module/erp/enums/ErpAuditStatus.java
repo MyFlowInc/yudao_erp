@@ -18,8 +18,12 @@ import java.util.Arrays;
 public enum ErpAuditStatus implements IntArrayValuable {
     // 审核中
     PROCESS(10, "未审核"),
-    // 审核通过
-    APPROVE(20, "已审核");
+    // 审核通过 && 发起请检
+    APPROVE(20, "已审核"),
+    //待入库
+    PENDING_STORAGE(30,"待入库"),
+    //已入库
+    ALREADY_IN_STOCK(40,"已入库");
 
     public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(ErpAuditStatus::getStatus).toArray();
 

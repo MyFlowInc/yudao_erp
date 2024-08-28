@@ -14,6 +14,7 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purqualitycontrol.ErpPurQualitycontrolDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
@@ -21,6 +22,7 @@ import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseInItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseInMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.purqualitycontrol.ErpPurQualitycontrolMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.enums.stock.ErpStockRecordBizTypeEnum;
@@ -29,6 +31,7 @@ import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.bo.ErpStockRecordCreateReqBO;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +81,8 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     private ErpStockRecordService stockRecordService;
     @Resource
     private AdminUserApi adminUserApi;
-
+    @Resource
+    private ErpPurQualitycontrolMapper erpPurQualitycontrolMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPurchaseIn(ErpPurchaseInSaveReqVO createReqVO) {
@@ -155,7 +159,7 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public void updatePurchaseInStatus(Long id, Integer status) {
         boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
         // 1.1 校验存在
@@ -174,7 +178,12 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         if (updateCount == 0) {
             throw exception(approve ? PURCHASE_IN_APPROVE_FAIL : PURCHASE_IN_PROCESS_FAIL);
         }
-        if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())){
+        //发起ailuo审核，判断是否可入库未入库
+        if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())) {
+//            erpPurQualitycontrolMapper.insert(new ErpPurQualitycontrolDO().setName())
+        }
+        //判断已入库进行逻辑修改
+        if (Objects.equals(status, ErpAuditStatus.ALREADY_IN_STOCK.getStatus())){
             List<ErpPurchaseInItemDO> erpPurchaseInItemDOS = purchaseInItemMapper.selectListByInId(id);
             erpPurchaseInItemDOS = erpPurchaseInItemDOS.stream()
                     .filter(item -> !item.getDeleted())
@@ -208,7 +217,7 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                             // 使用迭代器的去除为审核的数据
                             ErpPurchaseInItemDO items = iterator.next();
                             ErpPurchaseInDO erpPurchaseInDO = purchaseInMapper.selectById(items.getInId());
-                            if (!Objects.equals(erpPurchaseInDO.getStatus(), ErpAuditStatus.APPROVE.getStatus())) {
+                            if (!Objects.equals(erpPurchaseInDO.getStatus(), ErpAuditStatus.ALREADY_IN_STOCK.getStatus())) {
                                 iterator.remove();
                             }
                         }
@@ -235,19 +244,19 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                     });
                 }
                 }
+            // 3. 变更库存
+            List<ErpPurchaseInItemDO> purchaseInItems = purchaseInItemMapper.selectListByInId(id);
+            Integer bizType = approve ? ErpStockRecordBizTypeEnum.PURCHASE_IN.getType()
+                    : ErpStockRecordBizTypeEnum.PURCHASE_IN_CANCEL.getType();
+            purchaseInItems.forEach(purchaseInItem -> {
+                BigDecimal count = approve ? purchaseInItem.getCount() : purchaseInItem.getCount().negate();
+                stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
+                        purchaseInItem.getProductId(), purchaseInItem.getWarehouseId(), count,
+                        bizType, purchaseInItem.getInId(), purchaseInItem.getId(), purchaseIn.getNo(),purchaseInItem.getAssociatedBatchId()));
+            });
             }
 
-        // 3. 变更库存
-        List<ErpPurchaseInItemDO> purchaseInItems = purchaseInItemMapper.selectListByInId(id);
-        Integer bizType = approve ? ErpStockRecordBizTypeEnum.PURCHASE_IN.getType()
-                : ErpStockRecordBizTypeEnum.PURCHASE_IN_CANCEL.getType();
 
-        purchaseInItems.forEach(purchaseInItem -> {
-            BigDecimal count = approve ? purchaseInItem.getCount() : purchaseInItem.getCount().negate();
-            stockRecordService.createStockRecord(new ErpStockRecordCreateReqBO(
-                    purchaseInItem.getProductId(), purchaseInItem.getWarehouseId(), count,
-                    bizType, purchaseInItem.getInId(), purchaseInItem.getId(), purchaseIn.getNo(),purchaseInItem.getAssociatedBatchId()));
-        });
     }
 
     @Override

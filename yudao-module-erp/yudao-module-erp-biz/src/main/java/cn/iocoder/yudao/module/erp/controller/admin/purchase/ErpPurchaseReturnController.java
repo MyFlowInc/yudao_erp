@@ -114,14 +114,14 @@ public class ErpPurchaseReturnController {
                 convertSet(purchaseReturnItemList, ErpPurchaseReturnItemDO::getProductId));
         return success(BeanUtils.toBean(purchaseReturn, ErpPurchaseReturnRespVO.class, purchaseReturnVO ->
                 purchaseReturnVO.setItems(BeanUtils.toBean(purchaseReturnItemList, ErpPurchaseReturnRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId(),item.getAssociatedBatchId());
                     ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(item.getOrderItemId());
                     if (erpPurchaseOrderItemDO != null) {
                         ErpProductBatchDO productBatch = productBatchService.getProductBatch(erpPurchaseOrderItemDO.getAssociatedBatchId());
                         item.setAssociatedBatchId(productBatch.getId());
                         item.setAssociatedBatchName(productBatch.getName());
+                        ErpStockDO stock = stockService.getStock(erpPurchaseOrderItemDO.getProductId(), item.getWarehouseId(),erpPurchaseOrderItemDO.getAssociatedBatchId());
+                        item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     }
-                    item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
                     MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
                             .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
                 }))));

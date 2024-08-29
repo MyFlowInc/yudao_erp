@@ -40,6 +40,7 @@ import java.util.Map;
 import static cn.iocoder.yudao.framework.apilog.core.enums.OperateTypeEnum.EXPORT;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertSet;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.getSumValue;
 
 @Tag(name = "管理后台 - ERP 产品库存")
 @RestController
@@ -70,8 +71,12 @@ public class ErpStockController {
                                                  @RequestParam(value = "productId", required = false) Long productId,
                                                  @RequestParam(value = "warehouseId", required = false) Long warehouseId,
                                                  @RequestParam(value = "batchId", required = false) Long batchId) {
-        ErpStockDO stock = id != null ? stockService.getStock(id) : stockService.getStock(productId, warehouseId,batchId);
-        return success(BeanUtils.toBean(stock, ErpStockRespVO.class));
+        if (warehouseId != null){
+            ErpStockDO stock = id != null ? stockService.getStock(id) : stockService.getStock(productId, warehouseId,batchId);
+            return success(BeanUtils.toBean(stock, ErpStockRespVO.class));
+        }
+        List<ErpStockDO> list = stockService.getStockPage(new ErpStockPageReqVO().setAssociatedBatchId(batchId).setProductId(productId)).getList();
+        return success(BeanUtils.toBean(new ErpStockDO().setCount(getSumValue(list, ErpStockDO::getCount,BigDecimal::add)), ErpStockRespVO.class));
     }
 
     @GetMapping("/get-count")

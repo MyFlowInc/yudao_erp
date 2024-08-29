@@ -128,7 +128,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
     @Override
     public void updateByIdAndStatus(Long id, Integer status) {
         ErpCostingDO erpCostingDO = validateCostingExists(id);
-        boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
         //总领料数
         BigDecimal pickingTotalCount = BigDecimal.ZERO;
         //总领料成本
@@ -190,6 +189,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                 });
                 });
             }
+        //子项
         List<ErpCostItemDO> erpCostItemDOS = costItemMapper.selectListByCostId(id);
         //其他收入列表
         List<ErpCostItemDO> erpOtherIncomeCostItemDOS = new ArrayList<>();

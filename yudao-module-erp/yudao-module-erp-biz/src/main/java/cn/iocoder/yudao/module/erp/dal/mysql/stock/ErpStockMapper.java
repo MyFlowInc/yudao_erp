@@ -27,6 +27,7 @@ public interface ErpStockMapper extends BaseMapperX<ErpStockDO> {
         return selectPage(reqVO, new LambdaQueryWrapperX<ErpStockDO>()
                 .eqIfPresent(ErpStockDO::getProductId, reqVO.getProductId())
                 .eqIfPresent(ErpStockDO::getWarehouseId, reqVO.getWarehouseId())
+                .eqIfPresent(ErpStockDO::getAssociatedBatchId, reqVO.getAssociatedBatchId())
                 .orderByDesc(ErpStockDO::getId));
     }
 

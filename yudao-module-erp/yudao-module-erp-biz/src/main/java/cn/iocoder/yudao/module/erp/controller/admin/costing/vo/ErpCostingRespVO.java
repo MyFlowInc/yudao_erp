@@ -27,6 +27,10 @@ public class ErpCostingRespVO {
     @ExcelProperty("状态")
     private Integer status;
 
+    @Schema(description = "类型", example = "2")
+    @ExcelProperty("类型")
+    private Integer type;
+
     @Schema(description = "关联项目id", requiredMode = Schema.RequiredMode.REQUIRED, example = "15076")
     @ExcelProperty("关联项目id")
     private Long associationProjectId;

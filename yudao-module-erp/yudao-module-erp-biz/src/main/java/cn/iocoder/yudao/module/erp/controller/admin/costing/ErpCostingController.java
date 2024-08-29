@@ -219,6 +219,7 @@ public class ErpCostingController {
         map.put(31,"其他收入");
         map.put(32,"领料");
         map.put(33,"还料");
+        map.put(35,"物料");
         return map.get(type);
     }
     // ==================== 子表（成本核算项） ====================

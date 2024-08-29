@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.costing.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -23,6 +24,9 @@ public class ErpCostingSaveReqVO {
 
     @Schema(description = "状态", example = "2")
     private Integer status;
+
+    @Schema(description = "类型", example = "2")
+    private Integer type;
 
     @Schema(description = "关联项目id", requiredMode = Schema.RequiredMode.REQUIRED, example = "15076")
     @NotNull(message = "关联项目id不能为空")

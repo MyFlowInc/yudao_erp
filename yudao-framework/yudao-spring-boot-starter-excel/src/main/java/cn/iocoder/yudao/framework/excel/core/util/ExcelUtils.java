@@ -179,6 +179,7 @@ public class ExcelUtils {
         map.put(32,"领料");
         map.put(33,"还料");
         map.put(34,"ALL");
+        map.put(35,"物料");
         return map.get(type);
     }
     // 方法：创建单元格样式

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.costing.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.*;
 import java.util.*;
 import io.swagger.v3.oas.annotations.media.Schema;

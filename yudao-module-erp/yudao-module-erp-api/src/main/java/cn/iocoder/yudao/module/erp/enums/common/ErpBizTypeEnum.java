@@ -27,6 +27,7 @@ public enum ErpBizTypeEnum implements IntArrayValuable {
     OTHER_INCOME(31,"其他收入"),
     PICKING(32,"领料"),
     RETURN_MATERIALS(33,"还料"),
+    MATERIAL(35,"物料"),
     ;
 
     public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(ErpBizTypeEnum::getType).toArray();

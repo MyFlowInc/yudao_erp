@@ -44,6 +44,10 @@ public class ErpCostingDO extends BaseDO {
      */
     private Integer status;
     /**
+     * 类型
+     */
+    private Integer type;
+    /**
      * 关联项目id
      */
     private Long associationProjectId;

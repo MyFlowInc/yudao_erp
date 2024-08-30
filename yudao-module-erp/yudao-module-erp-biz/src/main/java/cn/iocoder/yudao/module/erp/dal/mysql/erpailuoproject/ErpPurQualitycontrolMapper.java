@@ -1,7 +1,7 @@
-package cn.iocoder.yudao.module.erp.dal.mysql.purqualitycontrol;
+package cn.iocoder.yudao.module.erp.dal.mysql.erpailuoproject;
 
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purqualitycontrol.ErpPurQualitycontrolDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject.ErpPurQualitycontrolDO;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 @Mapper

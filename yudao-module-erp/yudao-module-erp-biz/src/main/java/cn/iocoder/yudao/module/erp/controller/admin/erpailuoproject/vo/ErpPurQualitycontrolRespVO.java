@@ -1,9 +1,9 @@
-package cn.iocoder.yudao.module.erp.dal.dataobject.purqualitycontrol;
+package cn.iocoder.yudao.module.erp.controller.admin.erpailuoproject.vo;
 
 import lombok.Data;
 
 @Data
-public class ErpPurQualitycontrolDO {
+public class ErpPurQualitycontrolRespVO {
 
     private Long id;
 

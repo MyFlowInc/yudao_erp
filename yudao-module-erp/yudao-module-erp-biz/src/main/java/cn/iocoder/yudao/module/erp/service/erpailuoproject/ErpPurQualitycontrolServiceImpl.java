@@ -1,19 +1,19 @@
-package cn.iocoder.yudao.module.erp.service.purqualitycontrol;
+package cn.iocoder.yudao.module.erp.service.erpailuoproject;
 
-import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.module.erp.controller.admin.purqualitycontrol.vo.ErpPurQualitycontrolRespVO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purqualitycontrol.ErpPurQualitycontrolDO;
-import cn.iocoder.yudao.module.erp.dal.mysql.project.ErpAiluoProjectsMapper;
-import cn.iocoder.yudao.module.erp.dal.mysql.purqualitycontrol.ErpPurQualitycontrolMapper;
+import cn.iocoder.yudao.module.erp.controller.admin.erpailuoproject.vo.ErpPurQualitycontrolRespVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject.ErpPurQualitycontrolDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.erpailuoproject.ErpPurQualitycontrolMapper;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
-import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author 15276
+ */
 @Service
 @Validated
 @DS("ailuo")

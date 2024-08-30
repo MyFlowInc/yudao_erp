@@ -224,7 +224,8 @@ public class CollectionUtils {
      */
     public static <T> List<List<T>> diffList(Collection<T> oldList, Collection<T> newList,
                                              BiFunction<T, T, Boolean> sameFunc) {
-        List<T> createList = new LinkedList<>(newList); // 默认都认为是新增的，后续会进行移除
+        // 默认都认为是新增的，后续会进行移除
+        List<T> createList = new LinkedList<>(newList);
         List<T> updateList = new ArrayList<>();
         List<T> deleteList = new ArrayList<>();
 

@@ -98,9 +98,10 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             createReqVO.getItems().forEach(o -> o.setCostId(costing.getId()));
             BeanUtils.toBean(createReqVO.getItems(),ErpCostItemDO.class,erpCostItemDO -> {
                 //支出总金额为相反数，支出不进行处理
-                if (erpCostItemDO.getType().equals(OTHER_EXPENSES.getType())){
+                if (erpCostItemDO.getType().equals(OTHER_EXPENSES.getType())||erpCostItemDO.getType().equals(MATERIAL.getType())){
                     erpCostItemDO.setMoney(erpCostItemDO.getMoney().negate());
                 }
+
                 erpCostItemDO.setCostId(costing.getId());
                 costItemMapper.insert(erpCostItemDO);
             });
@@ -239,7 +240,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             add = reduce.add(reduce1);
             //总成本
             allCost = materialCost.add(add);
-        }else if (erpCostingDO.getType() == ZERO.intValue() && erpCostingDO.getStatus().equals(ErpAuditStatus.APPROVE.getStatus())){
+        }else if (erpCostingDO.getType() == ZERO.intValue() && status.equals(ErpAuditStatus.APPROVE.getStatus())){
             //子项
             List<ErpCostItemDO> erpCostItemDOS = costItemMapper.selectListByCostId(id);
             //其他收入列表
@@ -248,10 +249,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             List<ErpCostItemDO> erpOtherExpensesCostItemDOS = new ArrayList<>();
             //领料项集合 && 物料项集合
             List<ErpCostItemDO> erpPickingInItemDOS = new ArrayList<>();
-            //获取其他收入总收入
-            reduce = erpOtherIncomeCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
-            //获取其他支出，总支出
-            reduce1 = erpOtherExpensesCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
             //获取其他收入支出成本
             add = reduce.add(reduce1);
             erpCostItemDOS.forEach(o -> {
@@ -265,6 +262,10 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                     erpPickingInItemDOS.add(o);
                 }
             });
+            //获取其他收入总收入
+            reduce = erpOtherIncomeCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+            //获取其他支出，总支出
+            reduce1 = erpOtherExpensesCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
             //总物料成本
             pickingMoneyCount= erpPickingInItemDOS.stream()
                     .map(ErpCostItemDO::getMoney)

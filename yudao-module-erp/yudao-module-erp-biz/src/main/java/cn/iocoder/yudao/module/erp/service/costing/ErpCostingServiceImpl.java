@@ -100,10 +100,9 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             createReqVO.getItems().forEach(o -> o.setCostId(costing.getId()));
             BeanUtils.toBean(createReqVO.getItems(),ErpCostItemDO.class,erpCostItemDO -> {
                 //支出总金额为相反数，支出不进行处理
-                if (erpCostItemDO.getType().equals(OTHER_EXPENSES.getType())||erpCostItemDO.getType().equals(MATERIAL.getType())){
+                if (erpCostItemDO.getType().equals(OTHER_EXPENSES.getType()) || erpCostItemDO.getType().equals(MATERIAL.getType()) || erpCostItemDO.getType().equals(PICKING.getType())){
                     erpCostItemDO.setMoney(erpCostItemDO.getMoney().negate());
                 }
-
                 erpCostItemDO.setCostId(costing.getId());
                 costItemMapper.insert(erpCostItemDO);
             });

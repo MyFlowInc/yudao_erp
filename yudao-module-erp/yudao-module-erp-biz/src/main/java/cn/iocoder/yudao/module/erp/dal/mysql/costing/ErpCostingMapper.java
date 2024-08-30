@@ -25,6 +25,7 @@ public interface ErpCostingMapper extends BaseMapperX<ErpCostingDO> {
                 .eqIfPresent(ErpCostingDO::getNo, reqVO.getNo())
                 .eqIfPresent(ErpCostingDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(ErpCostingDO::getAssociationProjectId, reqVO.getAssociationProjectId())
+                .eqIfPresent(ErpCostingDO::getType, reqVO.getType())
                 .betweenIfPresent(ErpCostingDO::getCostingTime, reqVO.getCostingTime())
                 .betweenIfPresent(ErpCostingDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(ErpCostingDO::getId));

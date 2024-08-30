@@ -44,6 +44,7 @@ import javax.annotation.Resource;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
+import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.getSumValue;
 import static cn.iocoder.yudao.module.erp.enums.ErrorCodeConstants.*;
 import static cn.iocoder.yudao.module.erp.enums.common.ErpBizTypeEnum.*;
 import static java.math.BigInteger.ONE;
@@ -78,6 +79,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
     private ErpReturnMaterialsMapper returnMaterialsMapper;
     @Resource
     private ErpReturnMaterialsItemMapper returnMaterialsItemMapper;
+
     @Override
     @DSTransactional(rollbackFor = Exception.class)
     public Long createCosting(ErpCostingSaveReqVO createReqVO) {
@@ -137,6 +139,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
         BigDecimal add = BigDecimal.ZERO;
         BigDecimal allCost = BigDecimal.ZERO;
         BigDecimal materialCost = BigDecimal.ZERO;
+
         if (ONE.intValue() == erpCostingDO.getType() && status.equals(ErpAuditStatus.APPROVE.getStatus())){
             // 获取领料单并拼接领料项
             PageResult<ErpPickingInDO> erpPickingInDOPageResult = pickingInMapper.selectPage(new ErpPickingInPageReqVO().setAssociationProjectId(erpCostingDO.getAssociationProjectId()).setStatus(ErpAuditStatus.APPROVE.getStatus()));
@@ -214,28 +217,20 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                     erpReturnMaterialsDOs.add(o);
                 }
             });
+            //总得到总领料成本
+            pickingMoneyCount = getSumValue(erpPickingInItemDOS, ErpCostItemDO::getCount, BigDecimal::add);
             //得到总领料量
-            pickingTotalCount = erpPickingInItemDOS.stream()
-                    .map(ErpCostItemDO::getCount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            pickingTotalCount = getSumValue(erpPickingInItemDOS, ErpCostItemDO::getCount, BigDecimal::add);
 
-            pickingMoneyCount = erpPickingInItemDOS.stream()
-                    .map(ErpCostItemDO::getMoney)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
             //总还料数量及成本
-            erpReturnMaterialsTotalCount = erpReturnMaterialsDOs.stream()
-                    .map(ErpCostItemDO::getCount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            erpReturnMaterialsMoneyCount = erpReturnMaterialsDOs.stream()
-                    .map(ErpCostItemDO::getMoney)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            erpReturnMaterialsTotalCount=getSumValue(erpPickingInItemDOS,ErpCostItemDO::getCount,BigDecimal::add);
+            erpReturnMaterialsMoneyCount=getSumValue(erpReturnMaterialsDOs,ErpCostItemDO::getMoney,BigDecimal::add);
             //总物料成本
             materialCost = pickingMoneyCount.add(erpReturnMaterialsMoneyCount);
             //获取其他收入总收入
-            reduce = erpOtherIncomeCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+            reduce = getSumValue(erpOtherIncomeCostItemDOS, ErpCostItemDO::getMoney, BigDecimal::add);
             //获取其他支出，总支出
-            reduce1 = erpOtherExpensesCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+            reduce1=getSumValue(erpOtherExpensesCostItemDOS, ErpCostItemDO::getMoney, BigDecimal::add);
             //获取其他收入支出成本
             add = reduce.add(reduce1);
             //总成本
@@ -247,7 +242,7 @@ public class ErpCostingServiceImpl implements ErpCostingService {
             List<ErpCostItemDO> erpOtherIncomeCostItemDOS = new ArrayList<>();
             //其他支出列表
             List<ErpCostItemDO> erpOtherExpensesCostItemDOS = new ArrayList<>();
-            //领料项集合 && 物料项集合
+            //领料项集合
             List<ErpCostItemDO> erpPickingInItemDOS = new ArrayList<>();
             //获取其他收入支出成本
             add = reduce.add(reduce1);
@@ -263,17 +258,13 @@ public class ErpCostingServiceImpl implements ErpCostingService {
                 }
             });
             //获取其他收入总收入
-            reduce = erpOtherIncomeCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+            reduce = getSumValue(erpOtherIncomeCostItemDOS, ErpCostItemDO::getMoney, BigDecimal::add);
             //获取其他支出，总支出
-            reduce1 = erpOtherExpensesCostItemDOS.stream().map(ErpCostItemDO::getMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+            reduce1=getSumValue(erpOtherExpensesCostItemDOS, ErpCostItemDO::getMoney, BigDecimal::add);
             //总物料成本
-            pickingMoneyCount= erpPickingInItemDOS.stream()
-                    .map(ErpCostItemDO::getMoney)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            pickingMoneyCount = getSumValue(erpPickingInItemDOS, ErpCostItemDO::getMoney, BigDecimal::add);
             //得到总领料量
-            pickingTotalCount= erpPickingInItemDOS.stream()
-                    .map(ErpCostItemDO::getCount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            pickingTotalCount = getSumValue(erpPickingInItemDOS, ErpCostItemDO::getCount, BigDecimal::add);
             allCost = pickingMoneyCount.add(add);
         }
         // 2. 更新状态

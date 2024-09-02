@@ -48,9 +48,6 @@ public class PurchaseRequisitionServiceImpl implements PurchaseRequisitionServic
     @Resource
     private ErpProductService productService;
 
-    @Resource
-    private ErpAccountService accountService;
-
     @Override
     public Long createPurchaseRequisition(PurchaseRequisitionSaveReqVO createReqVO) {
         // 1.1 校验订单项的有效性

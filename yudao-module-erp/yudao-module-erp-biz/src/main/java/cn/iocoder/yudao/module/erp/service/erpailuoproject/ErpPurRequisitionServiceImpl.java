@@ -4,8 +4,9 @@ import cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject.ErpPurRequisit
 import cn.iocoder.yudao.module.erp.dal.mysql.erpailuoproject.ErpPurRequisitionMapper;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
 import javax.annotation.Resource;
 import java.util.List;
 

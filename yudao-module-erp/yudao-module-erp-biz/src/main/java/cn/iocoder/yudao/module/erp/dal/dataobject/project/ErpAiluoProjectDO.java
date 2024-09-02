@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+/**
+ * @author 15276
+ */
 @TableName("spl_project")
 @Data
 @ToString(callSuper = true)

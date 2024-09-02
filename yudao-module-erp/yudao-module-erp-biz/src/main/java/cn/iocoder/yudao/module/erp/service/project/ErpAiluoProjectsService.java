@@ -7,6 +7,9 @@ import java.util.Map;
 
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertMap;
 
+/**
+ * @author 15276
+ */
 public interface ErpAiluoProjectsService {
     List<ErpAiluoProjectDO> getActiveProjects();
 

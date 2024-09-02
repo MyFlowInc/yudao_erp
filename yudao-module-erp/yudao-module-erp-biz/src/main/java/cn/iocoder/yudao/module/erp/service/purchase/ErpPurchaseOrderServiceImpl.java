@@ -24,6 +24,7 @@ import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.service.finance.ErpAccountService;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.productbatch.ErpProductBatchService;
+import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -148,7 +149,7 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @DSTransactional(rollbackFor = Exception.class)
     public void updatePurchaseOrderStatus(Long id, Integer status) {
         boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
         // 1.1 校验存在

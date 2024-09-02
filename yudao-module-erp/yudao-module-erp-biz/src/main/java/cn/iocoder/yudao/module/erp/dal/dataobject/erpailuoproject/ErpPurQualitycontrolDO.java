@@ -1,20 +1,25 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author 15276
+ */
 @Data
 @TableName("pur_qualitycontrol")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErpPurQualitycontrolDO extends BaseDO {
-
-    private Long id;
+public class ErpPurQualitycontrolDO{
+    @TableId
+private Long id;
 
     /** 节点名称 */
 
@@ -34,7 +39,7 @@ public class ErpPurQualitycontrolDO extends BaseDO {
 
     /** 关联采购入库单 */
 
-    private String relatedRequisition;
+    private Long relatedRequisition;
 
-
+    private String remark;
 }

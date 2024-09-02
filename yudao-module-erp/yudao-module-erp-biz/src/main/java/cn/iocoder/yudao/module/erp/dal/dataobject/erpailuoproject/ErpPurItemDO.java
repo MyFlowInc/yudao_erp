@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +17,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErpPurItemDO extends BaseDO {
-    @TableField(value = "id")
-    private Integer id;
+public class ErpPurItemDO{
+
+    @TableId
+    private Long id;
 
     /** 序号 */
 
@@ -66,11 +68,11 @@ public class ErpPurItemDO extends BaseDO {
 
     /** 关联项目 */
 
-    private String relationProject;
+    private Long relationProject;
 
     /** 关联请购 */
 
-    private String relationRequisition;
+    private Long relationRequisition;
 
     /** 来料检完成时间 */
 
@@ -83,5 +85,7 @@ public class ErpPurItemDO extends BaseDO {
     /** 是否入库？yes/or */
 
     private String warehousing;
+
+    private String remark;
 
 }

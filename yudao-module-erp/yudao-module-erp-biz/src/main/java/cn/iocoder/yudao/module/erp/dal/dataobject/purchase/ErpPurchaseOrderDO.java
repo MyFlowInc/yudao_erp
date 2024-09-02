@@ -100,6 +100,7 @@ public class ErpPurchaseOrderDO extends BaseDO {
      * 附件地址
      */
     private String fileUrl;
+
 //    关联请购订单
     private String associatedRequisition;
     /**

@@ -7,18 +7,25 @@ import cn.iocoder.yudao.framework.common.util.number.MoneyUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInSaveReqVO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject.ErpPurItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject.ErpPurQualitycontrolDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.erpailuoproject.ErpPurRequisitionDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductUnitDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.productbatch.ErpProductBatchDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseOrderItemDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.project.ErpAiluoProjectDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.*;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.PurchaseRequisitionDO;
+import cn.iocoder.yudao.module.erp.dal.dataobject.requisition.RequisitionProductDO;
+import cn.iocoder.yudao.module.erp.dal.mysql.erpailuoproject.ErpPurItemMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.erpailuoproject.ErpPurRequisitionMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.product.ErpProductUnitMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.productbatch.ErpProductBatchMapper;
-import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseInItemMapper;
-import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseInMapper;
-import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderItemMapper;
-import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpPurchaseOrderMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.project.ErpAiluoProjectsMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.purchase.*;
 import cn.iocoder.yudao.module.erp.dal.mysql.erpailuoproject.ErpPurQualitycontrolMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.requisition.PurchaseRequisitionMapper;
+import cn.iocoder.yudao.module.erp.dal.mysql.requisition.RequisitionProductMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
 import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
 import cn.iocoder.yudao.module.erp.enums.stock.ErpStockRecordBizTypeEnum;
@@ -27,8 +34,10 @@ import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockRecordService;
 import cn.iocoder.yudao.module.erp.service.stock.bo.ErpStockRecordCreateReqBO;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
+import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
 import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
@@ -76,7 +85,22 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     @Resource
     private AdminUserApi adminUserApi;
     @Resource
+    private ErpPurItemMapper erpPurItemMapper;
+    @Resource
+    private ErpPurRequisitionMapper erpPurRequisitionMapper;
+    @Resource
+    private ErpProductUnitMapper productUnitMapper;
+    @Resource
+    private ErpSupplierMapper supplierMapper;
+    @Resource
     private ErpPurQualitycontrolMapper erpPurQualitycontrolMapper;
+    @Resource
+    private ErpAiluoProjectsMapper erpAiluoProjectsMapper;
+    @Resource
+    private PurchaseRequisitionMapper purchaseRequisitionMapper;
+
+    @Resource
+    private RequisitionProductMapper requisitionProductMapper;
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPurchaseIn(ErpPurchaseInSaveReqVO createReqVO) {
@@ -153,7 +177,7 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     }
 
     @Override
-    @DSTransactional(rollbackFor = Exception.class)
+    @DSTransactional
     public void updatePurchaseInStatus(Long id, Integer status) {
         boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
         // 1.1 校验存在
@@ -174,7 +198,58 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
         }
         //发起ailuo审核，判断是否可入库未入库
         if (Objects.equals(status, ErpAuditStatus.APPROVE.getStatus())) {
-//            erpPurQualitycontrolMapper.insert(new ErpPurQualitycontrolDO().setName())
+            String key = UUID.randomUUID().toString().replace("-", "");
+            AdminUserRespDTO user = adminUserApi.getUser(Long.valueOf(purchaseIn.getCreator()));
+            //子项id
+            List<ErpPurchaseInItemDO> erpPurchaseInItemDOS = purchaseInItemMapper.selectListByInId(purchaseIn.getId());
+//            StringBuilder productName = new StringBuilder();
+            erpPurchaseInItemDOS.forEach( i->{
+                //采购项
+                ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(i.getOrderItemId());
+                ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(erpPurchaseOrderItemDO.getOrderId());
+                //请购项
+                RequisitionProductDO erpPurRequisitionDO1 = requisitionProductMapper.selectById(erpPurchaseOrderItemDO.getAssociatedRequisitionProductId());
+                PurchaseRequisitionDO purchaseRequisitionDO = purchaseRequisitionMapper.selectById(erpPurRequisitionDO1.getAssociationRequisition());
+                //供应商信息
+                ErpSupplierDO erpSupplierDO = supplierMapper.selectById(erpPurchaseOrderDO.getSupplierId());
+                //项目信息
+                ErpAiluoProjectDO erpAiluoProjectDO = erpAiluoProjectsMapper.selectById(purchaseRequisitionDO.getAssociationProject());
+                erpPurRequisitionMapper.insert
+                        (new ErpPurRequisitionDO()
+                                .setUuid(key)
+                                .setStatus("over")
+                                .setType("backup_warehouse")
+                                .setProjectName(erpAiluoProjectDO.getName())
+                                .setRequestor(user.getNickname())
+                                .setRelationProject(purchaseRequisitionDO.getAssociationProject())
+                                .setApplicationDate(String.valueOf(purchaseIn.getInTime()))
+                                .setCode(purchaseIn.getNo()));
+                List<ErpPurRequisitionDO> erpPurRequisitionDOS = erpPurRequisitionMapper.selectErpPurRequisitionList(new ErpPurRequisitionDO().setUuid(key));
+                ErpPurRequisitionDO erpPurRequisitionDO = erpPurRequisitionDOS.get(0);
+
+                        ErpProductDO product = productService.getProduct(i.getProductId());
+                        ErpProductUnitDO erpProductUnitDO = productUnitMapper.selectById(i.getProductUnitId());
+                        erpPurItemMapper.insert(new ErpPurItemDO()
+                                .setRelationRequisition(erpPurRequisitionDO.getId())
+                                .setBrand(erpSupplierDO.getName())
+                                .setName(product.getName())
+                                .setStatus("approve")
+                                .setUnit(erpProductUnitDO.getName())
+                                .setQuantity(String.valueOf(i.getCount()))
+                                .setOrderDepartment("订单").setPurpose("采购入库").setRemark(i.getRemark())
+                                .setRelationProject(purchaseRequisitionDO.getAssociationProject()));
+//                        productName.append(product.getName()).append(",");
+                        erpPurQualitycontrolMapper.insert(new ErpPurQualitycontrolDO()
+                                .setName(product.getName())
+                                .setType("incoming")
+                                .setStatus("approve")
+                                .setRelatedRequisition(erpPurRequisitionDO.getId())
+                                .setRemark(erpPurRequisitionDO1.getRemark())
+                                .setNodeName("来料检"+"-"+erpAiluoProjectDO.getName()));
+            }
+            );
+
+
         }
         //判断已入库进行逻辑修改
         if (Objects.equals(status, ErpAuditStatus.ALREADY_IN_STOCK.getStatus())){

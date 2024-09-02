@@ -11,8 +11,8 @@ import java.util.List;
  * @author 15276
  */
 @Validated
-@DS("ailuo")
 @Service
+@DS("ailuo")
 public class ErpPurItemServiceImpl implements ErpPurItemService {
     @Resource
     private ErpPurItemMapper erpPurItemMapper;

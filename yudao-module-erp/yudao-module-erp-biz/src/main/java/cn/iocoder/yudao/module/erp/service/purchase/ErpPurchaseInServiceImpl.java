@@ -202,31 +202,24 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
             AdminUserRespDTO user = adminUserApi.getUser(Long.valueOf(purchaseIn.getCreator()));
             //子项id
             List<ErpPurchaseInItemDO> erpPurchaseInItemDOS = purchaseInItemMapper.selectListByInId(purchaseIn.getId());
-//            StringBuilder productName = new StringBuilder();
+            erpPurRequisitionMapper.insert
+                    (new ErpPurRequisitionDO()
+                            .setUuid(key)
+                            .setStatus("over")
+                            .setType("backup_warehouse")
+                            .setRequestor(user.getNickname())
+                            .setApplicationDate(String.valueOf(purchaseIn.getInTime()))
+                            .setCode(purchaseIn.getNo()));
+            List<ErpPurRequisitionDO> erpPurRequisitionDOS = erpPurRequisitionMapper
+                    .selectErpPurRequisitionList(new ErpPurRequisitionDO().setUuid(key));
+            ErpPurRequisitionDO erpPurRequisitionDO = erpPurRequisitionDOS.get(0);
+            StringBuilder productName = new StringBuilder();
             erpPurchaseInItemDOS.forEach( i->{
                 //采购项
                 ErpPurchaseOrderItemDO erpPurchaseOrderItemDO = purchaseOrderItemMapper.selectById(i.getOrderItemId());
                 ErpPurchaseOrderDO erpPurchaseOrderDO = purchaseOrderMapper.selectById(erpPurchaseOrderItemDO.getOrderId());
-                //请购项
-                RequisitionProductDO erpPurRequisitionDO1 = requisitionProductMapper.selectById(erpPurchaseOrderItemDO.getAssociatedRequisitionProductId());
-                PurchaseRequisitionDO purchaseRequisitionDO = purchaseRequisitionMapper.selectById(erpPurRequisitionDO1.getAssociationRequisition());
                 //供应商信息
                 ErpSupplierDO erpSupplierDO = supplierMapper.selectById(erpPurchaseOrderDO.getSupplierId());
-                //项目信息
-                ErpAiluoProjectDO erpAiluoProjectDO = erpAiluoProjectsMapper.selectById(purchaseRequisitionDO.getAssociationProject());
-                erpPurRequisitionMapper.insert
-                        (new ErpPurRequisitionDO()
-                                .setUuid(key)
-                                .setStatus("over")
-                                .setType("backup_warehouse")
-                                .setProjectName(erpAiluoProjectDO.getName())
-                                .setRequestor(user.getNickname())
-                                .setRelationProject(purchaseRequisitionDO.getAssociationProject())
-                                .setApplicationDate(String.valueOf(purchaseIn.getInTime()))
-                                .setCode(purchaseIn.getNo()));
-                List<ErpPurRequisitionDO> erpPurRequisitionDOS = erpPurRequisitionMapper.selectErpPurRequisitionList(new ErpPurRequisitionDO().setUuid(key));
-                ErpPurRequisitionDO erpPurRequisitionDO = erpPurRequisitionDOS.get(0);
-
                         ErpProductDO product = productService.getProduct(i.getProductId());
                         ErpProductUnitDO erpProductUnitDO = productUnitMapper.selectById(i.getProductUnitId());
                         erpPurItemMapper.insert(new ErpPurItemDO()
@@ -236,20 +229,18 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                                 .setStatus("approve")
                                 .setUnit(erpProductUnitDO.getName())
                                 .setQuantity(String.valueOf(i.getCount()))
-                                .setOrderDepartment("订单").setPurpose("采购入库").setRemark(i.getRemark())
-                                .setRelationProject(purchaseRequisitionDO.getAssociationProject()));
-//                        productName.append(product.getName()).append(",");
-                        erpPurQualitycontrolMapper.insert(new ErpPurQualitycontrolDO()
-                                .setName(product.getName())
-                                .setType("incoming")
-                                .setStatus("approve")
-                                .setRelatedRequisition(erpPurRequisitionDO.getId())
-                                .setRemark(erpPurRequisitionDO1.getRemark())
-                                .setNodeName("来料检"+"-"+erpAiluoProjectDO.getName()));
+                                .setOrderDepartment("订单").setPurpose("采购入库").setRemark(i.getRemark()));
+                        productName.append(product.getName());
             }
             );
-
-
+            erpPurQualitycontrolMapper.insert(new ErpPurQualitycontrolDO()
+                    .setName(String.valueOf(productName))
+                    .setType("incoming")
+                    .setStatus("tobe_tested")
+                    .setRelatedRequisition(erpPurRequisitionDO.getId())
+                    .setRemark(erpPurRequisitionDO.getRemark())
+                    .setRelatedOrderId(id)
+                    .setNodeName("来料检"+"-"+purchaseIn.getNo()));
         }
         //判断已入库进行逻辑修改
         if (Objects.equals(status, ErpAuditStatus.ALREADY_IN_STOCK.getStatus())){

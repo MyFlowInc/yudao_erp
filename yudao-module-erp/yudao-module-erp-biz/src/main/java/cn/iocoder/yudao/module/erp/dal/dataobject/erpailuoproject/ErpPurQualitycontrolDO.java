@@ -37,9 +37,13 @@ private Long id;
 
     private String status;
 
-    /** 关联采购入库单 */
+    /** 关联请购单 */
 
     private Long relatedRequisition;
+
+
+    /** 关联采购入库单 */
+    private Long relatedOrderId;
 
     private String remark;
 }

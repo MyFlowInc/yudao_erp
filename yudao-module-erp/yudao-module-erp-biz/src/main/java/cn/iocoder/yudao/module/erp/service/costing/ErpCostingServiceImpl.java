@@ -280,7 +280,6 @@ public class ErpCostingServiceImpl implements ErpCostingService {
         if (updateCount == 0) {
             throw exception(COSTING_UPDATE_FAIL_APPROVE);
         }
-
     }
 
     @Override

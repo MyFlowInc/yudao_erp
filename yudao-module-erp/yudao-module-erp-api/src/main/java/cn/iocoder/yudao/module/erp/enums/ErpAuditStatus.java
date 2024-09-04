@@ -20,6 +20,8 @@ public enum ErpAuditStatus implements IntArrayValuable {
     PROCESS(10, "未审核"),
     // 审核通过 && 发起请检
     APPROVE(20, "已审核"),
+    // 审核驳回
+    APPROVE_NOT(-10, "发起重审"),
     //待入库
     PENDING_STORAGE(30,"待入库"),
     //已入库

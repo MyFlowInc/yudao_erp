@@ -31,7 +31,8 @@ public interface ErpFinanceReceiptMapper extends BaseMapperX<ErpFinanceReceiptDO
         if (reqVO.getBizNo() != null) {
             query.leftJoin(ErpFinanceReceiptItemDO.class, ErpFinanceReceiptItemDO::getReceiptId, ErpFinanceReceiptDO::getId)
                     .eq(reqVO.getBizNo() != null, ErpFinanceReceiptItemDO::getBizNo, reqVO.getBizNo())
-                    .groupBy(ErpFinanceReceiptDO::getId); // 避免 1 对多查询，产生相同的 1
+                    // 避免 1 对多查询，产生相同的 1
+                    .groupBy(ErpFinanceReceiptDO::getId);
         }
         return selectJoinPage(reqVO, ErpFinanceReceiptDO.class, query);
     }

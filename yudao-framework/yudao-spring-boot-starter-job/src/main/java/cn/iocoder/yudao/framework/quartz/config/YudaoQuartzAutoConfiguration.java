@@ -19,10 +19,10 @@ public class YudaoQuartzAutoConfiguration {
 
     @Bean
     public SchedulerManager schedulerManager(Optional<Scheduler> scheduler) {
-        if (!scheduler.isPresent()) {
-            log.info("[定时任务 - 已禁用][参考 https://doc.iocoder.cn/job/ 开启]");
-            return new SchedulerManager(null);
-        }
+//        if (!scheduler.isPresent()) {
+//            log.info("[定时任务 - 已禁用][参考 https://doc.iocoder.cn/job/ 开启]");
+//            return new SchedulerManager(null);
+//        }
         return new SchedulerManager(scheduler.get());
     }
 

@@ -119,4 +119,9 @@ public class ErpPurchaseInDO extends BaseDO {
      */
     private String remark;
 
+    /**
+     * 备注
+     */
+    private String reason;
+
 }

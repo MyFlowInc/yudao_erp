@@ -78,6 +78,9 @@ public class ErpPurchaseInRespVO {
     @ExcelProperty("备注")
     private String remark;
 
+    @Schema(description = "审批理由", example = "随便")
+    private String reason;
+
     @Schema(description = "创建人", example = "芋道")
     private String creator;
     @Schema(description = "创建人名称", example = "芋道")

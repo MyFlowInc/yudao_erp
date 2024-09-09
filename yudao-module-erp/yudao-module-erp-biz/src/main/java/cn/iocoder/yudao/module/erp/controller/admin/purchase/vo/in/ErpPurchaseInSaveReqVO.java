@@ -79,6 +79,8 @@ public class ErpPurchaseInSaveReqVO {
         @Schema(description = "备注", example = "随便")
         private String remark;
 
+        @Schema(description = "理由", example = "随便")
+        private String reason;
     }
 
 }

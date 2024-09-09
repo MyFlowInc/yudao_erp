@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.erp.service.productbatch;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.erp.dal.dataobject.product.ErpProductDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.product.ErpProductMapper;
@@ -12,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,9 +56,7 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         ErpProductBatchDO productBatch = BeanUtils.toBean(createReqVO, ErpProductBatchDO.class);
         ErpProductDO erpProductDO = productMapper.selectById(productBatch.getAssociationProductId());
         //获取同类型产品得批次信息，并进行后缀拼接
-        Integer i = batchProduct(productBatch);
-        int num = i + 1;
-        productBatch.setName(erpProductDO.getName()+"-"+"批次"+"-"+num);
+        productBatch.setName(erpProductDO.getName()+"-"+DateUtil.format(LocalDateTime.now(), DatePattern.NORM_DATETIME_PATTERN));
         // 1.4 生成编号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
         if (productBatchMapper.selectPage(new ErpProductBatchPageReqVO().setCode(no)) != null) {
@@ -74,12 +75,11 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
         // 插入
         ErpProductDO erpProductDO = productMapper.selectById(createDO.getAssociationProductId());
         //获取同类型产品得批次信息，并进行后缀拼接
-        Integer i = batchProduct(createDO);
-        int num = i + 1;
-        createDO.setName(erpProductDO.getName()+"-"+"批次"+"-"+num);
+        createDO.setName(erpProductDO.getName()+"-"+DateUtil.format(LocalDateTime.now(), DatePattern.NORM_DATETIME_PATTERN));
+//        Integer i = batchProduct(createDO);
+//        createDO.setName(erpProductDO.getName()+"-"+"批次"+"-"+num);
         // 1.4 生成编号，并校验唯一性
         String no = noRedisDAO.generate(ErpNoRedisDAO.PRODUCT_BATCH_NO_PREFIX);
-        System.out.println(no);
         if (productBatchMapper.selectByNo(no) != null) {
             throw exception(PURCHASE_ORDER_NO_EXISTS);
         }
@@ -118,35 +118,35 @@ public class ErpProductBatchServiceImpl implements ErpProductBatchService {
             throw exception(PRODUCT_BATCH_NOT_EXISTS);
         }
     }
-    public Integer batchProduct(ErpProductBatchDO productBatch) {
-        //查询同类型产品批次数量
-        QueryWrapper<ErpProductBatchDO> erpProductBatchDO = new QueryWrapper<ErpProductBatchDO>()
-                .eq("association_product_id",productBatch.getAssociationProductId() )
-                .ne("deleted",true);
-        //选中后判断批次号
-        if (productBatchMapper.selectList(erpProductBatchDO).isEmpty()){
-            return ZERO;
-        }
-        return getMaxSuffix(productBatchMapper.selectList(erpProductBatchDO));
-    }
-
-    public Integer getMaxSuffix(List<ErpProductBatchDO> proBatchlist) {
-        Pattern pattern = Pattern.compile("批次-(\\d+)");
-        int maxSuffix = Integer.MIN_VALUE;
-        for (ErpProductBatchDO obj : proBatchlist) {
-            Matcher matcher = pattern.matcher(obj.getName());
-            if (matcher.find()) {
-                String numberStr = matcher.group(1);
-                int number = Integer.parseInt(numberStr);
-                if (number > maxSuffix) {
-                    maxSuffix = number;
-                }
-            } else {
-                System.out.println("未找到匹配的批次号：" + obj.getName());
-            }
-        }
-        return maxSuffix;
-    }
+//    public Integer batchProduct(ErpProductBatchDO productBatch) {
+//        //查询同类型产品批次数量
+//        QueryWrapper<ErpProductBatchDO> erpProductBatchDO = new QueryWrapper<ErpProductBatchDO>()
+//                .eq("association_product_id",productBatch.getAssociationProductId() )
+//                .ne("deleted",true);
+//        //选中后判断批次号
+//        if (productBatchMapper.selectList(erpProductBatchDO).isEmpty()){
+//            return ZERO;
+//        }
+//        return getMaxSuffix(productBatchMapper.selectList(erpProductBatchDO));
+//    }
+//
+//    public Integer getMaxSuffix(List<ErpProductBatchDO> proBatchlist) {
+//        Pattern pattern = Pattern.compile("批次-(\\d+)");
+//        int maxSuffix = Integer.MIN_VALUE;
+//        for (ErpProductBatchDO obj : proBatchlist) {
+//            Matcher matcher = pattern.matcher(obj.getName());
+//            if (matcher.find()) {
+//                String numberStr = matcher.group(1);
+//                int number = Integer.parseInt(numberStr);
+//                if (number > maxSuffix) {
+//                    maxSuffix = number;
+//                }
+//            } else {
+//                System.out.println("未找到匹配的批次号：" + obj.getName());
+//            }
+//        }
+//        return maxSuffix;
+//    }
     @Override
     public ErpProductBatchDO getProductBatch(Long id) {
         return productBatchMapper.selectById(id);

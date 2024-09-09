@@ -122,7 +122,8 @@ public class SchedulerManager {
             throws SchedulerException {
         validateScheduler();
         // 触发任务
-        JobDataMap data = new JobDataMap(); // 无需重试，所以不设置 retryCount 和 retryInterval
+        // 无需重试，所以不设置 retryCount 和 retryInterval
+        JobDataMap data = new JobDataMap();
         data.put(JobDataKeyEnum.JOB_ID.name(), jobId);
         data.put(JobDataKeyEnum.JOB_HANDLER_NAME.name(), jobHandlerName);
         data.put(JobDataKeyEnum.JOB_HANDLER_PARAM.name(), jobHandlerParam);
@@ -142,8 +143,8 @@ public class SchedulerManager {
 
     private void validateScheduler() {
         if (scheduler == null) {
-            throw exception0(NOT_IMPLEMENTED.getCode(),
-                    "[定时任务 - 已禁用][参考 https://doc.iocoder.cn/job/ 开启]");
+//            throw exception0(NOT_IMPLEMENTED.getCode(),
+//                    "[定时任务 - 已禁用][参考 https://doc.iocoder.cn/job/ 开启]");
         }
     }
 

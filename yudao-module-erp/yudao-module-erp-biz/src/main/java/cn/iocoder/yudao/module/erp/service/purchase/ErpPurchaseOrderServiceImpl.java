@@ -101,7 +101,8 @@ public class ErpPurchaseOrderServiceImpl implements ErpPurchaseOrderService {
                 verifyIfselected();
             }
             if (o.getAssociatedBatchId() == null && o.getProductPrice()!= null) {
-             Long productBatch = productBatchService.createProductBatchDO(new ErpProductBatchDO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
+             Long productBatch = productBatchService.createProductBatchDO
+                     (new ErpProductBatchDO().setAssociationProductId(o.getProductId()).setUnitPrice(o.getProductPrice()));
              o.setAssociatedBatchId(productBatch);
             }
 //            requisitionProductMapper.updateById(new RequisitionProductDO().setId(o.getAssociatedRequisitionProductId()).setSelected("yes"));

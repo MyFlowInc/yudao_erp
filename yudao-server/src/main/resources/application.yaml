@@ -168,7 +168,7 @@ yudao:
 #      topic: ${spring.application.name}-websocket # 消息发送的 Kafka Topic
 #      consumer-group: ${spring.application.name}-websocket-consumer # 消息发送的 Kafka Consumer Group
   swagger:
-    title: 芋道快速开发平台
+    title: Flow快速开发平台
     description: 提供管理后台、用户 App 的所有功能
     version: ${yudao.info.version}
     url: ${yudao.web.admin-ui.url}
@@ -182,7 +182,7 @@ yudao:
     db-schemas: ${spring.datasource.dynamic.datasource.master.name}
     front-type: 10 # 前端模版的类型，参见 CodegenFrontTypeEnum 枚举类
   tenant: # 多租户相关配置项
-    enable: true
+    enable: false
     ignore-urls:
       - /admin-api/system/tenant/get-id-by-name # 基于名字获取租户，不许带租户编号
       - /admin-api/system/tenant/get-by-website # 基于域名获取租户，不许带租户编号

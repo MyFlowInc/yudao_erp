@@ -179,7 +179,7 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     @Override
     @DSTransactional
     public void updatePurchaseInStatus(Long id, Integer status) {
-        boolean approve = ErpAuditStatus.APPROVE.getStatus().equals(status);
+        boolean approve = ErpAuditStatus.ALREADY_IN_STOCK.getStatus().equals(status);
         // 1.1 校验存在
         ErpPurchaseInDO purchaseIn = validatePurchaseInExists(id);
         // 1.2 校验状态

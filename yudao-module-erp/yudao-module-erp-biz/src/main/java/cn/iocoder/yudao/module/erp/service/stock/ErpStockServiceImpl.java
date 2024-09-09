@@ -68,6 +68,7 @@ public class ErpStockServiceImpl implements ErpStockService {
             stock = new ErpStockDO().setProductId(productId).setWarehouseId(warehouseId).setAssociatedBatchId(batchId).setCount(BigDecimal.ZERO);
             stockMapper.insert(stock);
         }
+
         // 1.2 校验库存是否充足
         if (!NEGATIVE_STOCK_COUNT_ENABLE && stock.getCount().add(count).compareTo(BigDecimal.ZERO) < 0) {
             throw exception(STOCK_COUNT_NEGATIVE, productService.getProduct(productId).getName(),

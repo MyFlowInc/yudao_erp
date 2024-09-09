@@ -175,7 +175,8 @@ public class AdminUserServiceImpl implements AdminUserService {
         validateOldPassword(id, reqVO.getOldPassword());
         // 执行更新
         AdminUserDO updateObj = new AdminUserDO().setId(id);
-        updateObj.setPassword(encodePassword(reqVO.getNewPassword())); // 加密密码
+        // 加密密码
+        updateObj.setPassword(encodePassword(reqVO.getNewPassword()));
         userMapper.updateById(updateObj);
     }
 
@@ -202,7 +203,8 @@ public class AdminUserServiceImpl implements AdminUserService {
         // 2. 更新密码
         AdminUserDO updateObj = new AdminUserDO();
         updateObj.setId(id);
-        updateObj.setPassword(encodePassword(password)); // 加密密码
+        // 加密密码
+        updateObj.setPassword(encodePassword(password));
         userMapper.updateById(updateObj);
 
         // 3. 记录操作日志上下文

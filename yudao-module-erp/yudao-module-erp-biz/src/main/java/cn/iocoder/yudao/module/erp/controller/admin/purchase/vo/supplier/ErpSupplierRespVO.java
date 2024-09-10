@@ -80,6 +80,9 @@ public class ErpSupplierRespVO {
     @ExcelProperty("开户行")
     private String bankName;
 
+    @Schema(description = "分类名", example = "芋艿")
+    private String supplierClassificationName;
+
     @Schema(description = "开户账号", example = "29722")
     @ExcelProperty("开户账号")
     private String bankAccount;

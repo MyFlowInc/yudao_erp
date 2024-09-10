@@ -66,7 +66,13 @@ public class ErpSupplierController {
     @PreAuthorize("@ss.hasPermission('erp:supplier:query')")
     public CommonResult<ErpSupplierRespVO> getSupplier(@RequestParam("id") Long id) {
         ErpSupplierDO supplier = supplierService.getSupplier(id);
-        return success(BeanUtils.toBean(supplier, ErpSupplierRespVO.class));
+        return success(BeanUtils.toBean(supplier, ErpSupplierRespVO.class,item ->{
+            ErpSupplierClassificationDO supplierClassification =
+                    supplierClassificationService.getSupplierClassification(item.getSupplierClassification());
+            if (supplierClassification != null){
+                item.setSupplierClassificationName(supplierClassification.getName());
+            }
+        }));
     }
 
     @GetMapping("/page")
@@ -74,14 +80,27 @@ public class ErpSupplierController {
     @PreAuthorize("@ss.hasPermission('erp:supplier:query')")
     public CommonResult<PageResult<ErpSupplierRespVO>> getSupplierPage(@Valid ErpSupplierPageReqVO pageReqVO) {
         PageResult<ErpSupplierDO> pageResult = supplierService.getSupplierPage(pageReqVO);
-        return success(BeanUtils.toBean(pageResult, ErpSupplierRespVO.class));
+        return success(BeanUtils.toBean(pageResult, ErpSupplierRespVO.class,item ->{
+            ErpSupplierClassificationDO supplierClassification =
+                    supplierClassificationService.getSupplierClassification(item.getSupplierClassification());
+            if (supplierClassification != null){
+                item.setSupplierClassificationName(supplierClassification.getName());
+            }
+        }));
     }
+
     @GetMapping("/list")
     @Operation(summary = "获得ERP 供应商分页")
     @PreAuthorize("@ss.hasPermission('erp:supplier:query')")
     public CommonResult<List<ErpSupplierRespVO>> selectListByStatus() {
         List<ErpSupplierDO> erpSupplierDOS = supplierService.selectListByStatus(null);
-        return success(BeanUtils.toBean(erpSupplierDOS, ErpSupplierRespVO.class));
+        return success(BeanUtils.toBean(erpSupplierDOS, ErpSupplierRespVO.class,item ->{
+            ErpSupplierClassificationDO supplierClassification =
+                    supplierClassificationService.getSupplierClassification(item.getSupplierClassification());
+            if (supplierClassification != null){
+                item.setSupplierClassificationName(supplierClassification.getName());
+            }
+        }));
     }
 
     @GetMapping("/export-excel")

@@ -2,8 +2,10 @@ package cn.iocoder.yudao.module.erp.dal.dataobject.stock;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -64,5 +66,6 @@ public class ErpStockInDO extends BaseDO {
      * 附件 URL
      */
 //    private String fileUrl;
+    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
 }

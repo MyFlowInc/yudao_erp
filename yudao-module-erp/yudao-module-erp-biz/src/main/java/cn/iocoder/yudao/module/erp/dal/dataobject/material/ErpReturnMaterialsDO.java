@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.material;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 import java.util.*;
 import java.time.LocalDateTime;
@@ -74,5 +75,6 @@ public class ErpReturnMaterialsDO extends BaseDO {
      * 附件 URL
      */
 //    private String fileUrl;
+    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
 }

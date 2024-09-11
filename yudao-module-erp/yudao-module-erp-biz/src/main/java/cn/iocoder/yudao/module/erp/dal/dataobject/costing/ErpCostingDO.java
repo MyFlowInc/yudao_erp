@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.costing;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 import java.util.*;
 import java.time.LocalDateTime;
@@ -106,6 +107,7 @@ public class ErpCostingDO extends BaseDO {
     /**
      * 附件
      */
-    private List<String> fileUrls;
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> fileUrl;
 
 }

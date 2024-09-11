@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.dal.dataobject.requisition;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
 import java.util.*;
 import java.time.LocalDateTime;
@@ -65,5 +66,6 @@ public class PurchaseRequisitionDO extends BaseDO {
      */
     private String remark;
 
+    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
 }

@@ -107,7 +107,7 @@ public class ErpCostingRespVO {
     /**
      * 附件
      */
-    private List<String> fileUrls;
+    private List<String> fileUrl;
 
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<ErpCostingRespVO.Item> items;

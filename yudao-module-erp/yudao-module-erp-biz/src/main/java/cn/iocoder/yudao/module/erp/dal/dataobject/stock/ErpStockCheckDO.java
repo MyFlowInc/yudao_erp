@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ERP 库存盘点单 DO
@@ -58,6 +59,6 @@ public class ErpStockCheckDO extends BaseDO {
     /**
      * 附件 URL
      */
-    private String fileUrl;
-
+//    private String fileUrl;
+    private List<String> fileUrl;
 }

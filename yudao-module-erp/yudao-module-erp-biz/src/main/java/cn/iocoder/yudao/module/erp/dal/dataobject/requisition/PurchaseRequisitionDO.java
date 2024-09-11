@@ -65,5 +65,5 @@ public class PurchaseRequisitionDO extends BaseDO {
      */
     private String remark;
 
-
+    private List<String> fileUrl;
 }

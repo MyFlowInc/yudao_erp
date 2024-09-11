@@ -69,6 +69,6 @@ public class ErpPickingInDO extends BaseDO {
     /**
      * 附件 URL
      */
-    private String fileUrl;
-
+//    private String fileUrl;
+    private List<String> fileUrl;
 }

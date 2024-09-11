@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ERP 采购退货 DO
@@ -113,7 +114,8 @@ public class ErpPurchaseReturnDO extends BaseDO {
     /**
      * 附件地址
      */
-    private String fileUrl;
+//    private String fileUrl;
+    private List<String> fileUrl;
     /**
      * 备注
      */

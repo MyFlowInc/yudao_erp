@@ -98,4 +98,14 @@ public class ErpCostingDO extends BaseDO {
      */
     private BigDecimal totalCost;
 
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     * 附件
+     */
+    private List<String> fileUrls;
+
 }

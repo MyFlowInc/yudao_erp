@@ -73,13 +73,19 @@ public class ErpPurchaseInRespVO {
     @Schema(description = "定金金额，单位：元", requiredMode = Schema.RequiredMode.REQUIRED, example = "7127")
     private BigDecimal otherPrice;
 
-    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
-    @ExcelProperty("附件地址")
-    private String fileUrl;
-
-    @Schema(description = "备注", example = "你猜")
+//    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
+//    @ExcelProperty("附件地址")
+//    private String fileUrl;
+//
+//    @Schema(description = "备注", example = "你猜")
+//    @ExcelProperty("备注")
+//    private String remark;
+    @Schema(description = "备注", example = "随便")
     @ExcelProperty("备注")
     private String remark;
+
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
 
     @Schema(description = "审批理由", example = "随便")
     private String reason;

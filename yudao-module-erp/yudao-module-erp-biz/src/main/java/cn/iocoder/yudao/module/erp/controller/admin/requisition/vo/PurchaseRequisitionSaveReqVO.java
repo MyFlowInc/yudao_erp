@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.erp.controller.admin.requisition.vo;
 
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.order.ErpPurchaseOrderSaveReqVO;
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -40,6 +41,12 @@ public class PurchaseRequisitionSaveReqVO {
 
     @Schema(description = "备注", example = "你猜")
     private String remark;
+
+//    @Schema(description = "备注", example = "随便")
+//    @ExcelProperty("备注")
+//    private String remark;
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
 
     @Schema(description = "请购清单列表")
     private List<PurchaseRequisitionSaveReqVO.Item> items;

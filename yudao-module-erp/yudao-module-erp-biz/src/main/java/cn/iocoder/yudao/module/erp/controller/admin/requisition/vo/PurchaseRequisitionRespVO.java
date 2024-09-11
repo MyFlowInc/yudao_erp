@@ -74,6 +74,13 @@ public class PurchaseRequisitionRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+//    @Schema(description = "备注", example = "随便")
+//    @ExcelProperty("备注")
+//    private String remark;
+
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
+
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PurchaseRequisitionRespVO.Item> items;
 

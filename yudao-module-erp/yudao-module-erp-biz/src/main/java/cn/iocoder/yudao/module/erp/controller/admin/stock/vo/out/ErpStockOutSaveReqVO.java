@@ -30,8 +30,10 @@ public class ErpStockOutSaveReqVO {
     @Schema(description = "备注", example = "随便")
     private String remark;
 
-    @Schema(description = "附件 URL", example = "https://www.iocoder.cn/1.doc")
-    private String fileUrl;
+//    @Schema(description = "附件 URL", example = "https://www.iocoder.cn/1.doc")
+//    private String fileUrl;
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
 
     @Schema(description = "出库项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "出库项列表不能为空")

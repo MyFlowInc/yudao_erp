@@ -69,6 +69,16 @@ public class ErpCostingSaveReqVO {
 
 //    @Schema(description = "成本核算项列表")
 //    private List<ErpCostItemDO> costItems;
+    /**
+     * 备注
+     */
+    @Schema(description = "备注")
+    private String remark;
+
+    /**
+     * 附件
+     */
+    private List<String> fileUrls;
 
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<ErpCostingSaveReqVO.Item> items;

@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.returns;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -32,11 +33,16 @@ public class ErpPurchaseReturnSaveReqVO {
     @Schema(description = "其它金额，单位：元", example = "7127")
     private BigDecimal otherPrice;
 
-    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
-    private String fileUrl;
-
-    @Schema(description = "备注", example = "你猜")
+//    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
+//    private String fileUrl;
+//
+//    @Schema(description = "备注", example = "你猜")
+//    private String remark;
+    @Schema(description = "备注", example = "随便")
     private String remark;
+
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
 
     @Schema(description = "退货清单列表")
     private List<Item> items;

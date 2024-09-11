@@ -32,15 +32,20 @@ public class ErpPurchaseInSaveReqVO {
     @Schema(description = "其它金额，单位：元", example = "7127")
     private BigDecimal otherPrice;
 
-    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
-    private String fileUrl;
+//    @Schema(description = "附件地址", example = "https://www.iocoder.cn")
+//    private String fileUrl;
+//
+//    @Schema(description = "备注", example = "你猜")
+//    private String remark;
 
-    @Schema(description = "备注", example = "你猜")
+    @Schema(description = "备注", example = "随便")
     private String remark;
 
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
     @Schema(description = "入库清单列表")
     private List<Item> items;
-
+;
     @Data
     public static class Item {
 

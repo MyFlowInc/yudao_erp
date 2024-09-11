@@ -133,6 +133,9 @@ public class ErpStockMoveServiceImpl implements ErpStockMoveService {
             //库存变更
             // 1.1 查询当前调出仓库库存
             ErpStockDO fromStock = stockMapper.selectByProductIdAndWarehouseId(stockMoveItem.getProductId(), stockMoveItem.getFromWarehouseId(),stockMoveItem.getAssociatedBatchId());
+            if (fromStock == null) {
+                throw exception(STOCK_COUNT_NO);
+            }
             // 1.2 校验库存是否充足
             if (fromStock.getCount().add(fromCount).compareTo(BigDecimal.ZERO) < 0) {
                 throw exception(STOCK_COUNT_NEGATIVE, productService.getProduct(stockMoveItem.getProductId()).getName(),

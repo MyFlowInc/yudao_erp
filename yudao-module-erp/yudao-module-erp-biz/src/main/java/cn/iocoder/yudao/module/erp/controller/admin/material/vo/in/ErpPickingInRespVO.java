@@ -69,9 +69,8 @@ public class ErpPickingInRespVO {
     @ExcelProperty("备注")
     private String remark;
 
-    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
-    @ExcelProperty("附件 URL")
-    private String fileUrl;
+    private List<String> fileUrl;
+
     @Schema(description = "创建人", example = "芋道")
     private String creator;
     @Schema(description = "创建人名称", example = "芋道")

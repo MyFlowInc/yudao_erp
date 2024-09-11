@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.erp.controller.admin.stock.vo.check;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -21,11 +22,18 @@ public class ErpStockCheckSaveReqVO {
     @NotNull(message = "出库时间不能为空")
     private LocalDateTime checkTime;
 
+//    @Schema(description = "备注", example = "随便")
+//    private String remark;
+//
+//    @Schema(description = "附件 URL", example = "https://www.iocoder.cn/1.doc")
+//    private String fileUrl;
+
     @Schema(description = "备注", example = "随便")
     private String remark;
 
-    @Schema(description = "附件 URL", example = "https://www.iocoder.cn/1.doc")
-    private String fileUrl;
+    @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
+    private List<String> fileUrl;
+
 
     @Schema(description = "出库项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "出库项列表不能为空")

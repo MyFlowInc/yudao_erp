@@ -99,6 +99,16 @@ public class ErpCostingRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    /**
+     * 备注
+     */
+    @Schema(description = "备注", example = "111")
+    private String remark;
+    /**
+     * 附件
+     */
+    private List<String> fileUrls;
+
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<ErpCostingRespVO.Item> items;
 

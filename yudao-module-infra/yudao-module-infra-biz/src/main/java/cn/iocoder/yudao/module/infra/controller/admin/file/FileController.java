@@ -34,7 +34,6 @@ import static cn.iocoder.yudao.module.infra.framework.file.core.utils.FileTypeUt
 @Validated
 @Slf4j
 public class FileController {
-
     @Resource
     private FileService fileService;
 

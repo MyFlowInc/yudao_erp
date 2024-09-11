@@ -52,7 +52,7 @@ public class ErpPickingInSaveReqVO {
     private String remark;
 
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
-    private String fileUrl;
+    private List<String> fileUrl;
 
 //    @Schema(description = "ERP 领料出库单项列表")
 //    private List<ErpPickingInItemDO> pickingInItems;

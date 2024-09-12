@@ -16,7 +16,7 @@ import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
  *
  * @author 那就这样吧
  */
-@TableName("erp_return_materials")
+@TableName(value = "erp_return_materials", autoResultMap = true)
 @KeySequence("erp_return_materials_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
 @Data
 @EqualsAndHashCode(callSuper = true)

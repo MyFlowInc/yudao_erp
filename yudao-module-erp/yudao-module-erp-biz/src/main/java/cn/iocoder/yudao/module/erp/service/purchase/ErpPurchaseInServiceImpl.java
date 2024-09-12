@@ -209,6 +209,8 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
                             .setType("backup_warehouse")
                             .setRequestor(user.getNickname())
                             .setApplicationDate(String.valueOf(purchaseIn.getInTime()))
+                            .setFileUrl(purchaseIn.getFileUrl())
+                            .setSpecifications(purchaseIn.getSpecifications())
                             .setCode(purchaseIn.getNo()));
             List<ErpPurRequisitionDO> erpPurRequisitionDOS = erpPurRequisitionMapper
                     .selectErpPurRequisitionList(new ErpPurRequisitionDO().setUuid(key));

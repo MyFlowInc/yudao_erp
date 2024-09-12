@@ -55,6 +55,10 @@ public class ErpReturnMaterialsSaveReqVO {
 
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    private List<String> specifications;
 
     @Schema(description = "ERP 还料入库单项列表")
     private List<ErpReturnMaterialsSaveReqVO.Item> items;

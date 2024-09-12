@@ -68,4 +68,9 @@ public class ErpStockInDO extends BaseDO {
 //    private String fileUrl;
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> specifications;
 }

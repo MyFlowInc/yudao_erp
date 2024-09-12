@@ -120,6 +120,11 @@ public class ErpPurchaseInDO extends BaseDO {
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
     /**
+     * 规格
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> specifications;
+    /**
      * 备注
      */
     private String remark;

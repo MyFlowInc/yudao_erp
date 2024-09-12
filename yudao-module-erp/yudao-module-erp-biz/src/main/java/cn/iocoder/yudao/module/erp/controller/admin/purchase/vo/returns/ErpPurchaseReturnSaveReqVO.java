@@ -43,6 +43,10 @@ public class ErpPurchaseReturnSaveReqVO {
 
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    private List<String> specifications;
 
     @Schema(description = "退货清单列表")
     private List<Item> items;

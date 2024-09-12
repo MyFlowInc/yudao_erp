@@ -105,6 +105,11 @@ public class ErpPurchaseOrderDO extends BaseDO {
 //    private String fileUrl;
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> specifications;
 //    关联请购订单
     private String associatedRequisition;
     /**

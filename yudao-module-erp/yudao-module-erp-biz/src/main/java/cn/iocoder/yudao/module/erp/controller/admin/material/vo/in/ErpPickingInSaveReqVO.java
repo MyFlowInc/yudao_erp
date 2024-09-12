@@ -56,7 +56,10 @@ public class ErpPickingInSaveReqVO {
 
 //    @Schema(description = "ERP 领料出库单项列表")
 //    private List<ErpPickingInItemDO> pickingInItems;
-
+    /**
+     * 规格
+     */
+    private List<String> specifications;
     @Schema(description = "ERP 领料出库单项列表")
     private List<ErpPickingInSaveReqVO.Item> items;
 

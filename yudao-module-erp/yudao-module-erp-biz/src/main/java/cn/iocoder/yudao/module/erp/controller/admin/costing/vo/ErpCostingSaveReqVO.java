@@ -1,6 +1,8 @@
 package cn.iocoder.yudao.module.erp.controller.admin.costing.vo;
 
 import com.alibaba.excel.annotation.ExcelProperty;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -79,6 +81,11 @@ public class ErpCostingSaveReqVO {
      * 附件
      */
     private List<String> fileUrl;
+
+    /**
+     * 规格
+     */
+    private List<String> specifications;
 
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<ErpCostingSaveReqVO.Item> items;

@@ -109,6 +109,11 @@ public class ErpCostingRespVO {
      */
     private List<String> fileUrl;
 
+    /**
+     * 规格
+     */
+    private List<String> specifications;
+
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<ErpCostingRespVO.Item> items;
 

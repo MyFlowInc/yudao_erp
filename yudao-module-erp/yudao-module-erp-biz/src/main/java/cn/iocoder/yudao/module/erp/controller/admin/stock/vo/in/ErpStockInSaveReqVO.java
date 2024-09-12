@@ -32,6 +32,10 @@ public class ErpStockInSaveReqVO {
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     private List<String> fileUrl;
 
+    /**
+     * 规格
+     */
+    private List<String> specifications;
     @Schema(description = "入库项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotEmpty(message = "入库项列表不能为空")
     @Valid

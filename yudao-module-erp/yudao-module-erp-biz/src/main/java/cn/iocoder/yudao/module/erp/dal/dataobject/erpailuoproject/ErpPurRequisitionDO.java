@@ -4,13 +4,16 @@ import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.*;
+
+import java.util.List;
 
 /**
  * @author 15276
  */
 @Data
-@TableName("pur_requisition")
+@TableName(value = "pur_requisition", autoResultMap = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,9 +41,9 @@ public class ErpPurRequisitionDO{
 
     private String applicationDate;
 
-    /** 规格 */
-
-    private String specifications;
+//    /** 规格 */
+//
+//    private String specifications;
 
     /** 唯一标识 */
 
@@ -71,4 +74,12 @@ public class ErpPurRequisitionDO{
     private Long relationWorkshop;
 
     private String remark;
+    /** 逻辑删除 */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> specifications;
 }

@@ -82,6 +82,10 @@ public class ErpReturnMaterialsRespVO {
 
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    private List<String> specifications;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")

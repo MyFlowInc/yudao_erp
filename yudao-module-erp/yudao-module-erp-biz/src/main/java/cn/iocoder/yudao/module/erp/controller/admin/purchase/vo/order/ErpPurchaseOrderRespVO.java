@@ -83,6 +83,10 @@ public class ErpPurchaseOrderRespVO {
 
     @Schema(description = "附件 URL", example = "https://www.iocoder.cn")
     private List<String> fileUrl;
+    /**
+     * 规格
+     */
+    private List<String> specifications;
 
     @Schema(description = "创建人", example = "芋道")
     private String creator;

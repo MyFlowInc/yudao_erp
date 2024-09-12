@@ -102,4 +102,10 @@ public class ErpCostingDO extends BaseDO {
    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
 
+    /**
+     * 规格
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> specifications;
+
 }

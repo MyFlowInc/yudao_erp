@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.framework.common.util.io;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileNameUtil;
@@ -71,14 +72,15 @@ public class FileUtils {
      * @return path，唯一不可重复
      */
     public static String generatePath(byte[] content, String originalName) {
-        String sha256Hex = DigestUtil.sha256Hex(content);
+//        String sha256Hex = DigestUtil.sha256Hex(content);
+        String pathName = FileNameUtil.getName(originalName) + '-' + DateUtil.date().toDateStr();
         // 情况一：如果存在 name，则优先使用 name 的后缀
         if (StrUtil.isNotBlank(originalName)) {
             String extName = FileNameUtil.extName(originalName);
-            return StrUtil.isBlank(extName) ? sha256Hex : sha256Hex + "." + extName;
+            return StrUtil.isBlank(extName) ? pathName : pathName + "." + extName;
         }
         // 情况二：基于 content 计算
-        return sha256Hex + '.' + FileTypeUtil.getType(new ByteArrayInputStream(content));
+        return pathName + '.' + FileTypeUtil.getType(new ByteArrayInputStream(content));
     }
 
 }

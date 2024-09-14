@@ -73,7 +73,7 @@ public class FileUtils {
      */
     public static String generatePath(byte[] content, String originalName) {
 //        String sha256Hex = DigestUtil.sha256Hex(content);
-        String pathName = FileNameUtil.getName(originalName) + '-' + DateUtil.date().toDateStr();
+        String pathName = FileNameUtil.mainName(originalName) + '-' + DateUtil.date().getTime();
         // 情况一：如果存在 name，则优先使用 name 的后缀
         if (StrUtil.isNotBlank(originalName)) {
             String extName = FileNameUtil.extName(originalName);
@@ -82,5 +82,4 @@ public class FileUtils {
         // 情况二：基于 content 计算
         return pathName + '.' + FileTypeUtil.getType(new ByteArrayInputStream(content));
     }
-
 }

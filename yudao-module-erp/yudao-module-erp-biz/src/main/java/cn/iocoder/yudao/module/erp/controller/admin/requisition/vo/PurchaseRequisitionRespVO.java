@@ -82,6 +82,8 @@ public class PurchaseRequisitionRespVO {
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> fileUrl;
 
+    private List<String> specifications;
+
     @Schema(description = "请购单项列表", requiredMode = Schema.RequiredMode.REQUIRED)
     private List<PurchaseRequisitionRespVO.Item> items;
 

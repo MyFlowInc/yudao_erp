@@ -60,6 +60,7 @@ public class ErpStockCheckRespVO {
     /**
      * 规格
      */
+    @Schema(description = "规格 URL", example = "https://www.iocoder.cn")
     private List<String> specifications;
 
     @Schema(description = "创建人", example = "芋道")

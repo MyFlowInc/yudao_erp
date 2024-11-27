@@ -6,6 +6,9 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+/**
+ * @author 15276
+ */
 @Schema(description = "管理后台 - ERP 产品分类新增/修改 Request VO")
 @Data
 public class ErpProductCategorySaveReqVO {
@@ -22,7 +25,6 @@ public class ErpProductCategorySaveReqVO {
     private String name;
 
     @Schema(description = "分类编码", requiredMode = Schema.RequiredMode.REQUIRED, example = "S110")
-    @NotEmpty(message = "分类编码不能为空")
     private String code;
 
     @Schema(description = "分类排序", requiredMode = Schema.RequiredMode.REQUIRED, example = "10")

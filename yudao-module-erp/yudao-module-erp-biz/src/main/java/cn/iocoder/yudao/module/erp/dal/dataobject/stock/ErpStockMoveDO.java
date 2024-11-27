@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author 芋道源码
  */
-@TableName("erp_stock_move")
+@TableName(value = "erp_stock_move", autoResultMap = true)
 @KeySequence("erp_stock_move_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
 @Data
 @EqualsAndHashCode(callSuper = true)

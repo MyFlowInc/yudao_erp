@@ -110,6 +110,7 @@ public class ErpPurchaseOrderDO extends BaseDO {
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> specifications;
+
 //    关联请购订单
     private String associatedRequisition;
     /**

@@ -18,7 +18,6 @@ public class ErpProductSaveReqVO {
     private String name;
 
     @Schema(description = "产品条码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "产品条码不能为空")
     private String barCode;
 
     @Schema(description = "产品分类编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "6275")
@@ -26,11 +25,9 @@ public class ErpProductSaveReqVO {
     private Long categoryId;
 
     @Schema(description = "关联供应商Id", requiredMode = Schema.RequiredMode.REQUIRED, example = "31572")
-    @NotEmpty(message = "关联供应商Id不能为空")
     private String associationSupplierId;
 
     @Schema(description = "单位编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "28652")
-    @NotNull(message = "单位编号不能为空")
     private Integer unitId;
 
     @Schema(description = "产品状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
